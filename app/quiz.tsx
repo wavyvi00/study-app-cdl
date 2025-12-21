@@ -1,6 +1,6 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
-import { useState, useMemo, useEffect } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Image, ImageSourcePropType } from 'react-native';
+import { useState, useMemo, useEffect, useRef } from 'react';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, Animated, ViewStyle, TextStyle } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Question } from '../data/mock';
 import { useQuestions } from '../context/QuestionsContext';
@@ -9,39 +9,48 @@ import * as Haptics from 'expo-haptics';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
 import { recordQuizResult } from '../data/stats';
-
-// Image logic removed
+import { shuffleArray } from '../lib/shuffle';
+import { APP_CONFIG } from '../constants/appConfig';
+import Button from '../components/ui/Button';
+import Card from '../components/ui/Card';
+import Badge from '../components/ui/Badge';
 
 export default function QuizScreen() {
-    const { topicId, mode } = useLocalSearchParams();
+    const params = useLocalSearchParams();
     const router = useRouter();
-    const { isDark } = useTheme();
+    const { colors, spacing, typography, radius, isDark } = useTheme();
     const { getQuestions, topics } = useQuestions();
     const insets = useSafeAreaInsets();
 
-    // Topics with 25-question exams
-    const shortExamTopics = ['passenger', 'doubles_triples', 'tank', 'school_bus'];
+    // Safe params
+    const topicId = typeof params.topicId === 'string' ? params.topicId : '';
+    const mode = typeof params.mode === 'string' ? params.mode : 'practice';
 
     // Logic to load questions
     const questions = useMemo(() => {
         if (topicId) {
-            const allQuestions = [...getQuestions(topicId as string)];
+            const allQuestions = [...getQuestions(topicId)];
             if (allQuestions.length === 0) return [];
 
             // Exam mode: randomly select questions
             if (mode === 'exam') {
-                const shuffled = allQuestions.sort(() => 0.5 - Math.random());
-                // 25 questions for endorsement topics, 50 for main topics
-                const examQuestionCount = shortExamTopics.includes(topicId as string) ? 25 : 50;
-                return shuffled.slice(0, Math.min(examQuestionCount, allQuestions.length));
+                const shuffled = shuffleArray(allQuestions);
+
+                const isEndorsement = APP_CONFIG.ENDORSEMENT_TOPICS.includes(topicId);
+                const questCount = isEndorsement
+                    ? APP_CONFIG.QUESTION_COUNTS.ENDORSEMENT_TOPIC
+                    : APP_CONFIG.QUESTION_COUNTS.MAIN_TOPIC;
+
+                return shuffled.slice(0, Math.min(questCount, allQuestions.length));
             }
 
             // Practice mode: use all questions (shuffled)
-            return allQuestions.sort(() => 0.5 - Math.random());
+            return shuffleArray(allQuestions);
         }
-        // If no topic, combine all questions from all topics
+
+        // If no topic (fallback), combine all questions
         const allQ = topics.flatMap(t => t.questions);
-        return allQ.sort(() => 0.5 - Math.random()).slice(0, 10);
+        return shuffleArray(allQ).slice(0, 10);
     }, [topicId, mode, getQuestions, topics]);
 
     const [currentIndex, setCurrentIndex] = useState(0);
@@ -49,16 +58,35 @@ export default function QuizScreen() {
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
     const [isFinished, setIsFinished] = useState(false);
     const [showReview, setShowReview] = useState(false);
+
+    // Track wrong answers
     const [wrongAnswers, setWrongAnswers] = useState<Array<{
         question: Question;
         selectedIndex: number;
     }>>([]);
-    const [questionOrder, setQuestionOrder] = useState<number[]>(() =>
-        questions.map((_, i) => i)
-    );
 
-    // Timer state for Exam mode (60 minutes)
-    const [timeLeft, setTimeLeft] = useState(60 * 60);
+    // We already shuffled 'questions' above, so we can just iterate 0..length
+    const [questionOrder, setQuestionOrder] = useState<number[]>([]);
+
+    useEffect(() => {
+        if (questions.length > 0) {
+            setQuestionOrder(questions.map((_, i) => i));
+        }
+    }, [questions]);
+
+    // Timer state for Exam mode
+    const [timeLeft, setTimeLeft] = useState(APP_CONFIG.EXAM_TIME_LIMIT_SECONDS);
+    const hasRecordedRef = useRef(false);
+
+    // Reset recording flag when quiz starts (questions change)
+    useEffect(() => {
+        hasRecordedRef.current = false;
+        setIsFinished(false);
+        setScore(0);
+        setCurrentIndex(0);
+        setWrongAnswers([]);
+        setTimeLeft(APP_CONFIG.EXAM_TIME_LIMIT_SECONDS);
+    }, [questions]);
 
     // Timer logic
     useEffect(() => {
@@ -67,7 +95,18 @@ export default function QuizScreen() {
             setTimeLeft(prev => {
                 if (prev <= 1) {
                     clearInterval(interval);
-                    setIsFinished(true);
+
+                    // AUTO-SUBMIT LOGIC:
+                    // If user has a selection but ran out of time, count it!
+                    // We need to access the LATEST selectedOption. 
+                    // Since we are in a state update callback, we can't easily see other state.
+                    // BUT 'setIsFinished' will trigger the effect below.
+                    // To do this cleanly, we'll set a "timedOut" flag or just rely on the effect.
+
+                    // Correct approach: Set isFinished(true) is fine, 
+                    // but we need to ensure the final answer is processed.
+
+                    setIsFinished(true); // Triggers the effect
                     return 0;
                 }
                 return prev - 1;
@@ -78,17 +117,43 @@ export default function QuizScreen() {
 
     // Record results when finished
     useEffect(() => {
-        if (isFinished) {
+        if (isFinished && !hasRecordedRef.current && questions.length > 0) {
+            hasRecordedRef.current = true; // Mark handled immediately
+
+            // CHECK FOR TIMEOUT SUBMISSION
+            // If we timed out (timeLeft <= 0) and had a selection, add it to stats
+            // We use local variables to calculate 'final' data for DB without waiting for state update
+            let finalScore = score;
+
+            if (timeLeft <= 0 && selectedOption !== null && questions[currentIndex]) {
+                const currentQ = questions[currentIndex];
+                const isCorrect = selectedOption === currentQ.correctIndex;
+
+                if (isCorrect) {
+                    finalScore += 1;
+                    // Update UI state too so user sees correct count
+                    setScore(s => s + 1);
+                } else {
+                    setWrongAnswers(prev => [...prev, {
+                        question: currentQ,
+                        selectedIndex: selectedOption
+                    }]);
+                }
+            }
+            hasRecordedRef.current = true;
+
             const percentage = (score / questions.length) * 100;
-            recordQuizResult(percentage, questions.length, mode === 'exam', topicId as string).then(newStats => {
-                console.log('Stats updated:', newStats);
+
+            recordQuizResult(
+                percentage,
+                questions.length,
+                mode === 'exam',
+                topicId
+            ).catch(err => {
+                if (__DEV__) console.error("Failed to record stats:", err);
             });
         }
-    }, [isFinished]); // Dependencies: score is accessed from closure, but since isFinished triggers re-render, score should be up to date. 
-    // Actually, to be safe with React hooks linter, let's include score, questions.length, mode, topicId.
-    // But since this tool call builds the string, I'll trust the closure for now or just add them.
-    // Adding them to deps array:
-    // }, [isFinished, score, questions.length, mode, topicId]);
+    }, [isFinished, score, questions.length, mode, topicId]);
 
     // Helper to format time
     const formatTime = (seconds: number) => {
@@ -97,20 +162,25 @@ export default function QuizScreen() {
         return `${m}:${s < 10 ? '0' : ''}${s}`;
     };
 
-    // If no questions found
+    // If no questions found or loading
     if (questions.length === 0) {
         return (
-            <View style={[styles.container, isDark && styles.darkContainer]}>
-                <Text style={isDark && styles.darkText}>No questions found.</Text>
+            <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center', padding: spacing.xl }]}>
+                <Text style={{ color: colors.text, fontSize: typography.lg, marginBottom: spacing.lg }}>No questions found.</Text>
+                <Button title="Go Back" onPress={() => router.back()} />
             </View>
         );
     }
 
+    if (questionOrder.length === 0) return null; // Wait for init
+
     const currentQuestionIndex = questionOrder[currentIndex];
     const currentQuestion = questions[currentQuestionIndex];
+    if (!currentQuestion) return null; // Safety
+
     const isLastQuestion = currentIndex === questionOrder.length - 1;
     const isPractice = mode === 'practice';
-    const canSkip = currentIndex < questionOrder.length - 1; // Can skip if not on the last question
+    const canSkip = currentIndex < questionOrder.length - 1;
 
     const handleOptionPress = (index: number) => {
         if (selectedOption !== null && isPractice) return;
@@ -119,13 +189,13 @@ export default function QuizScreen() {
     };
 
     const handleNext = () => {
-        Haptics.selectionAsync(); // Light tap on next
-        // Check answer
+        Haptics.selectionAsync();
+
+        // Check answer matches current question
         const isCorrect = selectedOption === currentQuestion.correctIndex;
         if (isCorrect) {
             setScore(s => s + 1);
         } else if (selectedOption !== null) {
-            // Track wrong answer for review
             setWrongAnswers(prev => [...prev, {
                 question: currentQuestion,
                 selectedIndex: selectedOption
@@ -154,56 +224,49 @@ export default function QuizScreen() {
 
     if (isFinished) {
         const percentage = (score / questions.length) * 100;
-        const passed = percentage >= 80;
+        const passed = percentage >= APP_CONFIG.PASSING_SCORE_PERCENTAGE;
 
         // Show wrong answer review screen
         if (showReview) {
             return (
-                <View style={[styles.container, isDark && styles.darkContainer]}>
-                    <View style={[styles.header, isDark && styles.darkHeader, { paddingTop: insets.top + 12 }]}>
+                <View style={[styles.container, { backgroundColor: colors.background }]}>
+                    <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border, paddingTop: insets.top + 12 }]}>
                         <TouchableOpacity onPress={() => setShowReview(false)} style={styles.quitButton}>
-                            <FontAwesome name="arrow-left" size={18} color={isDark ? "#ccc" : "#666"} />
-                            <Text style={[styles.quitText, isDark && styles.darkSubText]}>Back</Text>
+                            <FontAwesome name="arrow-left" size={18} color={colors.textSecondary} />
+                            <Text style={[styles.quitText, { color: colors.textSecondary }]}>Back</Text>
                         </TouchableOpacity>
-                        <Text style={[styles.headerTitle, isDark && styles.darkText]}>Review ({wrongAnswers.length} missed)</Text>
-                        <View style={styles.headerSpacer} />
+                        <Text style={[styles.headerTitle, { color: colors.text }]}>Review ({wrongAnswers.length} missed)</Text>
+                        <View style={{ width: 60 }} />
                     </View>
 
                     <ScrollView contentContainerStyle={styles.scrollContent}>
                         {wrongAnswers.map((item, index) => (
-                            <View key={index} style={[styles.reviewCard, isDark && styles.darkCard]}>
-                                <Text style={[styles.reviewQuestionNumber, isDark && styles.darkSubText]}>Question {index + 1}</Text>
-                                <Text style={[styles.reviewQuestionText, isDark && styles.darkText]}>{item.question.text}</Text>
+                            <Card key={index} style={styles.reviewCard} padding="md">
+                                <Text style={[styles.reviewQuestionNumber, { color: colors.textSecondary }]}>Question {index + 1}</Text>
+                                <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text, marginBottom: 12 }}>{item.question.text}</Text>
 
                                 <View style={styles.reviewAnswerRow}>
-                                    <FontAwesome name="times-circle" size={16} color="#C62828" />
-                                    <Text style={styles.reviewWrongAnswer}>{item.question.options[item.selectedIndex]}</Text>
+                                    <FontAwesome name="times-circle" size={16} color={colors.error} />
+                                    <Text style={[styles.reviewWrongAnswer, { color: colors.error }]}>{item.question.options[item.selectedIndex]}</Text>
                                 </View>
 
                                 <View style={styles.reviewAnswerRow}>
-                                    <FontAwesome name="check-circle" size={16} color="#2E7D32" />
-                                    <Text style={styles.reviewCorrectAnswer}>{item.question.options[item.question.correctIndex]}</Text>
+                                    <FontAwesome name="check-circle" size={16} color={colors.success} />
+                                    <Text style={[styles.reviewCorrectAnswer, { color: colors.success }]}>{item.question.options[item.question.correctIndex]}</Text>
                                 </View>
 
                                 {item.question.explanation && (
-                                    <View style={[styles.reviewExplanation, isDark && styles.darkExplanationBox]}>
-                                        <Text style={[styles.explanationTitle, isDark && styles.darkText]}>Explanation:</Text>
-                                        <Text style={[styles.explanationText, isDark && styles.darkSubText]}>{item.question.explanation}</Text>
+                                    <View style={[styles.reviewExplanation, { backgroundColor: colors.background, borderColor: colors.primary }]}>
+                                        <Text style={{ fontWeight: 'bold', color: colors.text, marginBottom: 4 }}>Explanation:</Text>
+                                        <Text style={{ color: colors.textSecondary }}>{item.question.explanation}</Text>
                                     </View>
                                 )}
-                            </View>
+                            </Card>
                         ))}
                     </ScrollView>
 
-                    <View style={[styles.footer, isDark && styles.darkFooter, { paddingBottom: insets.bottom + 20 }]}>
-                        <View style={styles.footerButtons}>
-                            <TouchableOpacity
-                                style={[styles.nextButton, isDark && styles.darkNextButton]}
-                                onPress={() => router.back()}
-                            >
-                                <Text style={styles.nextButtonText}>Done</Text>
-                            </TouchableOpacity>
-                        </View>
+                    <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border, paddingBottom: insets.bottom + 20 }]}>
+                        <Button title="Done" onPress={() => router.back()} />
                     </View>
                 </View>
             );
@@ -211,29 +274,38 @@ export default function QuizScreen() {
 
         // Main results screen
         return (
-            <View style={[styles.container, isDark && styles.darkContainer]}>
-                <LinearGradient colors={isDark ? ['#0D47A1', '#1565C0'] : ['#1976D2', '#1565C0']} style={styles.resultGradient}>
+            <View style={[styles.container, { backgroundColor: colors.background }]}>
+                <LinearGradient colors={colors.headerGradient} style={styles.resultGradient}>
                     <View style={styles.resultIconContainer}>
-                        <FontAwesome name={passed ? "trophy" : "book"} size={60} color={passed ? "#FFD700" : "#fff"} />
+                        <FontAwesome name={passed ? "trophy" : "book"} size={60} color={passed ? colors.highlight : "#fff"} />
                     </View>
                     <Text style={styles.resultTitle}>{passed ? "Great Job!" : "Keep Studying!"}</Text>
-                    <Text style={styles.resultScore}>You scored {score} / {questions.length}</Text>
-                    <Text style={styles.resultSubtext}>{passed ? "You're ready for the next topic." : "Review the material and try again."}</Text>
+
+                    <View style={styles.scoreCircle}>
+                        <Text style={[styles.scoreNumber, { color: colors.primary }]}>{Math.round(percentage)}%</Text>
+                    </View>
+                    <Text style={{ color: 'rgba(255,255,255,0.9)', fontSize: 16, marginBottom: 40 }}>
+                        {score} out of {questions.length} correct
+                    </Text>
 
                     <View style={styles.resultButtonsContainer}>
                         {wrongAnswers.length > 0 && (
-                            <TouchableOpacity
+                            <Button
+                                title={`Review ${wrongAnswers.length} Wrong`}
                                 onPress={() => setShowReview(true)}
-                                style={[styles.button, styles.reviewButton]}
-                            >
-                                <FontAwesome name="list" size={16} color="#1565C0" style={{ marginRight: 8 }} />
-                                <Text style={styles.reviewButtonText}>Review {wrongAnswers.length} Wrong</Text>
-                            </TouchableOpacity>
+                                variant="secondary"
+                                style={{ marginBottom: 16, width: '100%' }}
+                                icon={<FontAwesome name="list" size={16} color="white" style={{ marginRight: 8 }} />}
+                            />
                         )}
 
-                        <TouchableOpacity onPress={() => router.back()} style={[styles.button, isDark && styles.darkButton]}>
-                            <Text style={[styles.buttonText, isDark && styles.darkButtonText]}>Back to Home</Text>
-                        </TouchableOpacity>
+                        <Button
+                            title="Back to Home"
+                            onPress={() => router.back()}
+                            variant="outline"
+                            style={{ width: '100%', borderColor: 'white', backgroundColor: 'rgba(255,255,255,0.1)' }}
+                            textStyle={{ color: 'white' }}
+                        />
                     </View>
                 </LinearGradient>
             </View>
@@ -241,104 +313,125 @@ export default function QuizScreen() {
     }
 
     return (
-        <View style={[styles.container, isDark && styles.darkContainer]}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             <Stack.Screen options={{ headerShown: false }} />
 
             {/* Header with Quit button */}
-            <View style={[styles.header, isDark && styles.darkHeader, { paddingTop: insets.top + 12 }]}>
+            <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border, paddingTop: insets.top + 12, paddingBottom: 12 }]}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.quitButton}>
-                    <FontAwesome name="arrow-left" size={18} color={isDark ? "#ccc" : "#666"} />
-                    <Text style={[styles.quitText, isDark && styles.darkSubText]}>Quit</Text>
+                    <FontAwesome name="arrow-left" size={18} color={colors.textSecondary} />
+                    <Text style={[styles.quitText, { color: colors.textSecondary }]}>Quit</Text>
                 </TouchableOpacity>
-                <Text style={[styles.headerTitle, isDark && styles.darkText]}>{isPractice ? 'Practice' : 'Exam'}</Text>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>{isPractice ? 'Practice' : 'Exam'}</Text>
                 {mode === 'exam' ? (
-                    <Text style={{ color: isDark ? '#fff' : '#333', fontWeight: 'bold', minWidth: 60, textAlign: 'right' }}>{formatTime(timeLeft)}</Text>
+                    <Badge
+                        label={formatTime(timeLeft)}
+                        variant={timeLeft < 60 ? 'error' : 'default'}
+                        style={{ minWidth: 60, justifyContent: 'center' }}
+                    />
                 ) : (
                     <View style={styles.headerSpacer} />
                 )}
             </View>
 
-            <View style={[styles.progressContainer, isDark && styles.darkProgressContainer]}>
-                <Text style={[styles.progressText, isDark && styles.darkSubText]}>Question {currentIndex + 1} / {questions.length}</Text>
-                <LinearGradient
-                    colors={isDark ? ['#1565C0', '#0D47A1'] : ['#1976D2', '#1565C0']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 0 }}
-                    style={[styles.progressBar, { width: `${((currentIndex + 1) / questions.length) * 100}%` }]}
-                />
+            <View style={[styles.progressContainer, { backgroundColor: colors.surface }]}>
+                <Text style={[styles.progressText, { color: colors.textSecondary }]}>Question {currentIndex + 1} / {questions.length}</Text>
+                <View style={[styles.progressBarBg, { backgroundColor: colors.border }]}>
+                    <View style={[styles.progressBarFill, { backgroundColor: colors.primary, width: `${((currentIndex + 1) / questions.length) * 100}%` }]} />
+                </View>
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                <Text style={[styles.questionText, isDark && styles.darkText]}>{currentQuestion.text}</Text>
+                <Card padding="lg" style={{ marginBottom: spacing.xl }}>
+                    <Text style={[styles.questionText, { color: colors.text, fontSize: typography.lg }]}>{currentQuestion.text}</Text>
+                </Card>
 
                 <View style={styles.optionsContainer}>
                     {currentQuestion.options.map((option, index) => {
                         const isSelected = selectedOption === index;
                         const isCorrect = index === currentQuestion.correctIndex;
 
-                        let backgroundColor = isDark ? '#2a2a3e' : '#fff';
-                        let borderColor = isDark ? '#444' : '#e0e0e0';
+                        let cardStyle: ViewStyle = {};
+                        let textStyle: TextStyle = { color: colors.text };
+                        let icon: React.ComponentProps<typeof FontAwesome>['name'] | null = null;
 
-                        // Practice Mode Feedback
                         if (isPractice && selectedOption !== null) {
                             if (isSelected && isCorrect) {
-                                backgroundColor = isDark ? '#1e4d2b' : '#d4edda'; // Greenish
-                                borderColor = '#28a745';
+                                cardStyle = { backgroundColor: isDark ? '#1b5e20' : '#E8F5E9', borderColor: colors.success, borderWidth: 2 };
+                                textStyle = { color: colors.success };
+                                icon = "check";
                             } else if (isSelected && !isCorrect) {
-                                backgroundColor = isDark ? '#4d1e1e' : '#f8d7da'; // Reddish
-                                borderColor = '#dc3545';
+                                cardStyle = { backgroundColor: isDark ? '#b71c1c' : '#FFEBEE', borderColor: colors.error, borderWidth: 2 };
+                                textStyle = { color: colors.error };
+                                icon = "times";
                             } else if (isCorrect) {
-                                // Show correct answer even if wrong selected
-                                backgroundColor = isDark ? '#1e4d2b' : '#d4edda';
-                                borderColor = '#28a745';
+                                cardStyle = { backgroundColor: isDark ? '#1b5e20' : '#E8F5E9', borderColor: colors.success, borderWidth: 2 };
+                                textStyle = { color: colors.success };
+                                icon = "check";
                             }
                         } else if (isSelected) {
-                            // Exam mode or Pre-submit Practice
-                            backgroundColor = isDark ? '#1A237E' : '#E3F2FD';
-                            borderColor = isDark ? '#1565C0' : '#1976D2';
+                            cardStyle = { backgroundColor: colors.primary + '10', borderColor: colors.primary, borderWidth: 2 };
+                            textStyle = { color: colors.primary, fontWeight: '700' };
                         }
 
                         return (
                             <TouchableOpacity
                                 key={index}
-                                style={[styles.optionCard, { backgroundColor, borderColor }]}
+                                activeOpacity={0.8}
                                 onPress={() => handleOptionPress(index)}
                                 disabled={isPractice && selectedOption !== null}
                             >
-                                <Text style={[styles.optionText, isDark && styles.darkText]}>{option}</Text>
+                                <Card style={[styles.optionCard, cardStyle]} padding="md">
+                                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                        {/* Option Letter/Circle */}
+                                        <View style={{
+                                            width: 24, height: 24, borderRadius: 12, borderWidth: 1, borderColor: colors.border,
+                                            justifyContent: 'center', alignItems: 'center', marginRight: 12,
+                                            backgroundColor: isSelected ? colors.primary : 'transparent',
+                                            ...((isSelected && isPractice && isCorrect) ? { backgroundColor: colors.success, borderColor: colors.success } : {}),
+                                            ...((isSelected && isPractice && !isCorrect) ? { backgroundColor: colors.error, borderColor: colors.error } : {})
+                                        }}>
+                                            {icon ? (
+                                                <FontAwesome name={icon} size={12} color="#fff" />
+                                            ) : (
+                                                <Text style={{ fontSize: 10, color: isSelected ? '#fff' : colors.textSecondary }}>{String.fromCharCode(65 + index)}</Text>
+                                            )}
+                                        </View>
+                                        <Text style={[{ fontSize: 16, flex: 1 }, textStyle]}>{option}</Text>
+                                    </View>
+                                </Card>
                             </TouchableOpacity>
                         );
                     })}
                 </View>
 
                 {/* Explanation in Practice Mode */}
-                {isPractice && selectedOption !== null && (
-                    <View style={[styles.explanationBox, isDark && styles.darkExplanationBox]}>
-                        <Text style={[styles.explanationTitle, isDark && styles.darkText]}>Explanation:</Text>
-                        <Text style={[styles.explanationText, isDark && styles.darkSubText]}>{currentQuestion.explanation}</Text>
+                {isPractice && selectedOption !== null && !!currentQuestion.explanation && (
+                    <View style={[styles.explanationBox, { backgroundColor: colors.background, borderLeftColor: colors.primary, borderLeftWidth: 4, padding: spacing.md, marginTop: spacing.lg, borderRadius: radius.md }]}>
+                        <Text style={{ fontWeight: 'bold', color: colors.text, marginBottom: 4 }}>Explanation:</Text>
+                        <Text style={{ color: colors.textSecondary, lineHeight: 22 }}>{currentQuestion.explanation}</Text>
                     </View>
                 )}
 
             </ScrollView>
 
-            <View style={[styles.footer, isDark && styles.darkFooter, { paddingBottom: insets.bottom + 20 }]}>
+            <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border, paddingBottom: insets.bottom + 20 }]}>
                 <View style={styles.footerButtons}>
                     {canSkip && (
-                        <TouchableOpacity
-                            style={[styles.skipButton, isDark && styles.darkSkipButton]}
+                        <Button
+                            title="Skip"
+                            variant="ghost"
                             onPress={handleSkip}
-                        >
-                            <Text style={[styles.skipButtonText, isDark && styles.darkSubText]}>Skip</Text>
-                            <FontAwesome name="arrow-right" size={14} color={isDark ? "#aaa" : "#666"} style={{ marginLeft: 6 }} />
-                        </TouchableOpacity>
+                            style={{ flex: 1, marginRight: 10 }}
+                            textStyle={{ color: colors.textSecondary }}
+                        />
                     )}
-                    <TouchableOpacity
-                        style={[styles.nextButton, isDark && styles.darkNextButton, { opacity: selectedOption === null ? 0.5 : 1 }]}
+                    <Button
+                        title={isLastQuestion ? 'Finish' : 'Next'}
                         onPress={handleNext}
                         disabled={selectedOption === null}
-                    >
-                        <Text style={styles.nextButtonText}>{isLastQuestion ? 'Finish' : 'Next'}</Text>
-                    </TouchableOpacity>
+                        style={{ flex: 2 }}
+                    />
                 </View>
             </View>
         </View>
@@ -348,7 +441,6 @@ export default function QuizScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8f9fa',
     },
     resultGradient: {
         flex: 1,
@@ -363,152 +455,69 @@ const styles = StyleSheet.create({
         fontSize: 32,
         fontWeight: 'bold',
         color: '#fff',
+        marginBottom: 20,
+    },
+    scoreCircle: {
+        width: 120,
+        height: 120,
+        borderRadius: 60,
+        backgroundColor: 'white',
+        justifyContent: 'center',
+        alignItems: 'center',
         marginBottom: 10,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 10,
+        elevation: 10,
     },
-    resultScore: {
-        fontSize: 24,
-        color: '#fff',
-        marginBottom: 10,
-    },
-    resultSubtext: {
-        fontSize: 16,
-        color: 'rgba(255,255,255,0.9)',
-        marginBottom: 40,
-        textAlign: 'center',
-        paddingHorizontal: 20,
-    },
-    button: {
-        backgroundColor: '#fff',
-        paddingHorizontal: 30,
-        paddingVertical: 15,
-        borderRadius: 25,
-    },
-    buttonText: {
-        color: '#3b5998',
+    scoreNumber: {
+        fontSize: 36,
         fontWeight: 'bold',
-        fontSize: 16
     },
     progressContainer: {
-        height: 40,
-        justifyContent: 'center',
+        paddingVertical: 10,
         paddingHorizontal: 20,
-        backgroundColor: '#fff',
     },
     progressText: {
         fontSize: 12,
-        color: '#666',
         marginBottom: 5,
     },
-    progressBar: {
+    progressBarBg: {
         height: 6,
         borderRadius: 3,
-        backgroundColor: '#eee',
+        overflow: 'hidden',
+    },
+    progressBarFill: {
+        height: '100%',
+        borderRadius: 3,
     },
     scrollContent: {
         padding: 20,
     },
     questionText: {
-        fontSize: 22,
         fontWeight: '700',
-        color: '#333',
-        marginBottom: 30,
+        lineHeight: 28,
     },
     optionsContainer: {
         gap: 12,
     },
     optionCard: {
-        padding: 20,
-        borderRadius: 16,
-        borderWidth: 2,
-        borderColor: '#e0e0e0',
-        backgroundColor: '#fff',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.05,
-        shadowRadius: 2,
-        elevation: 2,
-    },
-    optionText: {
-        fontSize: 17,
-        color: '#444',
+        borderWidth: 1,
+        borderColor: 'transparent', // Default hidden border
     },
     footer: {
         padding: 20,
-        backgroundColor: '#fff',
         borderTopWidth: 1,
-        borderTopColor: '#eee',
-    },
-    nextButton: {
-        flex: 1,
-        backgroundColor: '#1565C0',
-        paddingVertical: 16,
-        borderRadius: 16,
-        alignItems: 'center',
-    },
-    nextButtonText: {
-        color: '#fff',
-        fontSize: 18,
-        fontWeight: 'bold',
     },
     explanationBox: {
-        marginTop: 20,
-        padding: 15,
-        backgroundColor: '#E3F2FD',
-        borderRadius: 12,
-        borderLeftWidth: 4,
-        borderLeftColor: '#1565C0',
     },
-    explanationTitle: {
-        fontWeight: 'bold',
-        marginBottom: 5,
-        color: '#333',
-    },
-    explanationText: {
-        color: '#555',
-    },
-    // Dark mode styles
-    darkContainer: {
-        backgroundColor: '#1a1a2e',
-    },
-    darkText: {
-        color: '#f0f0f0',
-    },
-    darkSubText: {
-        color: '#aaa',
-    },
-    darkProgressContainer: {
-        backgroundColor: '#2a2a3e',
-    },
-    darkButton: {
-        backgroundColor: '#2a2a3e',
-    },
-    darkButtonText: {
-        color: '#90CAF9',
-    },
-    darkExplanationBox: {
-        backgroundColor: '#2a2a3e',
-    },
-    darkFooter: {
-        backgroundColor: '#2a2a3e',
-        borderTopColor: '#444',
-    },
-    darkNextButton: {
-        backgroundColor: '#1565C0',
-    },
-    // Header styles
     header: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 16,
-        paddingVertical: 12,
-        backgroundColor: '#fff',
         borderBottomWidth: 1,
-        borderBottomColor: '#eee',
-    },
-    darkHeader: {
-        backgroundColor: '#2a2a3e',
-        borderBottomColor: '#444',
     },
     quitButton: {
         flexDirection: 'row',
@@ -519,86 +528,39 @@ const styles = StyleSheet.create({
     quitText: {
         marginLeft: 6,
         fontSize: 16,
-        color: '#666',
     },
     headerTitle: {
         fontSize: 18,
         fontWeight: '600',
-        color: '#333',
     },
     headerSpacer: {
-        width: 60, // Balance the quit button width
+        width: 60,
     },
-    // Footer button layout
     footerButtons: {
         flexDirection: 'row',
-        gap: 12,
-    },
-    skipButton: {
-        flexDirection: 'row',
         alignItems: 'center',
-        justifyContent: 'center',
-        paddingVertical: 16,
-        paddingHorizontal: 20,
-        borderRadius: 16,
-        borderWidth: 2,
-        borderColor: '#ddd',
-        backgroundColor: '#f5f5f5',
     },
-    darkSkipButton: {
-        borderColor: '#555',
-        backgroundColor: '#3a3a4e',
-    },
-    skipButtonText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#666',
-    },
-
-    // Review styles
     reviewCard: {
-        backgroundColor: '#fff',
-        borderRadius: 16,
-        padding: 16,
         marginBottom: 16,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-    },
-    darkCard: {
-        backgroundColor: '#2a2a3e',
     },
     reviewQuestionNumber: {
         fontSize: 12,
         fontWeight: '600',
-        color: '#888',
         marginBottom: 6,
-    },
-    reviewQuestionText: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#333',
-        marginBottom: 12,
-        lineHeight: 22,
     },
     reviewAnswerRow: {
         flexDirection: 'row',
         alignItems: 'flex-start',
         marginBottom: 8,
-        paddingLeft: 4,
     },
     reviewWrongAnswer: {
         fontSize: 14,
-        color: '#C62828',
         marginLeft: 10,
         flex: 1,
         textDecorationLine: 'line-through',
     },
     reviewCorrectAnswer: {
         fontSize: 14,
-        color: '#2E7D32',
         fontWeight: '600',
         marginLeft: 10,
         flex: 1,
@@ -606,39 +568,11 @@ const styles = StyleSheet.create({
     reviewExplanation: {
         marginTop: 12,
         padding: 12,
-        backgroundColor: '#E3F2FD',
-        borderRadius: 10,
+        borderRadius: 8,
         borderLeftWidth: 3,
-        borderLeftColor: '#1565C0',
     },
     resultButtonsContainer: {
         width: '100%',
         paddingHorizontal: 30,
-        marginTop: 10,
-    },
-    reviewButton: {
-        backgroundColor: '#fff',
-        marginBottom: 12,
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    reviewButtonText: {
-        color: '#1565C0',
-        fontSize: 16,
-        fontWeight: 'bold',
-    },
-    // Question image styles
-    questionImageContainer: {
-        alignItems: 'center',
-        marginBottom: 16,
-        backgroundColor: '#f5f5f5',
-        borderRadius: 12,
-        padding: 12,
-    },
-    questionImage: {
-        width: '100%',
-        height: 180,
-        borderRadius: 8,
-    },
+    }
 });

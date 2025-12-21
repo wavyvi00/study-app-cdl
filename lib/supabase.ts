@@ -1,9 +1,14 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = 'https://tdemormabiwkhshgnahn.supabase.co';
-const supabaseAnonKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InRkZW1vcm1hYml3a2hzaGduYWhuIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjU4OTMxNzgsImV4cCI6MjA4MTQ2OTE3OH0.vM3RMRSh2Rvp2by_BceQc2Nth7C9kpW_gEdGLIyyDH4';
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Validating config to prevent crashes if env vars are missing
+const isValidConfig = supabaseUrl.length > 0 && supabaseAnonKey.length > 0;
+
+export const supabase = isValidConfig
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
 
 // Database types for questions
 export interface DbQuestion {
@@ -18,6 +23,8 @@ export interface DbQuestion {
 
 // Fetch questions for a specific topic
 export async function fetchQuestions(topicId: string): Promise<DbQuestion[]> {
+    if (!supabase) return [];
+
     const { data, error } = await supabase
         .from('questions')
         .select('*')
@@ -34,6 +41,8 @@ export async function fetchQuestions(topicId: string): Promise<DbQuestion[]> {
 
 // Fetch all questions
 export async function fetchAllQuestions(): Promise<DbQuestion[]> {
+    if (!supabase) return [];
+
     const { data, error } = await supabase
         .from('questions')
         .select('*')

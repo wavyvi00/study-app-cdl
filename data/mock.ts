@@ -70,7 +70,7 @@ export const TOPICS: Topic[] = [
         title: 'Passenger',
         description: 'Bus and passenger safety.',
         image: 'green',
-        questions: SCHOOL_BUS_QUESTIONS,
+        questions: PASSENGER_QUESTIONS,
     },
     {
         id: 'doubles_triples',
@@ -91,6 +91,6 @@ export const TOPICS: Topic[] = [
         title: 'School Bus',
         description: 'Student safety and operations.',
         image: 'yellow',
-        questions: PASSENGER_QUESTIONS,
+        questions: SCHOOL_BUS_QUESTIONS,
     },
 ];

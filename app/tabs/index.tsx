@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Modal, Switch, Alert } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Switch, Alert, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Topic } from '../../data/mock';
@@ -10,6 +10,9 @@ import { loadStats, resetStats, INITIAL_STATS, INITIAL_TOPIC_STATS, UserStats } 
 import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
+import Button from '../../components/ui/Button';
+import Card from '../../components/ui/Card';
+import Badge from '../../components/ui/Badge';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -17,7 +20,7 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 
 export default function TopicsScreen() {
     const router = useRouter();
-    const { theme, toggleTheme, isDark } = useTheme();
+    const { theme, toggleTheme, isDark, colors, spacing, typography, radius } = useTheme();
     const { topics, isLoading } = useQuestions();
     const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
@@ -32,9 +35,18 @@ export default function TopicsScreen() {
     );
 
     // Set initial topic once loaded
+    // Set initial topic once loaded or update refreshing
     useEffect(() => {
-        if (topics.length > 0 && !selectedTopic) {
-            setSelectedTopic(topics[0]);
+        if (topics.length > 0) {
+            if (!selectedTopic) {
+                setSelectedTopic(topics[0]);
+            } else {
+                // Refresh stale topic object
+                const current = topics.find(t => t.id === selectedTopic.id);
+                if (current && current !== selectedTopic) {
+                    setSelectedTopic(current);
+                }
+            }
         }
     }, [topics, selectedTopic]);
 
@@ -72,58 +84,89 @@ export default function TopicsScreen() {
         );
     };
 
-    const gradientMap: Record<string, string[]> = {
-        blue: ['#1565C0', '#0D47A1'],
-        red: ['#C62828', '#B71C1C'],
-        orange: ['#EF6C00', '#E65100'],
-        purple: ['#6A1B9A', '#4A148C'],
-        green: ['#2E7D32', '#1B5E20'],
-        teal: ['#00838F', '#006064'],
-        pink: ['#AD1457', '#880E4F'],
-        yellow: ['#F9A825', '#F57F17'],
+    const getTopicColor = (imageName: string) => {
+        switch (imageName) {
+            case 'blue': return '#2196F3';
+            case 'red': return '#F44336';
+            case 'orange': return '#FF9800';
+            case 'purple': return '#9C27B0';
+            case 'green': return '#4CAF50';
+            case 'teal': return '#009688';
+            case 'pink': return '#E91E63';
+            case 'yellow': return '#F9A825'; // Darker yellow for better visibility
+            default: return colors.primary;
+        }
     };
 
+    const getTopicIcon = (topicId: string): React.ComponentProps<typeof FontAwesome>['name'] => {
+        switch (topicId) {
+            case 'general_knowledge': return 'graduation-cap';
+            case 'combinations': return 'truck';
+            case 'air_brakes': return 'tachometer';
+            case 'hazmat': return 'exclamation-triangle';
+            case 'passenger': return 'users';
+            case 'doubles_triples': return 'road'; // or 'chain'
+            case 'tanks': return 'tint';
+            case 'school_bus': return 'bus';
+            default: return 'book';
+        }
+    };
+
+    if (isLoading) {
+        return (
+            <View style={[styles.container, styles.center, { backgroundColor: colors.background }]}>
+                <ActivityIndicator size="large" color={colors.primary} />
+                <Text style={{ marginTop: spacing.md, color: colors.textSecondary }}>Loading topics...</Text>
+            </View>
+        );
+    }
+
     return (
-        <View style={[styles.container, isDark && styles.darkContainer]}>
+        <View style={[styles.container, { backgroundColor: colors.background }]}>
             <LinearGradient
-                colors={isDark ? ['#0D47A1', '#1565C0'] : ['#1976D2', '#1565C0', '#0D47A1']}
-                style={styles.headerBackground}
+                colors={colors.headerGradient}
+                style={[styles.headerBackground, { paddingTop: 60, paddingBottom: 40, paddingHorizontal: spacing.lg, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
             >
                 <View style={styles.headerRow}>
                     <View>
-                        <Text style={styles.headerTitle}>Study Topics</Text>
-                        <Text style={styles.headerSubtitle}>Choose a subject to master</Text>
+                        <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]}>Study Topics</Text>
+                        <Text style={[styles.headerSubtitle, { color: 'rgba(255,255,255,0.8)', fontSize: typography.md }]}>Choose a subject to master</Text>
                     </View>
-                    <TouchableOpacity onPress={() => setIsMenuOpen(!isMenuOpen)} style={styles.settingsButton}>
-                        <FontAwesome name={isMenuOpen ? "times" : "bars"} size={24} color="rgba(255,255,255,0.8)" />
+                    <TouchableOpacity
+                        onPress={() => setIsMenuOpen(!isMenuOpen)}
+                        style={[styles.settingsButton, { backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: radius.xl }]}
+                        accessibilityRole="button"
+                        accessibilityLabel="Open settings menu"
+                    >
+                        <FontAwesome name={isMenuOpen ? "times" : "bars"} size={24} color="#FFFFFF" />
                     </TouchableOpacity>
                 </View>
 
                 {isMenuOpen && (
-                    <View style={[styles.menuDropdown, isDark && styles.darkCard]}>
+                    <Card style={styles.menuDropdown} padding="sm">
                         <TouchableOpacity
-                            style={[styles.menuItem, isDark && styles.darkBorder]}
+                            style={[styles.menuItem, { borderBottomColor: colors.border }]}
                             onPress={() => {
                                 setIsMenuOpen(false);
-                                router.push('/privacy');
+                                router.push('/privacy'); // Adjust if route doesn't exist, but per original it might
                             }}
                         >
-                            <FontAwesome name="shield" size={16} color={isDark ? "#ccc" : "#444"} style={styles.menuIcon} />
-                            <Text style={[styles.menuText, isDark && styles.darkText]}>Privacy Policy</Text>
+                            <FontAwesome name="shield" size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                            <Text style={[styles.menuText, { color: colors.text }]}>Privacy Policy</Text>
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            style={[styles.menuItem, isDark && styles.darkBorder]}
+                            style={[styles.menuItem, { borderBottomColor: colors.border }]}
                             onPress={toggleTheme}
                         >
-                            <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={isDark ? "#ccc" : "#444"} style={styles.menuIcon} />
-                            <Text style={[styles.menuText, isDark && styles.darkText]}>{isDark ? 'Dark Mode' : 'Light Mode'}</Text>
+                            <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                            <Text style={[styles.menuText, { color: colors.text }]}>{isDark ? 'Dark Mode' : 'Light Mode'}</Text>
                             <View pointerEvents="none">
                                 <Switch
                                     value={isDark}
                                     onValueChange={toggleTheme}
-                                    trackColor={{ false: "#767577", true: "#81b0ff" }}
-                                    thumbColor={isDark ? "#f5dd4b" : "#f4f3f4"}
+                                    trackColor={{ false: "#767577", true: colors.secondary }}
+                                    thumbColor={isDark ? colors.highlight : "#f4f3f4"}
                                     style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
                                 />
                             </View>
@@ -133,89 +176,89 @@ export default function TopicsScreen() {
                             style={[styles.menuItem, { borderBottomWidth: 0 }]}
                             onPress={handleResetProgress}
                         >
-                            <FontAwesome name="refresh" size={16} color="#C62828" style={styles.menuIcon} />
-                            <Text style={[styles.menuText, { color: '#C62828' }]}>Reset Progress</Text>
+                            <FontAwesome name="refresh" size={16} color={colors.error} style={styles.menuIcon} />
+                            <Text style={[styles.menuText, { color: colors.error }]}>Reset Progress</Text>
                         </TouchableOpacity>
-                    </View>
+                    </Card>
                 )}
             </LinearGradient>
 
-            <ScrollView contentContainerStyle={styles.scrollContent}>
+            <ScrollView contentContainerStyle={[styles.scrollContent, { padding: spacing.lg }]}>
                 <StatsOverview
-                    stats={selectedTopic ? (stats.topicStats[selectedTopic.id] || INITIAL_TOPIC_STATS) : stats}
-                    title={selectedTopic ? `${selectedTopic.title} Progress` : 'Overall Progress'}
+                    stats={stats}
                 />
 
-                <View style={[styles.dropdownContainer, { zIndex: isMenuOpen ? -1 : 10 }]}>
-                    <Text style={[styles.sectionLabel, isDark && styles.darkText]}>Select Topic:</Text>
-                    {selectedTopic && (
-                        <TouchableOpacity style={[styles.dropdownHeader, isDark && styles.darkCard]} onPress={toggleDropdown}>
-                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
-                                <View style={[styles.miniDot, { backgroundColor: gradientMap[selectedTopic.image]?.[1] }]} />
-                                <Text style={[styles.dropdownTitle, isDark && styles.darkText]}>{selectedTopic.title}</Text>
-                            </View>
-                            <FontAwesome name={isDropdownOpen ? "chevron-up" : "chevron-down"} size={16} color={isDark ? "#ccc" : "#666"} />
-                        </TouchableOpacity>
-                    )}
+                <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.sm, marginTop: spacing.xl, marginBottom: spacing.md }]}>SELECT TOPIC:</Text>
 
-                    {isDropdownOpen && (
-                        <View style={[styles.dropdownList, isDark && styles.darkCard]}>
-                            {topics.map((topic) => {
-                                const topicStat = stats.topicStats[topic.id];
-                                const masteryScore = topicStat?.averageScore || 0;
-                                return (
-                                    <TouchableOpacity
-                                        key={topic.id}
-                                        style={[styles.dropdownItem, isDark && styles.darkBorder]}
-                                        onPress={() => handleSelectTopic(topic)}
-                                    >
-                                        <View style={[styles.miniDot, { backgroundColor: gradientMap[topic.image]?.[1] }]} />
-                                        <Text style={[
-                                            styles.dropdownItemText,
-                                            isDark && styles.darkText,
-                                            selectedTopic?.id === topic.id && styles.selectedItemText
-                                        ]}>
-                                            {topic.title}
-                                        </Text>
-                                        {masteryScore > 0 && (
-                                            <View style={[styles.masteryBadge, masteryScore >= 80 && styles.masteryBadgeGreen]}>
-                                                {masteryScore >= 80 && (
-                                                    <FontAwesome name="check" size={10} color="#2E7D32" style={{ marginRight: 4 }} />
-                                                )}
-                                                <Text style={[styles.masteryBadgeText, masteryScore >= 80 && { color: '#2E7D32' }]}>{masteryScore}%</Text>
-                                            </View>
-                                        )}
-                                        {selectedTopic?.id === topic.id && <FontAwesome name="check" size={14} color="#1565C0" />}
-                                    </TouchableOpacity>
-                                );
-                            })}
-                        </View>
-                    )}
-                </View>
+                <TouchableOpacity
+                    style={[styles.dropdownButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
+                    onPress={toggleDropdown}
+                >
+                    <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                        <View style={[styles.dot, { backgroundColor: selectedTopic ? getTopicColor(selectedTopic.image) : colors.primary }]} />
+                        <Text style={[styles.dropdownText, { color: colors.text, fontSize: typography.md }]}>
+                            {selectedTopic ? selectedTopic.title : "Select a Topic"}
+                        </Text>
+                    </View>
+                    <FontAwesome name={isDropdownOpen ? "chevron-up" : "chevron-down"} size={14} color={colors.textSecondary} />
+                </TouchableOpacity>
 
-                {!isDropdownOpen && selectedTopic && (
-                    <View style={[styles.card, isDark && styles.darkCard]}>
-                        <View style={[styles.iconContainer, { backgroundColor: gradientMap[selectedTopic.image]?.[1] || '#ccc' }]}>
-                            <FontAwesome name="book" size={24} color="white" />
-                        </View>
-                        <View style={styles.cardContent}>
-                            <Text style={[styles.cardTitle, isDark && styles.darkText]}>{selectedTopic.title}</Text>
-                            <Text style={[styles.cardDesc, isDark && styles.darkSubText]}>{selectedTopic.description}</Text>
-
-                            <View style={styles.buttonRow}>
-                                <TouchableOpacity style={[styles.actionButton, styles.studyButton, isDark && styles.darkStudyButton]} onPress={() => router.push({ pathname: '/study', params: { topicId: selectedTopic.id } })}>
-                                    <Text style={[styles.actionText, isDark && styles.darkText]}>Study</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={[styles.actionButton, isDark && styles.darkButton]} onPress={() => startQuiz(selectedTopic.id, 'practice')}>
-                                    <Text style={[styles.actionText, isDark && styles.darkText]}>Practice</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={[styles.actionButton, styles.examButton, isDark && styles.darkExamButton]} onPress={() => startQuiz(selectedTopic.id, 'exam')}>
-                                    <Text style={[styles.actionText, isDark && styles.darkText]}>Exam</Text>
-                                </TouchableOpacity>
-                            </View>
-                        </View>
+                {isDropdownOpen && (
+                    <View style={[styles.dropdownList, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                        {topics.map((topic) => (
+                            <TouchableOpacity
+                                key={topic.id}
+                                style={[styles.dropdownItem, { borderBottomColor: colors.border }]}
+                                onPress={() => handleSelectTopic(topic)}
+                            >
+                                <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                    <View style={[styles.dot, { backgroundColor: getTopicColor(topic.image), marginRight: 12 }]} />
+                                    <Text style={[styles.dropdownItemText, { color: colors.text }]}>{topic.title}</Text>
+                                </View>
+                                {selectedTopic?.id === topic.id && (
+                                    <FontAwesome name="check" size={14} color={colors.primary} />
+                                )}
+                            </TouchableOpacity>
+                        ))}
                     </View>
                 )}
+
+                {selectedTopic && (
+                    <Card style={{ marginTop: spacing.xl }} padding="lg">
+                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md }}>
+                            <View style={[styles.iconBox, { backgroundColor: getTopicColor(selectedTopic.image) }]}>
+                                <FontAwesome name={getTopicIcon(selectedTopic.id)} size={20} color="#FFFFFF" />
+                            </View>
+                            <View style={{ marginLeft: spacing.md }}>
+                                <Text style={[styles.topicCardTitle, { color: colors.text, fontSize: typography.lg }]}>{selectedTopic.title}</Text>
+                                <Text style={[styles.topicCardSubtitle, { color: colors.textSecondary }]}>{selectedTopic.questions.length} questions available</Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.actionRow}>
+                            <Button
+                                title="Study Guide"
+                                onPress={() => router.push({ pathname: '/study', params: { topicId: selectedTopic.id } })}
+                                style={{ flex: 1, marginRight: spacing.sm }}
+                                icon={<FontAwesome name="book" size={16} color='#FFFFFF' style={{ marginRight: 8 }} />}
+                            />
+                            <Button
+                                title="Practice"
+                                variant="outline"
+                                onPress={() => startQuiz(selectedTopic.id, 'practice')}
+                                style={{ flex: 1, marginHorizontal: spacing.xs }}
+                            />
+                            <Button
+                                title="Exam"
+                                variant="accent"
+                                onPress={() => startQuiz(selectedTopic.id, 'exam')}
+                                style={{ flex: 1, marginLeft: spacing.sm }}
+                            />
+                        </View>
+                    </Card>
+                )}
+
+                <View style={{ height: 100 }} />
             </ScrollView>
         </View>
     );
@@ -224,232 +267,120 @@ export default function TopicsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
     },
-    darkContainer: {
-        backgroundColor: '#121212',
+    center: {
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     headerBackground: {
-        paddingTop: 80,
-        paddingBottom: 40,
-        paddingHorizontal: 20,
-        borderBottomLeftRadius: 30,
-        borderBottomRightRadius: 30,
-        zIndex: 20,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 10,
+        elevation: 5,
+        marginBottom: -20, // Overlap effect
+        zIndex: 1,
     },
     headerRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'flex-start',
     },
-    settingsButton: {
-        padding: 8,
-        backgroundColor: 'rgba(255,255,255,0.1)',
-        borderRadius: 20,
-    },
     headerTitle: {
-        fontSize: 32,
         fontWeight: '800',
-        color: '#fff',
+        marginBottom: 4,
     },
     headerSubtitle: {
-        fontSize: 16,
-        color: 'rgba(255,255,255,0.8)',
-        marginTop: 5,
+        fontWeight: '500',
+    },
+    settingsButton: {
+        width: 44,
+        height: 44,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
     menuDropdown: {
         position: 'absolute',
-        top: 130, // Increased to clear the header area
+        top: 110,
         right: 20,
-        backgroundColor: 'white',
-        borderRadius: 12,
-        padding: 5,
-        width: 180,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 8,
-        elevation: 10,
+        width: 200,
         zIndex: 100,
     },
     menuItem: {
         flexDirection: 'row',
         alignItems: 'center',
-        padding: 12,
+        paddingVertical: 12,
         borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0',
         justifyContent: 'space-between',
     },
     menuIcon: {
-        marginRight: 10,
-        width: 20,
+        width: 24,
         textAlign: 'center',
+        marginRight: 12,
     },
     menuText: {
-        fontSize: 14,
-        color: '#333',
-        fontWeight: '600',
         flex: 1,
+        fontSize: 14,
+        fontWeight: '500',
     },
     scrollContent: {
-        padding: 20,
+        paddingTop: 30, // Compensate for overlap
     },
-    sectionLabel: {
-        fontSize: 14,
+    sectionTitle: {
         fontWeight: '600',
-        color: '#666',
-        marginBottom: 8,
-        marginLeft: 4,
+        letterSpacing: 1,
     },
-    dropdownContainer: {
-        marginBottom: 20,
+    dropdownButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingHorizontal: 16,
+        paddingVertical: 14,
+        borderRadius: 12,
+        borderWidth: 1,
     },
-    dropdownHeader: {
+    dot: {
+        width: 8,
+        height: 8,
+        borderRadius: 4,
+        marginRight: 10,
+    },
+    dropdownText: {
+        fontWeight: '500',
+    },
+    dropdownList: {
+        marginTop: 8,
+        borderRadius: 12,
+        borderWidth: 1,
+        overflow: 'hidden',
+    },
+    dropdownItem: {
+        paddingVertical: 14,
+        paddingHorizontal: 16,
+        borderBottomWidth: 1,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-        backgroundColor: 'white',
-        padding: 16,
-        borderRadius: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 2,
-    },
-    dropdownTitle: {
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#333',
-    },
-    miniDot: {
-        width: 10,
-        height: 10,
-        borderRadius: 5,
-        marginRight: 10,
-    },
-    dropdownList: {
-        backgroundColor: 'white',
-        marginTop: 5,
-        borderRadius: 12,
-        padding: 5,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
-    },
-    dropdownItem: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        padding: 12,
-        borderBottomWidth: 1,
-        borderBottomColor: '#f0f0f0',
     },
     dropdownItemText: {
-        fontSize: 15,
-        color: '#555',
-        flex: 1,
+        fontSize: 16,
     },
-    selectedItemText: {
-        color: '#1565C0',
-        fontWeight: '600',
+    topicCardTitle: {
+        fontWeight: '700',
     },
-    card: {
-        backgroundColor: 'white',
-        borderRadius: 16,
-        marginBottom: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 8,
-        elevation: 3,
-        padding: 20,
-        flexDirection: 'row',
-        alignItems: 'flex-start',
+    topicCardSubtitle: {
+        fontSize: 14,
+        marginTop: 2,
     },
-    iconContainer: {
-        width: 50,
-        height: 50,
+    iconBox: {
+        width: 48,
+        height: 48,
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 15,
     },
-    cardContent: {
-        flex: 1,
-    },
-    cardTitle: {
-        fontSize: 18,
-        fontWeight: '700',
-        color: '#333',
-        marginBottom: 4,
-    },
-    cardDesc: {
-        fontSize: 14,
-        color: '#666',
-        marginBottom: 12,
-    },
-    buttonRow: {
+    actionRow: {
         flexDirection: 'row',
-        gap: 10,
-    },
-    actionButton: {
-        backgroundColor: '#eef2f5',
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 20,
-    },
-    studyButton: {
-        backgroundColor: '#E3F2FD',
-    },
-    darkStudyButton: {
-        backgroundColor: '#1A237E',
-    },
-    examButton: {
-        backgroundColor: '#fff0f0',
-    },
-    darkExamButton: {
-        backgroundColor: '#3a2a2a',
-    },
-    actionText: {
-        fontSize: 12,
-        fontWeight: '600',
-        color: '#444',
-    },
-    darkText: {
-        color: '#f0f0f0',
-    },
-    darkSubText: {
-        color: '#bbb',
-    },
-    darkCard: {
-        backgroundColor: '#1e1e1e',
-        shadowColor: '#000',
-    },
-    darkButton: {
-        backgroundColor: '#333',
-    },
-    darkBorder: {
-        borderBottomColor: '#333',
-    },
-    masteryBadge: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        backgroundColor: '#e0e0e0',
-        paddingHorizontal: 8,
-        paddingVertical: 3,
-        borderRadius: 12,
-        marginRight: 8,
-    },
-    masteryBadgeGreen: {
-        backgroundColor: '#C8E6C9',
-        borderWidth: 1,
-        borderColor: '#81C784',
-    },
-    masteryBadgeText: {
-        fontSize: 11,
-        fontWeight: '700',
-        color: '#555',
+        justifyContent: 'space-between',
     },
 });

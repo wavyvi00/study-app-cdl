@@ -2,6 +2,8 @@
 -- Copy and paste this into Supabase SQL Editor to populate questions
 -- WARNING: This will delete existing questions and re-insert them.
 
+-- WARNING: This file is for DEVELOPMENT PURPOSES ONLY.
+-- IT WILL DELETE ALL EXISTING QUESTIONS. DO NOT RUN IN PRODUCTION WITHOUT BACKUP.
 TRUNCATE TABLE questions;
 
 INSERT INTO questions (topic_id, text, options, correct_index, explanation) VALUES

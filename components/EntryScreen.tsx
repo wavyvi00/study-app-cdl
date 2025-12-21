@@ -7,7 +7,7 @@ interface EntryScreenProps {
 }
 
 export default function EntryScreen({ onFinish }: EntryScreenProps) {
-    const { isDark } = useTheme();
+    const { colors } = useTheme();
     const fadeAnim = useRef(new Animated.Value(0)).current; // Initial opacity for logo
     const scaleAnim = useRef(new Animated.Value(0.8)).current; // Initial scale
     const containerOpacity = useRef(new Animated.Value(1)).current; // For fading out the whole screen
@@ -46,8 +46,7 @@ export default function EntryScreen({ onFinish }: EntryScreenProps) {
     return (
         <Animated.View style={[
             styles.container,
-            isDark ? styles.darkContainer : styles.lightContainer,
-            { opacity: containerOpacity }
+            { backgroundColor: colors.background, opacity: containerOpacity }
         ]}>
             <Animated.Image
                 source={require('../assets/icon.png')} // Using app icon
@@ -70,12 +69,6 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         zIndex: 9999, // Ensure it's on top
-    },
-    lightContainer: {
-        backgroundColor: '#ffffff',
-    },
-    darkContainer: {
-        backgroundColor: '#121212',
     },
     logo: {
         width: 150,

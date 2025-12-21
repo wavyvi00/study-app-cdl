@@ -1,8 +1,9 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { LinearGradient } from 'expo-linear-gradient';
+
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { UserStats, TopicStats, INITIAL_TOPIC_STATS } from '../data/stats';
+import { UserStats, TopicStats } from '../data/stats';
 import { useTheme } from '../context/ThemeContext';
+import Card from './ui/Card';
 
 interface Props {
     stats: UserStats | TopicStats;
@@ -10,7 +11,7 @@ interface Props {
 }
 
 export default function StatsOverview({ stats, title = 'Your Progress' }: Props) {
-    const { isDark } = useTheme();
+    const { colors, spacing, typography, radius, isDark } = useTheme();
 
     // Handle both UserStats (has streakDays) and TopicStats (doesn't)
     const displayStats = {
@@ -20,96 +21,96 @@ export default function StatsOverview({ stats, title = 'Your Progress' }: Props)
         studyTimeMinutes: stats.studyTimeMinutes || 0,
     };
 
-    return (
-        <View style={styles.container}>
-            <Text style={[styles.sectionTitle, isDark && styles.darkText]}>{title}</Text>
-            <View style={styles.grid}>
-                <View style={styles.cardContainer}>
-                    <LinearGradient colors={['#1976D2', '#0D47A1']} style={styles.card}>
-                        <FontAwesome name="trophy" size={12} color="white" style={styles.icon} />
-                        <Text style={styles.value}>{displayStats.averageScore}%</Text>
-                        <Text style={styles.label}>Avg</Text>
-                    </LinearGradient>
-                </View>
-
-                <View style={styles.cardContainer}>
-                    <LinearGradient colors={['#42A5F5', '#1E88E5']} style={styles.card}>
-                        <FontAwesome name="pencil" size={12} color="white" style={styles.icon} />
-                        <Text style={styles.value}>{displayStats.examAttempts}</Text>
-                        <Text style={styles.label}>Exams</Text>
-                    </LinearGradient>
-                </View>
-
-                <View style={styles.cardContainer}>
-                    <LinearGradient colors={['#5C6BC0', '#3949AB']} style={styles.card}>
-                        <FontAwesome name="check-circle" size={12} color="white" style={styles.icon} />
-                        <Text style={styles.value}>{displayStats.questionsAnswered}</Text>
-                        <Text style={styles.label}>Done</Text>
-                    </LinearGradient>
-                </View>
-
-                <View style={styles.cardContainer}>
-                    <LinearGradient colors={['#26A69A', '#00897B']} style={styles.card}>
-                        <FontAwesome name="clock-o" size={12} color="white" style={styles.icon} />
-                        <Text style={styles.value}>{Math.floor(displayStats.studyTimeMinutes / 60)}h</Text>
-                        <Text style={styles.label}>Time</Text>
-                    </LinearGradient>
-                </View>
+    const StatItem = ({ icon, value, label, color }: { icon: any, value: string | number, label: string, color: string }) => (
+        <View style={styles.statItemContainer}>
+            <View style={[styles.iconCircle, { backgroundColor: isDark ? colors.surface : color + '20' }]}>
+                <FontAwesome name={icon} size={16} color={color} />
             </View>
+            <View>
+                <Text style={[styles.statValue, { color: colors.text, fontSize: typography.lg }]}>{value}</Text>
+                <Text style={[styles.statLabel, { color: colors.textSecondary, fontSize: typography.xs }]}>{label}</Text>
+            </View>
+        </View>
+    );
+
+    return (
+        <View style={[styles.container, { marginBottom: spacing.xl }]}>
+            <Text style={[styles.sectionTitle, { color: colors.text, fontSize: typography.xl, marginBottom: spacing.md, marginLeft: spacing.xs }]}>
+                {title}
+            </Text>
+
+            <Card style={styles.card} padding="md">
+                <View style={styles.row}>
+                    <StatItem
+                        icon="trophy"
+                        value={`${displayStats.averageScore}%`}
+                        label="Avg Score"
+                        color={colors.primary}
+                    />
+                    <StatItem
+                        icon="pencil"
+                        value={displayStats.examAttempts}
+                        label="Exams"
+                        color={colors.secondary}
+                    />
+                </View>
+                <View style={[styles.divider, { backgroundColor: colors.border }]} />
+                <View style={styles.row}>
+                    <StatItem
+                        icon="check-circle"
+                        value={displayStats.questionsAnswered}
+                        label="Questions"
+                        color={colors.success}
+                    />
+                    <StatItem
+                        icon="clock-o"
+                        value={`${Math.floor(displayStats.studyTimeMinutes / 60)}h`}
+                        label="Study Time"
+                        color={colors.accent}
+                    />
+                </View>
+            </Card>
         </View>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
-        marginBottom: 20,
-    },
+    container: {},
     sectionTitle: {
-        fontSize: 20,
         fontWeight: '700',
-        color: '#333',
-        marginBottom: 15,
-        marginLeft: 4,
-    },
-    darkText: {
-        color: '#f0f0f0',
-    },
-    grid: {
-        flexDirection: 'row',
-        justifyContent: 'space-around', // Changed to space-around for fixed small items
-        paddingHorizontal: 10,
-    },
-    cardContainer: {
-        width: 65,  // Fixed small width similar to topic icons
-        height: 65, // Fixed height
-        borderRadius: 12,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 2,
     },
     card: {
+        width: '100%',
+    },
+    row: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingVertical: 8,
+    },
+    divider: {
+        height: 1,
+        width: '100%',
+        marginVertical: 8,
+    },
+    statItemContainer: {
         flex: 1,
-        borderRadius: 12,
-        padding: 4,
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 8,
+    },
+    iconCircle: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
         justifyContent: 'center',
         alignItems: 'center',
+        marginRight: 12,
     },
-    icon: {
-        marginBottom: 1,
-        opacity: 0.9,
-    },
-    value: {
-        fontSize: 14, // Micro font
+    statValue: {
         fontWeight: 'bold',
-        color: 'white',
-        lineHeight: 16,
     },
-    label: {
-        fontSize: 7, // Micro label
-        color: 'rgba(255,255,255,0.9)',
-        marginTop: 0,
-        textAlign: 'center',
+    statLabel: {
+        fontWeight: '500',
     }
 });
+

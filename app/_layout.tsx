@@ -19,7 +19,7 @@ function RootNavigator() {
     return (
         <NavThemeProvider value={theme === 'dark' ? DarkTheme : DefaultTheme}>
             <Stack>
-                <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+                <Stack.Screen name="tabs" options={{ headerShown: false }} />
                 <Stack.Screen name="quiz" options={{ headerShown: false }} />
                 <Stack.Screen name="privacy" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />
