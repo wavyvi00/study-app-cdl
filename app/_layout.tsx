@@ -3,10 +3,12 @@ import { useFonts } from 'expo-font';
 import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
-import { useEffect } from 'react';
-import 'react-native-reanimated';
+import { useEffect, useState } from 'react';
+import { View } from 'react-native';
+
 import { ThemeProvider, useTheme } from '../context/ThemeContext';
 import { QuestionsProvider } from '../context/QuestionsContext';
+import EntryScreen from '../components/EntryScreen';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -27,26 +29,40 @@ function RootNavigator() {
     );
 }
 
+function AppContent({ fontsLoaded }: { fontsLoaded: boolean }) {
+    const [isSplashFinished, setIsSplashFinished] = useState(false);
+
+    useEffect(() => {
+        if (fontsLoaded) {
+            // Hide native splash immediately so our custom one takes over
+            SplashScreen.hideAsync();
+        }
+    }, [fontsLoaded]);
+
+    if (!fontsLoaded) {
+        return null;
+    }
+
+    return (
+        <View style={{ flex: 1 }}>
+            <RootNavigator />
+            {!isSplashFinished && (
+                <EntryScreen onFinish={() => setIsSplashFinished(true)} />
+            )}
+        </View>
+    );
+}
+
 export default function RootLayout() {
     const [loaded] = useFonts({
         // We can load custom fonts here later
         // SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     });
 
-    useEffect(() => {
-        if (loaded) {
-            SplashScreen.hideAsync();
-        }
-    }, [loaded]);
-
-    if (!loaded) {
-        return null;
-    }
-
     return (
         <ThemeProvider>
             <QuestionsProvider>
-                <RootNavigator />
+                <AppContent fontsLoaded={loaded} />
             </QuestionsProvider>
         </ThemeProvider>
     );

@@ -59,7 +59,7 @@ export const COMBINATION_QUESTIONS: Question[] = [
             'A square black knob'
         ],
         correctIndex: 0,
-        explanation: 'The trailer air supply control is a red, eight-sided knob used to supply the trailer air system.'
+        explanation: 'The trailer air supply control is a red, eight-sided knob used to supply the trailer air system.',
     },
     {
         id: 'comb_6',
@@ -71,7 +71,7 @@ export const COMBINATION_QUESTIONS: Question[] = [
             '0 to 10 psi'
         ],
         correctIndex: 1,
-        explanation: 'The valve should automatically close (pop out) between 20 and 45 psi.'
+        explanation: 'The valve should automatically close (pop out) between 20 and 45 psi.',
     },
     {
         id: 'comb_7',
@@ -83,7 +83,7 @@ export const COMBINATION_QUESTIONS: Question[] = [
             'Parallel'
         ],
         correctIndex: 2,
-        explanation: 'Press the seals together at a 90-degree angle and then turn to lock.'
+        explanation: 'Press the seals together at a 90-degree angle and then turn to lock.',
     },
     {
         id: 'comb_8',
@@ -95,7 +95,7 @@ export const COMBINATION_QUESTIONS: Question[] = [
             'To increase fuel efficiency'
         ],
         correctIndex: 0,
-        explanation: 'A dry fifth wheel can cause steering problems due to friction.'
+        explanation: 'A dry fifth wheel can cause steering problems due to friction.',
     },
     {
         id: 'comb_9',
@@ -107,7 +107,7 @@ export const COMBINATION_QUESTIONS: Question[] = [
             'About 2 inches'
         ],
         correctIndex: 1,
-        explanation: 'There should be no space between the upper and lower fifth wheel plates.'
+        explanation: 'There should be no space between the upper and lower fifth wheel plates.',
     },
     {
         id: 'comb_10',

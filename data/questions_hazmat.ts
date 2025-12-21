@@ -11,7 +11,7 @@ export const HAZMAT_QUESTIONS: Question[] = [
             '5'
         ],
         correctIndex: 2,
-        explanation: 'Placards must be on all 4 sides: front, rear, and both sides.'
+        explanation: 'Placards must be on all 4 sides: front, rear, and both sides.',
     },
     {
         id: 'hm_2',
@@ -23,7 +23,7 @@ export const HAZMAT_QUESTIONS: Question[] = [
             'The Shipper'
         ],
         correctIndex: 1,
-        explanation: 'To refuse improper shipments, the Carrier is responsible for checking the paperwork.'
+        explanation: 'To refuse improper shipments, the Carrier is responsible for checking the paperwork.',
     },
     {
         id: 'hm_3',
@@ -47,7 +47,7 @@ export const HAZMAT_QUESTIONS: Question[] = [
             'Flashing lights'
         ],
         correctIndex: 2,
-        explanation: 'Never use flares/fusees (fire) around hazardous materials.'
+        explanation: 'Never use flares/fusees (fire) around hazardous materials.',
     },
     {
         id: 'hm_5',
@@ -59,7 +59,7 @@ export const HAZMAT_QUESTIONS: Question[] = [
             'A police escort'
         ],
         correctIndex: 1,
-        explanation: 'You need a specific Hazmat (H) endorsement on your CDL.'
+        explanation: 'You need a specific Hazmat (H) endorsement on your CDL.',
     },
     {
         id: 'hm_6',

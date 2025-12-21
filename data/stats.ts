@@ -1,5 +1,21 @@
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
+// Stats for a single topic
+export interface TopicStats {
+    examAttempts: number;
+    averageScore: number;
+    questionsAnswered: number;
+    studyTimeMinutes: number;
+}
+
+export const INITIAL_TOPIC_STATS: TopicStats = {
+    examAttempts: 0,
+    averageScore: 0,
+    questionsAnswered: 0,
+    studyTimeMinutes: 0,
+};
+
+// Global user stats including per-topic breakdown
 export interface UserStats {
     examAttempts: number;
     averageScore: number;
@@ -7,6 +23,7 @@ export interface UserStats {
     studyTimeMinutes: number;
     streakDays: number;
     lastStudyDate: string | null;
+    topicStats: Record<string, TopicStats>;
 }
 
 const STATS_STORAGE_KEY = 'user_stats_v1';
@@ -18,6 +35,7 @@ export const INITIAL_STATS: UserStats = {
     studyTimeMinutes: 0,
     streakDays: 0,
     lastStudyDate: null,
+    topicStats: {},
 };
 
 // Load stats from local storage
@@ -78,33 +96,26 @@ export const updateStats = async (newStats: Partial<UserStats>) => {
 };
 
 // Helper: Update stats after a quiz/exam
-export const recordQuizResult = async (scorePercentage: number, questionCount: number, isExam: boolean) => {
+export const recordQuizResult = async (
+    scorePercentage: number,
+    questionCount: number,
+    isExam: boolean,
+    topicId?: string
+) => {
     const current = await loadStats();
 
+    // --- Update Global Stats ---
     const newTotalQuestions = current.questionsAnswered + questionCount;
-    // Calculate new running average
-    // Heuristic: Weighted average based on total questions isn't perfectly stored, 
-    // but we can approximate or just keep a simple moving average.
-    // Better simple approach: New Avg = ((Old Avg * Old Exams) + New Score) / (Old Exams + 1)
-    // Only updating average score for Exams to be meaningful? Or all quizzes?
-    // Let's assume average score tracks EXAM performance mainly, or blended.
-    // Let's do blended for now.
-
-    // We don't track total quizzes, so let's stick to a simple weighted moving average 
-    // or just average of last N? Without history, we approximate:
-    // NewAvg = (OldAvg * 0.9) + (NewScore * 0.1) for smoothing? 
-    // OR: NewAvg = ((OldAvg * TotalQuestions) + (Score * Questions)) / NewTotal
-    // Let's try the weighted by questions approach for accuracy over time.
     const oldWeight = current.questionsAnswered;
     const currentTotalScoreMass = current.averageScore * oldWeight;
     const newScoreMass = scorePercentage * questionCount;
-    const newAverage = Math.round((currentTotalScoreMass + newScoreMass) / newTotalQuestions);
+    const newAverage = newTotalQuestions > 0
+        ? Math.round((currentTotalScoreMass + newScoreMass) / newTotalQuestions)
+        : 0;
 
     const updates: Partial<UserStats> = {
         questionsAnswered: newTotalQuestions,
         averageScore: newAverage,
-        // Add 5 mins study time per quiz roughly? Or pass actual time?
-        // Let's assume 1 min per question for now as a heuristic if not passed.
         studyTimeMinutes: current.studyTimeMinutes + Math.ceil(questionCount * 1.0),
     };
 
@@ -112,5 +123,35 @@ export const recordQuizResult = async (scorePercentage: number, questionCount: n
         updates.examAttempts = current.examAttempts + 1;
     }
 
+    // --- Update Per-Topic Stats ---
+    if (topicId) {
+        const currentTopicStats = current.topicStats[topicId] || { ...INITIAL_TOPIC_STATS };
+        const topicNewTotal = currentTopicStats.questionsAnswered + questionCount;
+        const topicOldWeight = currentTopicStats.questionsAnswered;
+        const topicScoreMass = currentTopicStats.averageScore * topicOldWeight;
+        const topicNewScoreMass = scorePercentage * questionCount;
+        const topicNewAverage = topicNewTotal > 0
+            ? Math.round((topicScoreMass + topicNewScoreMass) / topicNewTotal)
+            : 0;
+
+        const updatedTopicStats: TopicStats = {
+            questionsAnswered: topicNewTotal,
+            averageScore: topicNewAverage,
+            studyTimeMinutes: currentTopicStats.studyTimeMinutes + Math.ceil(questionCount * 1.0),
+            examAttempts: isExam ? currentTopicStats.examAttempts + 1 : currentTopicStats.examAttempts,
+        };
+
+        updates.topicStats = {
+            ...current.topicStats,
+            [topicId]: updatedTopicStats,
+        };
+    }
+
     return await updateStats(updates);
+};
+
+// Reset all stats to initial values
+export const resetStats = async (): Promise<UserStats> => {
+    await saveStats(INITIAL_STATS);
+    return INITIAL_STATS;
 };

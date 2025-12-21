@@ -1,48 +1,57 @@
 import { StyleSheet, Text, View } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { UserStats } from '../data/stats';
+import { UserStats, TopicStats, INITIAL_TOPIC_STATS } from '../data/stats';
 import { useTheme } from '../context/ThemeContext';
 
 interface Props {
-    stats: UserStats;
+    stats: UserStats | TopicStats;
+    title?: string;
 }
 
-export default function StatsOverview({ stats }: Props) {
+export default function StatsOverview({ stats, title = 'Your Progress' }: Props) {
     const { isDark } = useTheme();
+
+    // Handle both UserStats (has streakDays) and TopicStats (doesn't)
+    const displayStats = {
+        averageScore: stats.averageScore || 0,
+        examAttempts: stats.examAttempts || 0,
+        questionsAnswered: stats.questionsAnswered || 0,
+        studyTimeMinutes: stats.studyTimeMinutes || 0,
+    };
 
     return (
         <View style={styles.container}>
-            <Text style={[styles.sectionTitle, isDark && styles.darkText]}>Your Progress</Text>
+            <Text style={[styles.sectionTitle, isDark && styles.darkText]}>{title}</Text>
             <View style={styles.grid}>
                 <View style={styles.cardContainer}>
-                    <LinearGradient colors={['#FF9966', '#FF5E62']} style={styles.card}>
+                    <LinearGradient colors={['#1976D2', '#0D47A1']} style={styles.card}>
                         <FontAwesome name="trophy" size={12} color="white" style={styles.icon} />
-                        <Text style={styles.value}>{stats.averageScore}%</Text>
+                        <Text style={styles.value}>{displayStats.averageScore}%</Text>
                         <Text style={styles.label}>Avg</Text>
                     </LinearGradient>
                 </View>
 
                 <View style={styles.cardContainer}>
-                    <LinearGradient colors={['#56CCF2', '#2F80ED']} style={styles.card}>
+                    <LinearGradient colors={['#42A5F5', '#1E88E5']} style={styles.card}>
                         <FontAwesome name="pencil" size={12} color="white" style={styles.icon} />
-                        <Text style={styles.value}>{stats.examAttempts}</Text>
+                        <Text style={styles.value}>{displayStats.examAttempts}</Text>
                         <Text style={styles.label}>Exams</Text>
                     </LinearGradient>
                 </View>
 
                 <View style={styles.cardContainer}>
-                    <LinearGradient colors={['#42275a', '#734b6d']} style={styles.card}>
+                    <LinearGradient colors={['#5C6BC0', '#3949AB']} style={styles.card}>
                         <FontAwesome name="check-circle" size={12} color="white" style={styles.icon} />
-                        <Text style={styles.value}>{stats.questionsAnswered}</Text>
+                        <Text style={styles.value}>{displayStats.questionsAnswered}</Text>
                         <Text style={styles.label}>Done</Text>
                     </LinearGradient>
                 </View>
 
                 <View style={styles.cardContainer}>
-                    <LinearGradient colors={['#11998e', '#38ef7d']} style={styles.card}>
+                    <LinearGradient colors={['#26A69A', '#00897B']} style={styles.card}>
                         <FontAwesome name="clock-o" size={12} color="white" style={styles.icon} />
-                        <Text style={styles.value}>{Math.floor(stats.studyTimeMinutes / 60)}h</Text>
+                        <Text style={styles.value}>{Math.floor(displayStats.studyTimeMinutes / 60)}h</Text>
                         <Text style={styles.label}>Time</Text>
                     </LinearGradient>
                 </View>

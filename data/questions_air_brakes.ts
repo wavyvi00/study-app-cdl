@@ -11,7 +11,7 @@ export const AIR_BRAKES_QUESTIONS: Question[] = [
             'All of the above'
         ],
         correctIndex: 2,
-        explanation: 'The air brake system uses compressed air to make the brakes work. Water and oil are contaminants.'
+        explanation: 'The air brake system uses compressed air to make the brakes work. Water and oil are contaminants.',
     },
     {
         id: 'ab_2',
@@ -23,7 +23,7 @@ export const AIR_BRAKES_QUESTIONS: Question[] = [
             '4 psi per minute'
         ],
         correctIndex: 2,
-        explanation: 'For a straight truck, air loss with brakes applied should not exceed 3 psi in one minute.'
+        explanation: 'For a straight truck, air loss with brakes applied should not exceed 3 psi in one minute.',
     },
     {
         id: 'ab_3',
@@ -35,7 +35,7 @@ export const AIR_BRAKES_QUESTIONS: Question[] = [
             '4 psi'
         ],
         correctIndex: 1,
-        explanation: 'With brakes released, a single vehicle shouldn\'t leak more than 2 psi per minute.'
+        explanation: 'With brakes released, a single vehicle shouldn\'t leak more than 2 psi per minute.',
     },
     {
         id: 'ab_4',
@@ -47,7 +47,7 @@ export const AIR_BRAKES_QUESTIONS: Question[] = [
             'The air compressor'
         ],
         correctIndex: 2,
-        explanation: 'One-way check valves prevent air from escaping the tanks back into the supply line.'
+        explanation: 'One-way check valves prevent air from escaping the tanks back into the supply line.',
     },
     {
         id: 'ab_5',
@@ -107,7 +107,7 @@ export const AIR_BRAKES_QUESTIONS: Question[] = [
             'Measure with a ruler while someone presses the pedal'
         ],
         correctIndex: 0,
-        explanation: 'You must release the parking brake to check free play. If it moves more than 1 inch, it needs adjustment.'
+        explanation: 'You must release the parking brake to check free play. If it moves more than 1 inch, it needs adjustment.',
     },
     {
         id: 'ab_10',

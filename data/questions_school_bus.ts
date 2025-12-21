@@ -35,7 +35,7 @@ export const SCHOOL_BUS_QUESTIONS: Question[] = [
             'It depends on the speed limit'
         ],
         correctIndex: 1,
-        explanation: 'Activate the amber warning lights at least 200 feet or approximately 5-10 seconds before the school bus stop.'
+        explanation: 'Activate the amber warning lights at least 200 feet or approximately 5-10 seconds before the school bus stop.',
     },
     {
         id: 'sb_4',
@@ -59,7 +59,7 @@ export const SCHOOL_BUS_QUESTIONS: Question[] = [
             'On the roof'
         ],
         correctIndex: 0,
-        explanation: 'The danger zone extends 10 feet on all sides of the bus where the driver cannot see.'
+        explanation: 'The danger zone extends 10 feet on all sides of the bus where the driver cannot see.',
     },
     {
         id: 'sb_6',
@@ -71,7 +71,7 @@ export const SCHOOL_BUS_QUESTIONS: Question[] = [
             'Crawl under the bus'
         ],
         correctIndex: 1,
-        explanation: 'Students should leave the object and alert the driver. Picking it up puts them in the danger zone.'
+        explanation: 'Students should leave the object and alert the driver. Picking it up puts them in the danger zone.',
     },
     {
         id: 'sb_7',
@@ -83,7 +83,7 @@ export const SCHOOL_BUS_QUESTIONS: Question[] = [
             'Wait by the tire'
         ],
         correctIndex: 1,
-        explanation: 'Walking at least 10 feet away ensures they are out of the danger zone.'
+        explanation: 'Walking at least 10 feet away ensures they are out of the danger zone.',
     },
     {
         id: 'sb_8',

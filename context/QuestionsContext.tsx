@@ -62,11 +62,13 @@ export function QuestionsProvider({ children }: { children: ReactNode }) {
     const getQuestions = (topicId: string): Question[] => {
         const supabaseQ = supabaseQuestions.get(topicId);
         if (supabaseQ && supabaseQ.length > 0) {
+            console.log(`Using Supabase data for ${topicId} (${supabaseQ.length} questions)`);
             return supabaseQ;
         }
 
         // Fallback to local data
         const topic = TOPICS.find(t => t.id === topicId);
+        console.log(`Using Local data for ${topicId} (${topic?.questions.length} questions)`);
         return topic?.questions || [];
     };
 

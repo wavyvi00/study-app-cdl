@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Modal, Switch } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Modal, Switch, Alert } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Topic } from '../../data/mock';
@@ -6,7 +6,7 @@ import { useQuestions } from '../../context/QuestionsContext';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import StatsOverview from '../../components/StatsOverview';
 
-import { loadStats, INITIAL_STATS, UserStats } from '../../data/stats';
+import { loadStats, resetStats, INITIAL_STATS, INITIAL_TOPIC_STATS, UserStats } from '../../data/stats';
 import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
@@ -53,21 +53,40 @@ export default function TopicsScreen() {
         setIsDropdownOpen(false);
     };
 
+    const handleResetProgress = () => {
+        Alert.alert(
+            'Reset All Progress',
+            'Are you sure you want to reset all your progress? This cannot be undone.',
+            [
+                { text: 'Cancel', style: 'cancel' },
+                {
+                    text: 'Reset',
+                    style: 'destructive',
+                    onPress: async () => {
+                        const freshStats = await resetStats();
+                        setStats(freshStats);
+                        setIsMenuOpen(false);
+                    }
+                }
+            ]
+        );
+    };
+
     const gradientMap: Record<string, string[]> = {
-        blue: ['#4c669f', '#3b5998'],
-        red: ['#cb2d3e', '#ef473a'],
-        orange: ['#FF8008', '#FFC837'],
-        purple: ['#8E2DE2', '#4A00E0'],
-        green: ['#11998e', '#38ef7d'],
-        teal: ['#00b09b', '#96c93d'],
-        pink: ['#ec008c', '#fc6767'],
-        yellow: ['#f2994a', '#f2c94c'],
+        blue: ['#1565C0', '#0D47A1'],
+        red: ['#C62828', '#B71C1C'],
+        orange: ['#EF6C00', '#E65100'],
+        purple: ['#6A1B9A', '#4A148C'],
+        green: ['#2E7D32', '#1B5E20'],
+        teal: ['#00838F', '#006064'],
+        pink: ['#AD1457', '#880E4F'],
+        yellow: ['#F9A825', '#F57F17'],
     };
 
     return (
         <View style={[styles.container, isDark && styles.darkContainer]}>
             <LinearGradient
-                colors={isDark ? ['#1f1c2c', '#928dab'] : ['#4c669f', '#3b5998', '#192f6a']}
+                colors={isDark ? ['#0D47A1', '#1565C0'] : ['#1976D2', '#1565C0', '#0D47A1']}
                 style={styles.headerBackground}
             >
                 <View style={styles.headerRow}>
@@ -94,7 +113,7 @@ export default function TopicsScreen() {
                         </TouchableOpacity>
 
                         <TouchableOpacity
-                            style={[styles.menuItem, { borderBottomWidth: 0 }]}
+                            style={[styles.menuItem, isDark && styles.darkBorder]}
                             onPress={toggleTheme}
                         >
                             <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={isDark ? "#ccc" : "#444"} style={styles.menuIcon} />
@@ -109,12 +128,23 @@ export default function TopicsScreen() {
                                 />
                             </View>
                         </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={[styles.menuItem, { borderBottomWidth: 0 }]}
+                            onPress={handleResetProgress}
+                        >
+                            <FontAwesome name="refresh" size={16} color="#C62828" style={styles.menuIcon} />
+                            <Text style={[styles.menuText, { color: '#C62828' }]}>Reset Progress</Text>
+                        </TouchableOpacity>
                     </View>
                 )}
             </LinearGradient>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
-                <StatsOverview stats={stats} />
+                <StatsOverview
+                    stats={selectedTopic ? (stats.topicStats[selectedTopic.id] || INITIAL_TOPIC_STATS) : stats}
+                    title={selectedTopic ? `${selectedTopic.title} Progress` : 'Overall Progress'}
+                />
 
                 <View style={[styles.dropdownContainer, { zIndex: isMenuOpen ? -1 : 10 }]}>
                     <Text style={[styles.sectionLabel, isDark && styles.darkText]}>Select Topic:</Text>
@@ -130,23 +160,35 @@ export default function TopicsScreen() {
 
                     {isDropdownOpen && (
                         <View style={[styles.dropdownList, isDark && styles.darkCard]}>
-                            {topics.map((topic) => (
-                                <TouchableOpacity
-                                    key={topic.id}
-                                    style={[styles.dropdownItem, isDark && styles.darkBorder]}
-                                    onPress={() => handleSelectTopic(topic)}
-                                >
-                                    <View style={[styles.miniDot, { backgroundColor: gradientMap[topic.image]?.[1] }]} />
-                                    <Text style={[
-                                        styles.dropdownItemText,
-                                        isDark && styles.darkText,
-                                        selectedTopic?.id === topic.id && styles.selectedItemText
-                                    ]}>
-                                        {topic.title}
-                                    </Text>
-                                    {selectedTopic?.id === topic.id && <FontAwesome name="check" size={14} color="#4c669f" />}
-                                </TouchableOpacity>
-                            ))}
+                            {topics.map((topic) => {
+                                const topicStat = stats.topicStats[topic.id];
+                                const masteryScore = topicStat?.averageScore || 0;
+                                return (
+                                    <TouchableOpacity
+                                        key={topic.id}
+                                        style={[styles.dropdownItem, isDark && styles.darkBorder]}
+                                        onPress={() => handleSelectTopic(topic)}
+                                    >
+                                        <View style={[styles.miniDot, { backgroundColor: gradientMap[topic.image]?.[1] }]} />
+                                        <Text style={[
+                                            styles.dropdownItemText,
+                                            isDark && styles.darkText,
+                                            selectedTopic?.id === topic.id && styles.selectedItemText
+                                        ]}>
+                                            {topic.title}
+                                        </Text>
+                                        {masteryScore > 0 && (
+                                            <View style={[styles.masteryBadge, masteryScore >= 80 && styles.masteryBadgeGreen]}>
+                                                {masteryScore >= 80 && (
+                                                    <FontAwesome name="check" size={10} color="#2E7D32" style={{ marginRight: 4 }} />
+                                                )}
+                                                <Text style={[styles.masteryBadgeText, masteryScore >= 80 && { color: '#2E7D32' }]}>{masteryScore}%</Text>
+                                            </View>
+                                        )}
+                                        {selectedTopic?.id === topic.id && <FontAwesome name="check" size={14} color="#1565C0" />}
+                                    </TouchableOpacity>
+                                );
+                            })}
                         </View>
                     )}
                 </View>
@@ -161,6 +203,9 @@ export default function TopicsScreen() {
                             <Text style={[styles.cardDesc, isDark && styles.darkSubText]}>{selectedTopic.description}</Text>
 
                             <View style={styles.buttonRow}>
+                                <TouchableOpacity style={[styles.actionButton, styles.studyButton, isDark && styles.darkStudyButton]} onPress={() => router.push({ pathname: '/study', params: { topicId: selectedTopic.id } })}>
+                                    <Text style={[styles.actionText, isDark && styles.darkText]}>Study</Text>
+                                </TouchableOpacity>
                                 <TouchableOpacity style={[styles.actionButton, isDark && styles.darkButton]} onPress={() => startQuiz(selectedTopic.id, 'practice')}>
                                     <Text style={[styles.actionText, isDark && styles.darkText]}>Practice</Text>
                                 </TouchableOpacity>
@@ -307,7 +352,7 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     selectedItemText: {
-        color: '#4c669f',
+        color: '#1565C0',
         fontWeight: '600',
     },
     card: {
@@ -355,6 +400,12 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
         borderRadius: 20,
     },
+    studyButton: {
+        backgroundColor: '#E3F2FD',
+    },
+    darkStudyButton: {
+        backgroundColor: '#1A237E',
+    },
     examButton: {
         backgroundColor: '#fff0f0',
     },
@@ -381,5 +432,24 @@ const styles = StyleSheet.create({
     },
     darkBorder: {
         borderBottomColor: '#333',
-    }
+    },
+    masteryBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#e0e0e0',
+        paddingHorizontal: 8,
+        paddingVertical: 3,
+        borderRadius: 12,
+        marginRight: 8,
+    },
+    masteryBadgeGreen: {
+        backgroundColor: '#C8E6C9',
+        borderWidth: 1,
+        borderColor: '#81C784',
+    },
+    masteryBadgeText: {
+        fontSize: 11,
+        fontWeight: '700',
+        color: '#555',
+    },
 });
