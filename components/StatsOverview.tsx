@@ -51,7 +51,14 @@ export default function StatsOverview({ stats, title = 'Your Progress' }: Props)
                 <View style={styles.cardContainer}>
                     <LinearGradient colors={['#26A69A', '#00897B']} style={styles.card}>
                         <FontAwesome name="clock-o" size={12} color="white" style={styles.icon} />
-                        <Text style={styles.value}>{Math.floor(displayStats.studyTimeMinutes / 60)}h</Text>
+                        <Text style={styles.value}>
+                            {(() => {
+                                const h = Math.floor(displayStats.studyTimeMinutes / 60);
+                                const m = displayStats.studyTimeMinutes % 60;
+                                if (h > 0) return `${h}h ${m}m`;
+                                return `${m}m`;
+                            })()}
+                        </Text>
                         <Text style={styles.label}>Time</Text>
                     </LinearGradient>
                 </View>
