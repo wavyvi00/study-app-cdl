@@ -8,22 +8,71 @@ import { LinearGradient } from 'expo-linear-gradient';
 import * as Haptics from 'expo-haptics';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
-import { recordQuizResult } from '../data/stats';
+import { recordQuizResult, logActivityStart } from '../data/stats';
+import { Achievement } from '../data/achievements';
 
 // Image logic removed
 
 export default function QuizScreen() {
-    const { topicId, mode } = useLocalSearchParams();
+    const { topicId, mode, resume } = useLocalSearchParams();
     const router = useRouter();
     const { isDark } = useTheme();
     const { getQuestions, topics } = useQuestions();
     const insets = useSafeAreaInsets();
+
+    // State to hold potentially restored session data
+    const [restoredSession, setRestoredSession] = useState<{
+        questions: Question[];
+        index: number;
+        score: number;
+        wrongAnswers: Array<{ question: Question; selectedIndex: number }>;
+    } | null>(null);
+
+    // Initial Load for Resume
+    useEffect(() => {
+        const initSession = async () => {
+            if (mode === 'practice') {
+                const stats = await import('../data/stats').then(m => m.loadStats());
+
+                if (resume === 'true' && stats.currentPracticeSession && stats.currentPracticeSession.topicId === topicId) {
+                    // Restore session
+                    const session = stats.currentPracticeSession;
+                    const allQs = getQuestions(topicId as string);
+                    // Reconstruct question objects from IDs
+                    const sessionQuestions = session.questionIds.map(id => allQs.find(q => q.id === id)).filter(Boolean) as Question[];
+
+                    if (sessionQuestions.length > 0) {
+                        const restoredWrong = session.wrongAnswers.map(w => ({
+                            question: allQs.find(q => q.id === w.questionId)!,
+                            selectedIndex: w.selectedIndex
+                        })).filter(w => w.question);
+
+                        setRestoredSession({
+                            questions: sessionQuestions,
+                            index: session.currentIndex,
+                            score: session.score,
+                            wrongAnswers: restoredWrong
+                        });
+                        return; // Done restoring
+                    }
+                }
+
+                // If not resuming or restore failed, we'll start fresh (the normal flow)
+                // We do NOT save here because we need the questions first, which are in useMemo/state
+            }
+            logActivityStart(topicId as string, mode as 'practice' | 'exam');
+        };
+        initSession();
+    }, [topicId, mode, resume]);
 
     // Topics with 25-question exams
     const shortExamTopics = ['passenger', 'doubles_triples', 'tank', 'school_bus'];
 
     // Logic to load questions
     const questions = useMemo(() => {
+        // If we restored a session, use those questions
+        if (restoredSession) return restoredSession.questions;
+
         if (topicId) {
             const allQuestions = [...getQuestions(topicId as string)];
             if (allQuestions.length === 0) return [];
@@ -42,7 +91,7 @@ export default function QuizScreen() {
         // If no topic, combine all questions from all topics
         const allQ = topics.flatMap(t => t.questions);
         return allQ.sort(() => 0.5 - Math.random()).slice(0, 10);
-    }, [topicId, mode, getQuestions, topics]);
+    }, [topicId, mode, getQuestions, topics, restoredSession]);
 
     const [currentIndex, setCurrentIndex] = useState(0);
     const [score, setScore] = useState(0);
@@ -53,9 +102,42 @@ export default function QuizScreen() {
         question: Question;
         selectedIndex: number;
     }>>([]);
+
+    // Initialize state from restored session if available
+    useEffect(() => {
+        if (restoredSession) {
+            setCurrentIndex(restoredSession.index);
+            setScore(restoredSession.score);
+            setWrongAnswers(restoredSession.wrongAnswers);
+            // Don't set QuestionOrder because questions array is already ordered as per session
+            setQuestionOrder(restoredSession.questions.map((_, i) => i));
+        } else {
+            setQuestionOrder(questions.map((_, i) => i));
+        }
+    }, [restoredSession, questions]);
+
     const [questionOrder, setQuestionOrder] = useState<number[]>(() =>
         questions.map((_, i) => i)
     );
+    const [recentAchievements, setRecentAchievements] = useState<Achievement[]>([]);
+
+    // Save initial session if starting new Practice
+    useEffect(() => {
+        if (mode === 'practice' && questions.length > 0 && !restoredSession) {
+            // New session, save it
+            import('../data/stats').then(m => {
+                m.savePracticeSession({
+                    topicId: topicId as string,
+                    questionIds: questions.map(q => q.id),
+                    currentIndex: 0,
+                    score: 0,
+                    wrongAnswers: [],
+                    startTime: Date.now()
+                });
+            });
+        }
+    }, [mode, questions, topicId, restoredSession]);
+
 
     // Timer state for Exam mode (60 minutes)
     const [timeLeft, setTimeLeft] = useState(60 * 60);
@@ -80,15 +162,15 @@ export default function QuizScreen() {
     useEffect(() => {
         if (isFinished) {
             const percentage = (score / questions.length) * 100;
-            recordQuizResult(percentage, questions.length, mode === 'exam', topicId as string).then(newStats => {
-                console.log('Stats updated:', newStats);
+            recordQuizResult(percentage, questions.length, mode === 'exam', topicId as string).then(result => {
+                console.log('Stats updated:', result.stats);
+                if (result.newAchievements.length > 0) {
+                    setRecentAchievements(result.newAchievements);
+                    Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
+                }
             });
         }
-    }, [isFinished]); // Dependencies: score is accessed from closure, but since isFinished triggers re-render, score should be up to date. 
-    // Actually, to be safe with React hooks linter, let's include score, questions.length, mode, topicId.
-    // But since this tool call builds the string, I'll trust the closure for now or just add them.
-    // Adding them to deps array:
-    // }, [isFinished, score, questions.length, mode, topicId]);
+    }, [isFinished]);
 
     // Helper to format time
     const formatTime = (seconds: number) => {
@@ -110,7 +192,24 @@ export default function QuizScreen() {
     const currentQuestion = questions[currentQuestionIndex];
     const isLastQuestion = currentIndex === questionOrder.length - 1;
     const isPractice = mode === 'practice';
-    const canSkip = currentIndex < questionOrder.length - 1; // Can skip if not on the last question
+    const canSkip = currentIndex < questionOrder.length - 1;
+
+    // Save progress on every step in Practice mode
+    const saveProgress = async (newIndex: number, newScore: number, newWrong: typeof wrongAnswers) => {
+        if (mode === 'practice') {
+            const { savePracticeSession } = await import('../data/stats');
+            // We need current question IDs. 
+            // IMPORTANT: 'questions' array is what determines our session ID list.
+            savePracticeSession({
+                topicId: topicId as string,
+                questionIds: questions.map(q => q.id),
+                currentIndex: newIndex,
+                score: newScore,
+                wrongAnswers: newWrong.map(w => ({ questionId: w.question.id, selectedIndex: w.selectedIndex })),
+                startTime: Date.now() // Update time or keep original? Doesn't matter much for now.
+            });
+        }
+    };
 
     const handleOptionPress = (index: number) => {
         if (selectedOption !== null && isPractice) return;
@@ -122,31 +221,75 @@ export default function QuizScreen() {
         Haptics.selectionAsync(); // Light tap on next
         // Check answer
         const isCorrect = selectedOption === currentQuestion.correctIndex;
+        let nextScore = score;
+        let nextWrong = wrongAnswers;
+
         if (isCorrect) {
-            setScore(s => s + 1);
+            setScore(s => { nextScore = s + 1; return s + 1; });
         } else if (selectedOption !== null) {
             // Track wrong answer for review
-            setWrongAnswers(prev => [...prev, {
-                question: currentQuestion,
-                selectedIndex: selectedOption
-            }]);
+            setWrongAnswers(prev => {
+                const updated = [...prev, {
+                    question: currentQuestion,
+                    selectedIndex: selectedOption
+                }];
+                nextWrong = updated;
+                return updated;
+            });
         }
 
         if (isLastQuestion) {
             setIsFinished(true);
+            // Session clearing handled in recordQuizResult now
         } else {
-            setCurrentIndex(i => i + 1);
+            const nextIndex = currentIndex + 1;
+            setCurrentIndex(nextIndex);
             setSelectedOption(null);
+            saveProgress(nextIndex, nextScore, nextWrong);
         }
     };
 
     const handleSkip = () => {
         Haptics.selectionAsync();
         // Move current question to the end
+        // For persistence: update question order? 
+        // Complex. If we shuffle 'questionOrder', the 'questions' array array remains fixed.
+        // Persistence stores 'questionIds'. If we change order, we must update persistence order too.
+
+        // This 'handleSkip' implementation changes 'questionOrder' state which maps displayed index -> real index.
+        // But 'questions' array stays same.
+        // To persist skip properly, we'd need to persist 'questionOrder' too.
+        // Or, simpler: Just reorder the 'questions' array in persistence?
+
+        // Let's stick to simple index increment for now to avoid complexity in this step.
+        // If user skips, we just move to next. The skipped question goes to end of 'questionOrder'.
+        // My persistence logic above saves 'questions.map(q => q.id)'. It assumes 'questions' array order matches play order.
+        // BUT 'questionOrder' state allows shuffling.
+        // If I want to support skip+resume, I need to save the EFFECTIVE order.
+
+        // Fix: Use 'questionOrder' to derive the actual sequence of question IDs to save.
+
         setQuestionOrder(prev => {
             const newOrder = [...prev];
             const skippedIndex = newOrder.splice(currentIndex, 1)[0];
             newOrder.push(skippedIndex);
+
+            // Re-save session with NEW logical order of questions
+            if (mode === 'practice') {
+                // Construct new Question list based on newOrder
+                const reorderedQs = newOrder.map(idx => questions[idx]);
+                import('../data/stats').then(m => {
+                    m.savePracticeSession({
+                        topicId: topicId as string,
+                        questionIds: reorderedQs.map(q => q.id),
+                        currentIndex: currentIndex, // Index stays same, but content at index changed
+                        score: score,
+                        wrongAnswers: wrongAnswers.map(w => ({ questionId: w.question.id, selectedIndex: w.selectedIndex })),
+                        startTime: Date.now()
+                    });
+                });
+            }
+
             return newOrder;
         });
         setSelectedOption(null);
@@ -216,9 +359,22 @@ export default function QuizScreen() {
                     <View style={styles.resultIconContainer}>
                         <FontAwesome name={passed ? "trophy" : "book"} size={60} color={passed ? "#FFD700" : "#fff"} />
                     </View>
-                    <Text style={styles.resultTitle}>{passed ? "Great Job!" : "Keep Studying!"}</Text>
-                    <Text style={styles.resultScore}>You scored {score} / {questions.length}</Text>
                     <Text style={styles.resultSubtext}>{passed ? "You're ready for the next topic." : "Review the material and try again."}</Text>
+
+                    {recentAchievements.length > 0 && (
+                        <View style={styles.achievementsContainer}>
+                            <Text style={styles.achievementsHeader}>New Awards Earned!</Text>
+                            {recentAchievements.map((achievement) => (
+                                <View key={achievement.id} style={styles.achievementBadge}>
+                                    <FontAwesome name={achievement.icon as any} size={20} color="#FFD700" />
+                                    <View style={{ marginLeft: 12 }}>
+                                        <Text style={styles.achievementTitle}>{achievement.title}</Text>
+                                        <Text style={styles.achievementDesc}>{achievement.description}</Text>
+                                    </View>
+                                </View>
+                            ))}
+                        </View>
+                    )}
 
                     <View style={styles.resultButtonsContainer}>
                         {wrongAnswers.length > 0 && (
@@ -640,5 +796,36 @@ const styles = StyleSheet.create({
         width: '100%',
         height: 180,
         borderRadius: 8,
+    },
+    achievementsContainer: {
+        width: '100%',
+        paddingHorizontal: 30,
+        marginBottom: 20,
+        alignItems: 'center',
+    },
+    achievementsHeader: {
+        color: '#FFD700',
+        fontWeight: 'bold',
+        fontSize: 16,
+        marginBottom: 10,
+        textTransform: 'uppercase',
+    },
+    achievementBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
+        padding: 12,
+        borderRadius: 12,
+        width: '100%',
+        marginBottom: 8,
+    },
+    achievementTitle: {
+        color: '#fff',
+        fontWeight: 'bold',
+        fontSize: 14,
+    },
+    achievementDesc: {
+        color: 'rgba(255, 255, 255, 0.8)',
+        fontSize: 12,
     },
 });

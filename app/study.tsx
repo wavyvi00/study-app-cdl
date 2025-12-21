@@ -3,6 +3,7 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, Alert } from 'rea
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import { useQuestions } from '../context/QuestionsContext';
+import { saveStudyProgress, loadStats, logActivityStart } from '../data/stats';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useState, useRef, useEffect } from 'react';
 import { STUDY_GUIDES } from '../data/study_content';
@@ -24,11 +25,32 @@ export default function StudyScreen() {
     // Track selected answers: { questionId: selectedIndex }
     const [answers, setAnswers] = useState<Record<string, number>>({});
 
+    const [isCompleted, setIsCompleted] = useState(false);
+
     // Reset scroll and answers when section changes
     useEffect(() => {
-        scrollViewRef.current?.scrollTo({ y: 0, animated: false });
-        setAnswers({});
-    }, [sectionIndex]);
+        if (!isCompleted) {
+            scrollViewRef.current?.scrollTo({ y: 0, animated: false });
+            setAnswers({});
+            // Save progress whenever section changes
+            if (topic) {
+                saveStudyProgress(topic.id, sectionIndex);
+            }
+        }
+    }, [sectionIndex, topic, isCompleted]);
+
+    // Initial load of saved position
+    useEffect(() => {
+        if (topicId) {
+            logActivityStart(topicId as string, 'study');
+            loadStats().then(stats => {
+                const topicStats = stats.topicStats[topicId as string];
+                if (topicStats?.lastStudySectionIndex !== undefined) {
+                    setSectionIndex(topicStats.lastStudySectionIndex);
+                }
+            });
+        }
+    }, [topicId]);
 
     if (!topic) {
         return (
@@ -92,7 +114,15 @@ export default function StudyScreen() {
     const handleNext = () => {
         if (!isLastSection) {
             setSectionIndex(prev => prev + 1);
+        } else {
+            handleFinish();
         }
+    };
+
+    const handleFinish = () => {
+        setIsCompleted(true);
+        // Optionally mark as "completed" in stats if we were tracking that
+        // For now, just show the completion screen
     };
 
     const handlePrev = () => {
@@ -100,6 +130,48 @@ export default function StudyScreen() {
             setSectionIndex(prev => prev - 1);
         }
     };
+
+    const handleRestart = () => {
+        setSectionIndex(0);
+        setIsCompleted(false);
+    };
+
+    const handleQuit = () => {
+        router.back();
+    };
+
+    if (isCompleted) {
+        return (
+            <View style={[styles.container, isDark && styles.darkContainer]}>
+                <Stack.Screen options={{ headerShown: false }} />
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', padding: 40 }}>
+                    <View style={[styles.completionIcon, isDark && styles.darkCompletionIcon]}>
+                        <FontAwesome name="trophy" size={50} color="#FFD700" />
+                    </View>
+                    <Text style={[styles.completionTitle, isDark && styles.darkText]}>Topic Completed!</Text>
+                    <Text style={[styles.completionSub, isDark && styles.darkSubText]}>
+                        You have finished reading all {studyGuide.sections.length} sections of {topic.title}.
+                    </Text>
+
+                    <View style={styles.actionButtonsContainer}>
+                        <TouchableOpacity style={[styles.actionButton, styles.restartButton]} onPress={handleRestart}>
+                            <FontAwesome name="refresh" size={16} color="#555" style={{ marginRight: 8 }} />
+                            <Text style={styles.actionButtonText}>Restart Study</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={[styles.actionButton, styles.practiceButton]} onPress={handlePractice}>
+                            <FontAwesome name="pencil" size={16} color="#fff" style={{ marginRight: 8 }} />
+                            <Text style={styles.actionButtonTextWhite}>Practice Questions</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={[styles.actionButton, styles.quitButton, isDark && { borderColor: '#555' }]} onPress={handleQuit}>
+                            <Text style={[styles.actionButtonText, isDark && styles.darkText]}>Quit</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+            </View>
+        );
+    }
 
     return (
         <View style={[styles.container, isDark && styles.darkContainer]}>
@@ -264,13 +336,13 @@ export default function StudyScreen() {
                     {/* Integrated CTA */}
                     <TouchableOpacity
                         style={[styles.practiceCtaButton, isLastSection && styles.finishButton]}
-                        onPress={handlePractice}
+                        onPress={isLastSection ? handleFinish : handlePractice}
                     >
                         <Text style={[styles.practiceCtaText, isLastSection && styles.finishButtonText]}>
-                            {isLastSection ? "Finish & Practice This Topic" : "Practice This Topic"}
+                            {isLastSection ? "Finish Study Guide" : "Practice This Topic"}
                         </Text>
                         <FontAwesome
-                            name="arrow-right"
+                            name={isLastSection ? "check" : "arrow-right"}
                             size={16}
                             color={isLastSection ? "#fff" : "#1976D2"}
                             style={{ marginLeft: 8 }}
@@ -281,6 +353,7 @@ export default function StudyScreen() {
                 {/* Safe area spacer */}
                 <View style={{ height: 40 }} />
             </ScrollView>
+
         </View>
     );
 }
@@ -574,5 +647,66 @@ const styles = StyleSheet.create({
     },
     darkSubText: {
         color: '#bbb',
+    },
+    completionIcon: {
+        width: 100,
+        height: 100,
+        backgroundColor: '#FFF8E1',
+        borderRadius: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 30,
+    },
+    darkCompletionIcon: {
+        backgroundColor: '#3e3e26',
+    },
+    completionTitle: {
+        fontSize: 28,
+        fontWeight: 'bold',
+        color: '#333',
+        marginBottom: 10,
+        textAlign: 'center',
+    },
+    completionSub: {
+        fontSize: 16,
+        color: '#666',
+        textAlign: 'center',
+        marginBottom: 40,
+        lineHeight: 24,
+    },
+    actionButtonsContainer: {
+        width: '100%',
+        gap: 15,
+    },
+    actionButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 14,
+        paddingHorizontal: 20,
+        borderRadius: 12,
+        borderWidth: 1,
+        borderColor: 'transparent',
+    },
+    restartButton: {
+        backgroundColor: '#f5f5f5',
+        borderColor: '#e0e0e0',
+    },
+    practiceButton: {
+        backgroundColor: '#1976D2',
+    },
+    quitButton: {
+        backgroundColor: 'transparent',
+        borderColor: '#ccc',
+    },
+    actionButtonText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#555',
+    },
+    actionButtonTextWhite: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#fff',
     },
 });

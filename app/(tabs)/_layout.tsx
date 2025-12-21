@@ -30,6 +30,14 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
+                name="achievements"
+                options={{
+                    title: 'Awards',
+                    tabBarIcon: ({ color }) => <FontAwesome name="trophy" size={24} color={color} />,
+                    headerShown: false,
+                }}
+            />
+            <Tabs.Screen
                 name="practice"
                 options={{
                     href: null,

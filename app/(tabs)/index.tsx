@@ -5,6 +5,7 @@ import { Topic } from '../../data/mock';
 import { useQuestions } from '../../context/QuestionsContext';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import StatsOverview from '../../components/StatsOverview';
+import { STUDY_GUIDES } from '../../data/study_content';
 
 import { loadStats, resetStats, INITIAL_STATS, INITIAL_TOPIC_STATS, UserStats } from '../../data/stats';
 import { useState, useEffect, useCallback } from 'react';
@@ -91,8 +92,12 @@ export default function TopicsScreen() {
             >
                 <View style={styles.headerRow}>
                     <View>
-                        <Text style={styles.headerTitle}>Study Topics</Text>
-                        <Text style={styles.headerSubtitle}>Choose a subject to master</Text>
+                        <Text style={styles.headerTitle}>CDL Permit Preparation</Text>
+                        <Text style={styles.headerSubtitle}>
+                            {stats.lastTopicId
+                                ? "Welcome back! Continue mastering your subjects."
+                                : "Master CDL sections and endorsements."}
+                        </Text>
                     </View>
                     <TouchableOpacity onPress={() => setIsMenuOpen(!isMenuOpen)} style={styles.settingsButton}>
                         <FontAwesome name={isMenuOpen ? "times" : "bars"} size={24} color="rgba(255,255,255,0.8)" />
@@ -146,6 +151,78 @@ export default function TopicsScreen() {
                     title={selectedTopic ? `${selectedTopic.title} Progress` : 'Overall Progress'}
                 />
 
+                {stats.lastTopicId && topics.find(t => t.id === stats.lastTopicId) && (() => {
+                    const lastTopic = topics.find(t => t.id === stats.lastTopicId)!;
+                    const topicStat = stats.topicStats[lastTopic.id] || INITIAL_TOPIC_STATS;
+                    const totalQuestions = lastTopic.questions.length;
+
+                    const isPractice = stats.lastActivityMode === 'practice';
+                    // Determine progress based on mode
+                    let progress = 0;
+                    let progressLabel = '';
+                    let shouldShow = false;
+
+                    if (isPractice && stats.currentPracticeSession && stats.currentPracticeSession.topicId === lastTopic.id) {
+                        const currentIdx = stats.currentPracticeSession.currentIndex;
+                        // Use saved session total (length of questionIds) or current total (fallback)
+                        const sessionTotal = stats.currentPracticeSession.questionIds.length || totalQuestions;
+                        progress = sessionTotal > 0 ? Math.min((currentIdx / sessionTotal) * 100, 100) : 0;
+                        progressLabel = `${currentIdx}/${sessionTotal}`;
+                        shouldShow = progress < 100;
+
+                    } else if (!isPractice) {
+                        // Study Mode (Reading Progress)
+                        const guide = STUDY_GUIDES[lastTopic.id];
+                        if (guide && guide.sections.length > 0) {
+                            const currentSectionIdx = topicStat.lastStudySectionIndex || 0;
+                            const totalSections = guide.sections.length;
+                            progress = Math.min(((currentSectionIdx + 1) / totalSections) * 100, 100);
+                            progressLabel = `Section ${currentSectionIdx + 1}/${totalSections}`;
+                            // Hide if on the very last section to imply "completion" (or maybe user wants to re-read?
+                            // But usually "Continue" implies "pick up where left off". If at end, nothing to pick up.)
+                            // Using progress < 100 means if I am on last section, it hides.
+                            // Let's stick to progress < 100 for "Incomplete".
+                            shouldShow = progress < 100;
+                        } else {
+                            // Fallback
+                            shouldShow = false;
+                        }
+                    }
+
+                    if (!shouldShow) return null;
+
+                    return (
+                        <TouchableOpacity
+                            style={[styles.resumeStrip, isDark && styles.darkResumeStrip]}
+                            onPress={() => {
+                                if (isPractice) {
+                                    router.push({ pathname: '/quiz', params: { topicId: lastTopic.id, mode: 'practice', resume: 'true' } });
+                                } else {
+                                    router.push({ pathname: '/study', params: { topicId: lastTopic.id } });
+                                }
+                            }}
+                        >
+                            <View style={[styles.resumeIconBox, isPractice ? { backgroundColor: '#E3F2FD' } : { backgroundColor: '#E8F5E9' }]}>
+                                <FontAwesome
+                                    name={isPractice ? "pencil" : "book"}
+                                    size={14}
+                                    color={isPractice ? "#1976D2" : "#2E7D32"}
+                                />
+                            </View>
+                            <View style={styles.resumeContent}>
+                                <Text style={[styles.resumeLabel, isDark && styles.darkText]} numberOfLines={1}>
+                                    <Text style={{ fontWeight: '700' }}>{isPractice ? 'Resume Practice' : 'Resume Study'}</Text>
+                                    <Text style={{ fontWeight: '400' }}> • {lastTopic.title}</Text>
+                                </Text>
+                            </View>
+                            <View style={{ flexDirection: 'row', alignItems: 'center' }}>
+                                <Text style={[styles.resumeProgress, isDark && styles.darkSubText]}>{progressLabel}</Text>
+                                <FontAwesome name="chevron-right" size={12} color={isDark ? "#666" : "#ccc"} style={{ marginLeft: 8 }} />
+                            </View>
+                        </TouchableOpacity>
+                    );
+                })()}
+
                 <View style={[styles.dropdownContainer, { zIndex: isMenuOpen ? -1 : 10 }]}>
                     <Text style={[styles.sectionLabel, isDark && styles.darkText]}>Select Topic:</Text>
                     {selectedTopic && (
@@ -193,6 +270,7 @@ export default function TopicsScreen() {
                     )}
                 </View>
 
+                {/* Old Card Logic Removed, Selected Topic Card below */}
                 {!isDropdownOpen && selectedTopic && (
                     <View style={[styles.card, isDark && styles.darkCard]}>
                         <View style={[styles.iconContainer, { backgroundColor: gradientMap[selectedTopic.image]?.[1] || '#ccc' }]}>
@@ -200,7 +278,20 @@ export default function TopicsScreen() {
                         </View>
                         <View style={styles.cardContent}>
                             <Text style={[styles.cardTitle, isDark && styles.darkText]}>{selectedTopic.title}</Text>
-                            <Text style={[styles.cardDesc, isDark && styles.darkSubText]}>{selectedTopic.description}</Text>
+                            {(() => {
+                                const guide = STUDY_GUIDES[selectedTopic.id];
+                                const sectionCount = guide ? guide.sections.length : 0;
+                                const questionCount = selectedTopic.questions.length;
+                                const subText = sectionCount > 0
+                                    ? `${sectionCount} study sections • ${questionCount} practice questions`
+                                    : `Coming soon • ${questionCount} practice questions`;
+
+                                return (
+                                    <Text style={[styles.cardDesc, isDark && styles.darkSubText]}>
+                                        {subText}
+                                    </Text>
+                                );
+                            })()}
 
                             <View style={styles.buttonRow}>
                                 <TouchableOpacity style={[styles.actionButton, styles.studyButton, isDark && styles.darkStudyButton]} onPress={() => router.push({ pathname: '/study', params: { topicId: selectedTopic.id } })}>
@@ -216,6 +307,8 @@ export default function TopicsScreen() {
                         </View>
                     </View>
                 )}
+
+
             </ScrollView>
         </View>
     );
@@ -248,7 +341,7 @@ const styles = StyleSheet.create({
         borderRadius: 20,
     },
     headerTitle: {
-        fontSize: 32,
+        fontSize: 28,
         fontWeight: '800',
         color: '#fff',
     },
@@ -392,28 +485,37 @@ const styles = StyleSheet.create({
     },
     buttonRow: {
         flexDirection: 'row',
-        gap: 10,
+        gap: 8,
+        marginTop: 8,
     },
     actionButton: {
-        backgroundColor: '#eef2f5',
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        borderRadius: 20,
+        flex: 1,
+        backgroundColor: '#f5f5f5',
+        paddingVertical: 10,
+        borderRadius: 12,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     studyButton: {
         backgroundColor: '#E3F2FD',
+        borderWidth: 1,
+        borderColor: '#BBDEFB',
     },
     darkStudyButton: {
-        backgroundColor: '#1A237E',
+        backgroundColor: '#1565C0',
+        borderColor: '#0D47A1',
     },
     examButton: {
-        backgroundColor: '#fff0f0',
+        backgroundColor: '#FFEBEE',
+        borderWidth: 1,
+        borderColor: '#FFCDD2',
     },
     darkExamButton: {
-        backgroundColor: '#3a2a2a',
+        backgroundColor: '#3E2723',
+        borderColor: '#4E342E',
     },
     actionText: {
-        fontSize: 12,
+        fontSize: 13,
         fontWeight: '600',
         color: '#444',
     },
@@ -451,5 +553,44 @@ const styles = StyleSheet.create({
         fontSize: 11,
         fontWeight: '700',
         color: '#555',
+    },
+
+    // Resume Strip Styles
+    resumeStrip: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'white',
+        borderRadius: 12,
+        padding: 10,
+        marginBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
+    },
+    darkResumeStrip: {
+        backgroundColor: '#1E1E1E',
+        shadowColor: '#000',
+    },
+    resumeIconBox: {
+        width: 32,
+        height: 32,
+        borderRadius: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 10,
+    },
+    resumeContent: {
+        flex: 1,
+    },
+    resumeLabel: {
+        fontSize: 14,
+        color: '#333',
+    },
+    resumeProgress: {
+        fontSize: 12,
+        color: '#666',
+        fontWeight: '600',
     },
 });

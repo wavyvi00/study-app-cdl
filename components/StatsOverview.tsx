@@ -22,36 +22,48 @@ export default function StatsOverview({ stats, title = 'Your Progress' }: Props)
 
     return (
         <View style={styles.container}>
-            <Text style={[styles.sectionTitle, isDark && styles.darkText]}>{title}</Text>
-            <View style={styles.grid}>
-                <View style={styles.cardContainer}>
-                    <LinearGradient colors={['#1976D2', '#0D47A1']} style={styles.card}>
-                        <FontAwesome name="trophy" size={12} color="white" style={styles.icon} />
-                        <Text style={styles.value}>{displayStats.averageScore}%</Text>
-                        <Text style={styles.label}>Avg</Text>
-                    </LinearGradient>
+            <Text style={[styles.sectionTitle, isDark && styles.darkTitle]}>{title}</Text>
+            <View style={[styles.minimalCard, isDark && styles.darkCard]}>
+
+                {/* Average Score */}
+                <View style={styles.statItem}>
+                    <Text style={styles.statLabel}>Accuracy</Text>
+                    <View style={styles.statRow}>
+                        <FontAwesome name="check-circle" size={14} color={isDark ? "#81C784" : "#43A047"} style={{ marginRight: 6 }} />
+                        <Text style={[styles.statValue, isDark && styles.darkText]}>{displayStats.averageScore}%</Text>
+                    </View>
                 </View>
 
-                <View style={styles.cardContainer}>
-                    <LinearGradient colors={['#42A5F5', '#1E88E5']} style={styles.card}>
-                        <FontAwesome name="pencil" size={12} color="white" style={styles.icon} />
-                        <Text style={styles.value}>{displayStats.examAttempts}</Text>
-                        <Text style={styles.label}>Exams</Text>
-                    </LinearGradient>
+                <View style={[styles.divider, isDark && styles.darkDivider]} />
+
+                {/* Questions Answered */}
+                <View style={styles.statItem}>
+                    <Text style={styles.statLabel}>Completed</Text>
+                    <View style={styles.statRow}>
+                        <FontAwesome name="list-ul" size={14} color={isDark ? "#90CAF9" : "#1976D2"} style={{ marginRight: 6 }} />
+                        <Text style={[styles.statValue, isDark && styles.darkText]}>{displayStats.questionsAnswered}</Text>
+                    </View>
                 </View>
 
-                <View style={styles.cardContainer}>
-                    <LinearGradient colors={['#5C6BC0', '#3949AB']} style={styles.card}>
-                        <FontAwesome name="check-circle" size={12} color="white" style={styles.icon} />
-                        <Text style={styles.value}>{displayStats.questionsAnswered}</Text>
-                        <Text style={styles.label}>Done</Text>
-                    </LinearGradient>
+                <View style={[styles.divider, isDark && styles.darkDivider]} />
+
+                {/* Exams */}
+                <View style={styles.statItem}>
+                    <Text style={styles.statLabel}>Exams</Text>
+                    <View style={styles.statRow}>
+                        <FontAwesome name="file-text-o" size={14} color={isDark ? "#E6EE9C" : "#AFB42B"} style={{ marginRight: 6 }} />
+                        <Text style={[styles.statValue, isDark && styles.darkText]}>{displayStats.examAttempts}</Text>
+                    </View>
                 </View>
 
-                <View style={styles.cardContainer}>
-                    <LinearGradient colors={['#26A69A', '#00897B']} style={styles.card}>
-                        <FontAwesome name="clock-o" size={12} color="white" style={styles.icon} />
-                        <Text style={styles.value}>
+                <View style={[styles.divider, isDark && styles.darkDivider]} />
+
+                {/* Time */}
+                <View style={styles.statItem}>
+                    <Text style={styles.statLabel}>Time</Text>
+                    <View style={styles.statRow}>
+                        <FontAwesome name="clock-o" size={14} color={isDark ? "#FFCC80" : "#F57C00"} style={{ marginRight: 6 }} />
+                        <Text style={[styles.statValue, isDark && styles.darkText]}>
                             {(() => {
                                 const h = Math.floor(displayStats.studyTimeMinutes / 60);
                                 const m = displayStats.studyTimeMinutes % 60;
@@ -59,9 +71,9 @@ export default function StatsOverview({ stats, title = 'Your Progress' }: Props)
                                 return `${m}m`;
                             })()}
                         </Text>
-                        <Text style={styles.label}>Time</Text>
-                    </LinearGradient>
+                    </View>
                 </View>
+
             </View>
         </View>
     );
@@ -69,54 +81,71 @@ export default function StatsOverview({ stats, title = 'Your Progress' }: Props)
 
 const styles = StyleSheet.create({
     container: {
-        marginBottom: 20,
+        marginBottom: 30,
+        paddingHorizontal: 4,
     },
     sectionTitle: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#333',
-        marginBottom: 15,
-        marginLeft: 4,
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#888',
+        marginBottom: 10,
+        textTransform: 'uppercase',
+        letterSpacing: 1,
     },
-    darkText: {
-        color: '#f0f0f0',
+    darkTitle: {
+        color: '#aaa',
     },
-    grid: {
+    minimalCard: {
         flexDirection: 'row',
-        justifyContent: 'space-around', // Changed to space-around for fixed small items
-        paddingHorizontal: 10,
-    },
-    cardContainer: {
-        width: 65,  // Fixed small width similar to topic icons
-        height: 65, // Fixed height
-        borderRadius: 12,
+        backgroundColor: 'white',
+        borderRadius: 16,
+        paddingVertical: 16,
+        paddingHorizontal: 20,
+        justifyContent: 'space-between',
+        alignItems: 'center',
         shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 2,
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 5,
+        elevation: 1, // very subtle shadow
+        borderWidth: 1,
+        borderColor: '#f0f0f0',
     },
-    card: {
-        flex: 1,
-        borderRadius: 12,
-        padding: 4,
+    darkCard: {
+        backgroundColor: '#1e1e1e',
+        borderColor: '#333',
+        shadowColor: '#000',
+        shadowOpacity: 0.2,
+    },
+    statItem: {
+        alignItems: 'center',
         justifyContent: 'center',
+    },
+    statLabel: {
+        fontSize: 10,
+        fontWeight: '600',
+        color: '#999',
+        marginBottom: 6,
+        textTransform: 'uppercase',
+    },
+    statRow: {
+        flexDirection: 'row',
         alignItems: 'center',
     },
-    icon: {
-        marginBottom: 1,
-        opacity: 0.9,
+    statValue: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#333',
     },
-    value: {
-        fontSize: 14, // Micro font
-        fontWeight: 'bold',
-        color: 'white',
-        lineHeight: 16,
+    darkText: {
+        color: '#eee',
     },
-    label: {
-        fontSize: 7, // Micro label
-        color: 'rgba(255,255,255,0.9)',
-        marginTop: 0,
-        textAlign: 'center',
+    divider: {
+        width: 1,
+        height: '60%',
+        backgroundColor: '#eee',
+    },
+    darkDivider: {
+        backgroundColor: '#333',
     }
 });
