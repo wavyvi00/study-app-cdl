@@ -7,7 +7,12 @@ if (!supabaseUrl || !supabaseAnonKey) {
     console.warn("Supabase credentials missing from environment variables");
 }
 
-export const supabase = createClient(supabaseUrl, supabaseAnonKey);
+// Validating config to prevent crashes if env vars are missing
+const isValidConfig = supabaseUrl.length > 0 && supabaseAnonKey.length > 0;
+
+export const supabase = isValidConfig
+    ? createClient(supabaseUrl, supabaseAnonKey)
+    : null;
 
 // Database types for questions
 export interface DbQuestion {
@@ -22,6 +27,8 @@ export interface DbQuestion {
 
 // Fetch questions for a specific topic
 export async function fetchQuestions(topicId: string): Promise<DbQuestion[]> {
+    if (!supabase) return [];
+
     const { data, error } = await supabase
         .from('questions')
         .select('*')
@@ -38,6 +45,8 @@ export async function fetchQuestions(topicId: string): Promise<DbQuestion[]> {
 
 // Fetch all questions
 export async function fetchAllQuestions(): Promise<DbQuestion[]> {
+    if (!supabase) return [];
+
     const { data, error } = await supabase
         .from('questions')
         .select('*')

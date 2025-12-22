@@ -134,12 +134,20 @@ export const updateStats = async (newStats: Partial<UserStats>) => {
     let updatedLastStudyDate = currentStats.lastStudyDate;
 
     if (newStats.studyTimeMinutes && newStats.studyTimeMinutes > currentStats.studyTimeMinutes) {
-        const today = new Date().toISOString().split('T')[0];
+        const now = new Date();
+        const year = now.getFullYear();
+        const month = String(now.getMonth() + 1).padStart(2, '0');
+        const day = String(now.getDate()).padStart(2, '0');
+        const today = `${year}-${month}-${day}`;
+
         if (currentStats.lastStudyDate !== today) {
             // Check if last study date was yesterday for streak
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayStr = yesterday.toISOString().split('T')[0];
+            const yesterdayDate = new Date();
+            yesterdayDate.setDate(yesterdayDate.getDate() - 1);
+            const yYear = yesterdayDate.getFullYear();
+            const yMonth = String(yesterdayDate.getMonth() + 1).padStart(2, '0');
+            const yDay = String(yesterdayDate.getDate()).padStart(2, '0');
+            const yesterdayStr = `${yYear}-${yMonth}-${yDay}`;
 
             if (currentStats.lastStudyDate === yesterdayStr) {
                 updatedStreak += 1;

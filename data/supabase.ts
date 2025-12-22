@@ -71,6 +71,11 @@ async function insertEmailToSupabase(email: string): Promise<boolean> {
     try {
         const { supabase } = await import('../lib/supabase');
 
+        if (!supabase) {
+            console.warn('Supabase client not initialized (missing credentials?)');
+            return false;
+        }
+
         // Insert email, ignore if duplicate (handled by unique constraint)
         const { error } = await supabase
             .from('email_subscribers')
