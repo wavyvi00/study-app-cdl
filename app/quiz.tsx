@@ -11,7 +11,7 @@ import { useTheme } from '../context/ThemeContext';
 import { recordQuizResult, logActivityStart } from '../data/stats';
 import { Achievement } from '../data/achievements';
 
-// Image logic removed
+
 
 export default function QuizScreen() {
     const { topicId, mode, resume } = useLocalSearchParams();

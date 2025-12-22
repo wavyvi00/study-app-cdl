@@ -1,4 +1,5 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Modal, Switch, Alert } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Modal, Switch, Alert, TextInput } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Topic } from '../../data/mock';
@@ -7,10 +8,12 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import StatsOverview from '../../components/StatsOverview';
 import { STUDY_GUIDES } from '../../data/study_content';
 
-import { loadStats, resetStats, INITIAL_STATS, INITIAL_TOPIC_STATS, UserStats } from '../../data/stats';
+import { loadStats, resetStats, updateStats, INITIAL_STATS, INITIAL_TOPIC_STATS, UserStats } from '../../data/stats';
 import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
+import { saveEmailLocally } from '../../data/supabase';
+import { startEmailSync } from '../../utils/emailSync';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -24,11 +27,18 @@ export default function TopicsScreen() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
+    const [emailInput, setEmailInput] = useState('');
+    const [isSubscribed, setIsSubscribed] = useState(false);
 
     // Load stats whenever the screen comes into focus
     useFocusEffect(
         useCallback(() => {
             loadStats().then(setStats);
+            AsyncStorage.getItem('EMAIL_SUBSCRIBED').then(val => {
+                if (val === 'true') setIsSubscribed(true);
+            });
+            // Trigger background sync when screen is focused
+            startEmailSync();
         }, [])
     );
 
@@ -146,6 +156,79 @@ export default function TopicsScreen() {
             </LinearGradient>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
+                {/* Email Prompt */}
+                {/* Email Prompt */}
+                {(!isSubscribed && !stats.hasDismissedEmailPrompt && (stats.questionsAnswered > 5 || !!stats.lastTopicId)) && (
+                    <View style={[styles.emailCard, isDark && styles.darkCard]}>
+                        <View style={styles.emailHeader}>
+                            <View style={styles.emailIconBox}>
+                                <FontAwesome name="envelope-o" size={20} color="#1565C0" />
+                            </View>
+                            <View style={{ flex: 1 }}>
+                                <Text style={[styles.emailTitle, isDark && styles.darkText]}>Stay Updated</Text>
+                                <Text style={[styles.emailSubtitle, isDark && styles.darkSubText]}>
+                                    Get the latest CDL study tips and app updates.
+                                </Text>
+                            </View>
+                            <TouchableOpacity
+                                onPress={() => {
+                                    // Dismiss logic
+                                    const nextStats = { ...stats, hasDismissedEmailPrompt: true };
+                                    setStats(nextStats);
+                                    updateStats({ hasDismissedEmailPrompt: true });
+                                }}
+                                style={{ padding: 4 }}
+                            >
+                                <FontAwesome name="times" size={16} color={isDark ? "#666" : "#999"} />
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.emailInputRow}>
+                            <TextInput
+                                style={[styles.emailInput, isDark && styles.darkInput]}
+                                placeholder="Enter your email"
+                                placeholderTextColor={isDark ? "#666" : "#999"}
+                                value={emailInput}
+                                onChangeText={setEmailInput}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                            />
+                            <TouchableOpacity
+                                style={styles.emailSubmitButton}
+                                onPress={async () => {
+                                    const email = emailInput.trim();
+                                    if (!email || !email.includes('@')) {
+                                        Alert.alert("Invalid Email", "Please enter a valid email address.");
+                                        return;
+                                    }
+
+                                    try {
+                                        // Save locally first (works offline)
+                                        await saveEmailLocally(email);
+
+                                        // Trigger background sync (non-blocking)
+                                        startEmailSync();
+
+                                        // Persist subscription state immediately
+                                        await AsyncStorage.setItem('EMAIL_SUBSCRIBED', 'true');
+                                        setIsSubscribed(true);
+
+                                        // Hide prompt and show success
+                                        Alert.alert("Subscribed!", "Thanks for subscribing. We'll keep you updated!");
+                                        const nextStats = { ...stats, hasDismissedEmailPrompt: true };
+                                        setStats(nextStats);
+                                        updateStats({ hasDismissedEmailPrompt: true });
+                                        setEmailInput('');
+                                    } catch (error) {
+                                        Alert.alert("Error", "Failed to save email. Please try again.");
+                                    }
+                                }}
+                            >
+                                <Text style={styles.emailSubmitText}>Join</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                )}
+
                 <StatsOverview
                     stats={selectedTopic ? (stats.topicStats[selectedTopic.id] || INITIAL_TOPIC_STATS) : stats}
                     title={selectedTopic ? `${selectedTopic.title} Progress` : 'Overall Progress'}
@@ -592,5 +675,72 @@ const styles = StyleSheet.create({
         fontSize: 12,
         color: '#666',
         fontWeight: '600',
+    },
+
+    // Email Prompt Styles
+    emailCard: {
+        backgroundColor: 'white',
+        borderRadius: 12,
+        padding: 16,
+        marginBottom: 20,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 3,
+        elevation: 2,
+    },
+    emailHeader: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        marginBottom: 12,
+    },
+    emailIconBox: {
+        width: 36,
+        height: 36,
+        borderRadius: 18,
+        backgroundColor: '#E3F2FD',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 12,
+    },
+    emailTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#333',
+        marginBottom: 2,
+    },
+    emailSubtitle: {
+        fontSize: 13,
+        color: '#666',
+        lineHeight: 18,
+    },
+    emailInputRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    emailInput: {
+        flex: 1,
+        backgroundColor: '#f5f5f5',
+        borderRadius: 8,
+        paddingHorizontal: 12,
+        paddingVertical: 8,
+        fontSize: 14,
+        color: '#333',
+        marginRight: 10,
+    },
+    darkInput: {
+        backgroundColor: '#333',
+        color: '#fff',
+    },
+    emailSubmitButton: {
+        backgroundColor: '#1565C0',
+        paddingHorizontal: 16,
+        paddingVertical: 10,
+        borderRadius: 8,
+    },
+    emailSubmitText: {
+        color: 'white',
+        fontSize: 14,
+        fontWeight: '700',
     },
 });

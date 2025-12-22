@@ -33,3 +33,28 @@ INSERT INTO questions (topic_id, text, options, correct_index, explanation) VALU
 
 -- Verify the table was created
 SELECT * FROM questions LIMIT 1;
+
+-- Email Subscribers Table Documentation
+CREATE TABLE IF NOT EXISTS public.email_subscribers (
+    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+    email TEXT UNIQUE NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW()
+);
+
+-- RLS: Enable security
+alter table public.email_subscribers enable row level security;
+
+-- RLS: Allow anyone to insert (subscribe)
+create policy "anon_can_insert_email"
+on public.email_subscribers
+for insert
+to anon
+with check (true);
+
+-- RLS: Block anyone from reading (prevent list scraping)
+create policy "block_anon_select"
+on public.email_subscribers
+for select
+to anon
+using (false);
+

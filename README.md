@@ -89,7 +89,21 @@ This project is configured for **EAS Build**.
 *   `context/`: React Contexts for global state (Theme, Questions).
 *   `data/`: Static question data and stats logic.
 *   `assets/`: Images and icons.
+*   `utils/`: Helper functions (e.g., email sync, validation).
 *   `scripts/`: Utility scripts (e.g., for generating SQL seeds).
+
+## 📝 Changelog
+
+See [CHANGELOG.md](./CHANGELOG.md) for a detailed history of changes.
+
+## 🔐 Environment Setup
+
+Create a `.env` file in the root directory with your Supabase credentials:
+
+```env
+EXPO_PUBLIC_SUPABASE_URL=your_supabase_url
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+```
 
 ## 📄 License
 

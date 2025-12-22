@@ -29,6 +29,10 @@ export interface UserStats {
     lastTopicId: string | null;
     lastActivityMode: 'study' | 'practice' | 'exam' | null;
     currentPracticeSession?: PracticeSessionState | null;
+    hasDismissedEmailPrompt?: boolean;
+    username?: string;
+    cdlClass?: 'Class A' | 'Class B';
+    avatarId?: string;
 }
 
 const STATS_STORAGE_KEY = 'user_stats_v1';
@@ -45,6 +49,10 @@ export const INITIAL_STATS: UserStats = {
     lastTopicId: null,
     lastActivityMode: null,
     currentPracticeSession: null,
+    hasDismissedEmailPrompt: false,
+    username: undefined,
+    cdlClass: 'Class A',
+    avatarId: 'truck',
 };
 
 // Load stats from local storage
