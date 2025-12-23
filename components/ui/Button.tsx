@@ -1,5 +1,5 @@
 import React from 'react';
-import { TouchableOpacity, Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle, StyleProp } from 'react-native';
+import { Pressable, Text, StyleSheet, ActivityIndicator, ViewStyle, TextStyle, StyleProp } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useTheme } from '../../context/ThemeContext';
 
@@ -68,6 +68,8 @@ export default function Button({
         </React.Fragment>
     );
 
+    const [isHovered, setIsHovered] = React.useState(false);
+
     const containerStyle = [
         styles.container,
         {
@@ -77,17 +79,19 @@ export default function Button({
             borderWidth: variant === 'outline' ? 1 : 0,
             borderColor: variant === 'outline' ? colors.primary : 'transparent',
             backgroundColor: (variant === 'primary' && !disabled) ? 'transparent' : getBackgroundColor(),
+            opacity: isHovered ? 0.9 : 1, // Hover effect
         },
         style
     ];
 
     if (variant === 'primary' && !disabled) {
         return (
-            <TouchableOpacity
+            <Pressable
                 onPress={onPress}
                 disabled={disabled || loading}
-                activeOpacity={0.8}
-                style={style}
+                onHoverIn={() => setIsHovered(true)}
+                onHoverOut={() => setIsHovered(false)}
+                style={({ pressed }) => [style, { opacity: pressed ? 0.8 : (isHovered ? 0.9 : 1) }]}
             >
                 <LinearGradient
                     colors={colors.headerGradient}
@@ -97,19 +101,20 @@ export default function Button({
                 >
                     {content}
                 </LinearGradient>
-            </TouchableOpacity>
+            </Pressable>
         );
     }
 
     return (
-        <TouchableOpacity
+        <Pressable
             onPress={onPress}
             disabled={disabled || loading}
-            activeOpacity={0.7}
-            style={containerStyle}
+            onHoverIn={() => setIsHovered(true)}
+            onHoverOut={() => setIsHovered(false)}
+            style={({ pressed }) => [containerStyle, { opacity: pressed ? 0.7 : (isHovered ? 0.8 : 1) }]}
         >
             {content}
-        </TouchableOpacity>
+        </Pressable>
     );
 }
 

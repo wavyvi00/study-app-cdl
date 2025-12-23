@@ -13,6 +13,7 @@ import { useTheme } from '../../context/ThemeContext';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
+import Hoverable from '../../components/ui/Hoverable';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -27,6 +28,8 @@ export default function TopicsScreen() {
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
 
+    // ... (rest of component logic remains same until return)
+
     // Load stats whenever the screen comes into focus
     useFocusEffect(
         useCallback(() => {
@@ -35,7 +38,6 @@ export default function TopicsScreen() {
     );
 
     // Set initial topic once loaded
-    // Set initial topic once loaded or update refreshing
     useEffect(() => {
         if (topics.length > 0) {
             if (!selectedTopic) {
@@ -125,12 +127,13 @@ export default function TopicsScreen() {
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <LinearGradient
                 colors={colors.headerGradient}
-                style={[styles.headerBackground, { paddingTop: 60, paddingBottom: 40, paddingHorizontal: spacing.lg, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
+                style={[styles.headerBackground, { paddingTop: 60, paddingBottom: 50, paddingHorizontal: spacing.lg, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
             >
                 <View style={styles.headerRow}>
                     <View>
-                        <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]}>Study Topics</Text>
-                        <Text style={[styles.headerSubtitle, { color: 'rgba(255,255,255,0.8)', fontSize: typography.md }]}>Choose a subject to master</Text>
+                        <Text style={styles.headerLabel}>OFFICIAL CDL PREPARATION</Text>
+                        <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]}>STUDY CENTER</Text>
+                        <Text style={[styles.headerSubtitle, { color: 'rgba(255,255,255,0.85)', fontSize: typography.md }]}>Prepare. Practice. Pass.</Text>
                     </View>
                     <TouchableOpacity
                         onPress={() => setIsMenuOpen(!isMenuOpen)}
@@ -188,10 +191,16 @@ export default function TopicsScreen() {
                     stats={stats}
                 />
 
-                <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.sm, marginTop: spacing.xl, marginBottom: spacing.md }]}>SELECT TOPIC:</Text>
+                <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.sm, marginTop: spacing.md, marginBottom: spacing.sm }]}>SELECT TOPIC:</Text>
 
-                <TouchableOpacity
-                    style={[styles.dropdownButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
+                <Hoverable
+                    style={({ hovered }) => [
+                        styles.dropdownButton,
+                        {
+                            backgroundColor: colors.surface,
+                            borderColor: hovered ? colors.primary : colors.border
+                        }
+                    ]}
                     onPress={toggleDropdown}
                 >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -200,15 +209,21 @@ export default function TopicsScreen() {
                             {selectedTopic ? selectedTopic.title : "Select a Topic"}
                         </Text>
                     </View>
-                    <FontAwesome name={isDropdownOpen ? "chevron-up" : "chevron-down"} size={14} color={colors.textSecondary} />
-                </TouchableOpacity>
+                    <FontAwesome name={isDropdownOpen ? "chevron-up" : "chevron-down"} size={12} color={colors.textSecondary} />
+                </Hoverable>
 
                 {isDropdownOpen && (
                     <View style={[styles.dropdownList, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                         {topics.map((topic) => (
-                            <TouchableOpacity
+                            <Hoverable
                                 key={topic.id}
-                                style={[styles.dropdownItem, { borderBottomColor: colors.border }]}
+                                style={({ hovered }) => [
+                                    styles.dropdownItem,
+                                    {
+                                        borderBottomColor: colors.border,
+                                        backgroundColor: hovered ? (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)') : 'transparent'
+                                    }
+                                ]}
                                 onPress={() => handleSelectTopic(topic)}
                             >
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -216,46 +231,59 @@ export default function TopicsScreen() {
                                     <Text style={[styles.dropdownItemText, { color: colors.text }]}>{topic.title}</Text>
                                 </View>
                                 {selectedTopic?.id === topic.id && (
-                                    <FontAwesome name="check" size={14} color={colors.primary} />
+                                    <FontAwesome name="check" size={12} color={colors.primary} />
                                 )}
-                            </TouchableOpacity>
+                            </Hoverable>
                         ))}
                     </View>
                 )}
 
                 {selectedTopic && (
-                    <Card style={{ marginTop: spacing.xl }} padding="lg">
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md }}>
-                            <View style={[styles.iconBox, { backgroundColor: getTopicColor(selectedTopic.image) }]}>
-                                <FontAwesome name={getTopicIcon(selectedTopic.id)} size={20} color="#FFFFFF" />
-                            </View>
-                            <View style={{ marginLeft: spacing.md }}>
-                                <Text style={[styles.topicCardTitle, { color: colors.text, fontSize: typography.lg }]}>{selectedTopic.title}</Text>
-                                <Text style={[styles.topicCardSubtitle, { color: colors.textSecondary }]}>{selectedTopic.questions.length} questions available</Text>
-                            </View>
-                        </View>
+                    <Hoverable style={{ marginTop: spacing.lg }}>
+                        {({ hovered }) => (
+                            <Card
+                                style={[
+                                    styles.topicCard,
+                                    hovered && {
+                                        transform: [{ translateY: -2 }],
+                                        shadowOpacity: isDark ? 0.35 : 0.12
+                                    }
+                                ]}
+                                padding="md"
+                            >
+                                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md }}>
+                                    <View style={[styles.iconBox, { backgroundColor: getTopicColor(selectedTopic.image) }]}>
+                                        <FontAwesome name={getTopicIcon(selectedTopic.id)} size={20} color="#FFFFFF" />
+                                    </View>
+                                    <View style={{ marginLeft: spacing.md }}>
+                                        <Text style={[styles.topicCardTitle, { color: colors.text, fontSize: typography.lg }]}>{selectedTopic.title}</Text>
+                                        <Text style={[styles.topicCardSubtitle, { color: colors.textSecondary }]}>{selectedTopic.questions.length} questions available</Text>
+                                    </View>
+                                </View>
 
-                        <View style={styles.actionRow}>
-                            <Button
-                                title="Study Guide"
-                                onPress={() => router.push({ pathname: '/study', params: { topicId: selectedTopic.id } })}
-                                style={{ flex: 1, marginRight: spacing.sm }}
-                                icon={<FontAwesome name="book" size={16} color='#FFFFFF' style={{ marginRight: 8 }} />}
-                            />
-                            <Button
-                                title="Practice"
-                                variant="outline"
-                                onPress={() => startQuiz(selectedTopic.id, 'practice')}
-                                style={{ flex: 1, marginHorizontal: spacing.xs }}
-                            />
-                            <Button
-                                title="Exam"
-                                variant="accent"
-                                onPress={() => startQuiz(selectedTopic.id, 'exam')}
-                                style={{ flex: 1, marginLeft: spacing.sm }}
-                            />
-                        </View>
-                    </Card>
+                                <View style={styles.actionRow}>
+                                    <Button
+                                        title="Study Guide"
+                                        onPress={() => router.push({ pathname: '/study', params: { topicId: selectedTopic.id } })}
+                                        style={{ flex: 1, marginRight: spacing.sm }}
+                                        icon={<FontAwesome name="book" size={14} color='#FFFFFF' style={{ marginRight: 8 }} />}
+                                    />
+                                    <Button
+                                        title="Practice"
+                                        variant="outline"
+                                        onPress={() => startQuiz(selectedTopic.id, 'practice')}
+                                        style={{ flex: 1, marginHorizontal: spacing.xs }}
+                                    />
+                                    <Button
+                                        title="Exam"
+                                        variant="accent"
+                                        onPress={() => startQuiz(selectedTopic.id, 'exam')}
+                                        style={{ flex: 1, marginLeft: spacing.sm }}
+                                    />
+                                </View>
+                            </Card>
+                        )}
+                    </Hoverable>
                 )}
 
                 <View style={{ height: 100 }} />
@@ -275,10 +303,10 @@ const styles = StyleSheet.create({
     headerBackground: {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-        elevation: 5,
-        marginBottom: -20, // Overlap effect
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 6,
+        marginBottom: 0,
         zIndex: 1,
     },
     headerRow: {
@@ -286,12 +314,23 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'flex-start',
     },
-    headerTitle: {
-        fontWeight: '800',
+    headerLabel: {
+        color: 'rgba(255,255,255,0.7)',
+        fontSize: 11,
+        fontWeight: '600',
+        letterSpacing: 2,
         marginBottom: 4,
+        textTransform: 'uppercase',
+    },
+    headerTitle: {
+        fontWeight: '900',
+        letterSpacing: 1.5,
+        marginBottom: 6,
+        textTransform: 'uppercase',
     },
     headerSubtitle: {
-        fontWeight: '500',
+        fontWeight: '600',
+        letterSpacing: 0.5,
     },
     settingsButton: {
         width: 44,
@@ -324,19 +363,20 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     scrollContent: {
-        paddingTop: 30, // Compensate for overlap
+        paddingTop: 20,
     },
     sectionTitle: {
-        fontWeight: '600',
-        letterSpacing: 1,
+        fontWeight: '700',
+        letterSpacing: 0.8,
+        opacity: 0.7,
     },
     dropdownButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 16,
-        paddingVertical: 14,
-        borderRadius: 12,
+        paddingVertical: 12, // Reduced from 14
+        borderRadius: 16, // Softer radius
         borderWidth: 1,
     },
     dot: {
@@ -346,16 +386,16 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     dropdownText: {
-        fontWeight: '500',
+        fontWeight: '600',
     },
     dropdownList: {
         marginTop: 8,
-        borderRadius: 12,
+        borderRadius: 16,
         borderWidth: 1,
         overflow: 'hidden',
     },
     dropdownItem: {
-        paddingVertical: 14,
+        paddingVertical: 12, // Reduced padding
         paddingHorizontal: 16,
         borderBottomWidth: 1,
         flexDirection: 'row',
@@ -363,7 +403,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     dropdownItemText: {
-        fontSize: 16,
+        fontSize: 15, // Slightly smaller
+        fontWeight: '500',
+    },
+    topicCard: {
+        // Softer shadow to match progress section
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+        elevation: 3,
+        borderRadius: 20,
     },
     topicCardTitle: {
         fontWeight: '700',
@@ -373,9 +423,9 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     iconBox: {
-        width: 48,
-        height: 48,
-        borderRadius: 12,
+        width: 44, // Reduced from 48
+        height: 44,
+        borderRadius: 14, // Softer radius
         justifyContent: 'center',
         alignItems: 'center',
     },

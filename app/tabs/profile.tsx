@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert,
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useCallback, useEffect } from 'react';
 import { useFocusEffect } from 'expo-router';
-import { loadStats, updateStats, UserStats, INITIAL_STATS } from '../../data/stats';
+import { loadStats, updateStats, resetAllAppData, UserStats, INITIAL_STATS } from '../../data/stats';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -91,6 +91,34 @@ export default function ProfileScreen() {
                 }
             }
         ]);
+    };
+
+    const handleResetAll = async () => {
+        Alert.alert(
+            "⚠️ Developer Reset",
+            "This will clear ALL app data and reset to fresh install state. Continue?",
+            [
+                { text: "Cancel", style: "cancel" },
+                {
+                    text: "Reset All",
+                    style: "destructive",
+                    onPress: async () => {
+                        await resetAllAppData();
+
+                        if (Platform.OS === 'web') {
+                            window.location.reload();
+                        } else {
+                            setStats(INITIAL_STATS);
+                            setUsername('');
+                            setSelectedAvatar('truck');
+                            setSelectedClass('Class A');
+                            setIsEditing(false);
+                            Alert.alert("Reset Complete", "Please restart the app for changes to take full effect.");
+                        }
+                    }
+                }
+            ]
+        );
     };
 
     if (isLoading) return null;
@@ -264,6 +292,10 @@ export default function ProfileScreen() {
                 <Text style={styles.versionText}>v1.0.0</Text>
                 <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                     <Text style={styles.logoutText}>Log Out</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={{ marginTop: 20 }} onPress={handleResetAll}>
+                    <Text style={{ color: '#FF9800', fontSize: 14, fontWeight: '600' }}>[DEV] Reset App Data</Text>
                 </TouchableOpacity>
             </View>
         </ScrollView>

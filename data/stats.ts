@@ -314,3 +314,37 @@ export const resetStats = async (): Promise<UserStats> => {
     await saveStats(INITIAL_STATS);
     return INITIAL_STATS;
 };
+
+import { Platform } from 'react-native';
+
+/**
+ * Developer-only function to completely reset all local app data.
+ * This clears AsyncStorage, localStorage (web), sessionStorage (web).
+ */
+export const resetAllAppData = async (): Promise<UserStats> => {
+    try {
+        // 1. Get all keys and remove them
+        const keys = await AsyncStorage.getAllKeys();
+        if (keys.length > 0) {
+            await AsyncStorage.multiRemove(keys);
+        }
+
+        // 2. Clear Web Storage explicitly
+        if (Platform.OS === 'web') {
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+            } catch (e) {
+                console.warn('Failed to clear web storage:', e);
+            }
+        }
+
+        // 3. Final Clear
+        await AsyncStorage.clear();
+
+        return INITIAL_STATS;
+    } catch (error) {
+        console.error('Error resetting app data:', error);
+        return INITIAL_STATS;
+    }
+};

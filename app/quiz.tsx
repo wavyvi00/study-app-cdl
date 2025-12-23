@@ -177,6 +177,19 @@ export default function QuizScreen() {
         return () => clearInterval(interval);
     }, [mode, isFinished]);
 
+    // Handle Quit (Finish early)
+    const handleQuit = () => {
+        // If we haven't answered anything, just exit
+        if (currentIndex === 0 && selectedOption === null) {
+            router.back();
+            return;
+        }
+
+        // Show simplified alert or just finish
+        // For 'Study App' flow, just finishing is cleanest.
+        setIsFinished(true);
+    };
+
     // Record results when finished
     useEffect(() => {
         if (isFinished && !hasRecordedRef.current && questions.length > 0) {
@@ -184,34 +197,47 @@ export default function QuizScreen() {
 
             // CHECK FOR TIMEOUT SUBMISSION
             let finalScore = score;
-            let currentWrong = wrongAnswers;
+            let finalWrong = [...wrongAnswers];
 
-            // If we timed out and had a selection, count it
+            // If we timed out (or quit?) and had a selection, count it
+            // Note: If I Quit, I might have a selected option?
+            // If I selected but didn't submit, should it count? 
+            // Usually 'Next' submits. 'Quit' abandons current question?
+            // Let's assume 'Quit' abandons the *current* unfinished question unless time ran out.
+            // If time ran out (timeLeft <= 0), we force submit.
+            // If voluntary quit, we ignore current selection.
+
             if (timeLeft <= 0 && selectedOption !== null && questions[currentIndex]) {
                 const currentQ = questions[currentIndex];
                 const isCorrect = selectedOption === currentQ.correctIndex;
 
                 if (isCorrect) {
                     finalScore += 1;
-                    setScore(s => s + 1);
                 } else {
-                    setWrongAnswers(prev => {
-                        const updated = [...prev, {
-                            question: currentQ,
-                            selectedIndex: selectedOption
-                        }];
-                        currentWrong = updated;
-                        return updated;
+                    finalWrong.push({
+                        question: currentQ,
+                        selectedIndex: selectedOption
                     });
                 }
             }
 
-            const percentage = (finalScore / questions.length) * 100;
-            const passed = percentage >= APP_CONFIG.PASSING_SCORE_PERCENTAGE;
+            // Calculate Stats based on ANSWERED questions, not TOTAL
+            const answeredCount = finalScore + finalWrong.length;
+
+            // Accuracy percentage (based on what was answered)
+            // If 0 answered, 0%
+            const accuracyPercentage = answeredCount > 0
+                ? (finalScore / answeredCount) * 100
+                : 0;
+
+            // Completion percentage (for UI 'Pass/Fail')
+            const completionPercentage = (finalScore / questions.length) * 100;
+            // const passed = completionPercentage >= APP_CONFIG.PASSING_SCORE_PERCENTAGE; 
+            // (We stick to passed logic based on strict completion for "Exam" feel, but stats use accuracy)
 
             recordQuizResult(
-                percentage,
-                questions.length,
+                accuracyPercentage, // Use ACCURACY for stats (average score)
+                answeredCount,      // Use ACTUAL COUNT for total questions stats
                 mode === 'exam',
                 topicId
             ).then(result => {
@@ -295,7 +321,7 @@ export default function QuizScreen() {
         }
 
         if (isLastQuestion) {
-            setIsFinished(true);
+            setIsFinished(true); // Triggers recording
         } else {
             const nextIndex = currentIndex + 1;
             setCurrentIndex(nextIndex);
@@ -331,6 +357,7 @@ export default function QuizScreen() {
     };
 
     if (isFinished) {
+        // Calculate based on ALL questions for UI "Grade"
         const percentage = (score / questions.length) * 100;
         const passed = percentage >= APP_CONFIG.PASSING_SCORE_PERCENTAGE;
 
@@ -441,7 +468,7 @@ export default function QuizScreen() {
             <Stack.Screen options={{ headerShown: false }} />
 
             <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border, paddingTop: insets.top + 12, paddingBottom: 12 }]}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.quitButton}>
+                <TouchableOpacity onPress={handleQuit} style={styles.quitButton}>
                     <FontAwesome name="arrow-left" size={18} color={colors.textSecondary} />
                     <Text style={[styles.quitText, { color: colors.textSecondary }]}>Quit</Text>
                 </TouchableOpacity>
