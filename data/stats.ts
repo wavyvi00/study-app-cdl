@@ -311,15 +311,19 @@ export const saveStudyProgress = async (topicId: string, sectionIndex: number) =
 
 // Reset all stats to initial values
 export const resetStats = async (): Promise<UserStats> => {
-    await saveStats(INITIAL_STATS);
-    return INITIAL_STATS;
+    const current = await loadStats();
+    const nextStats: UserStats = {
+        ...INITIAL_STATS,
+        unlockedAchievements: current.unlockedAchievements || [],
+    };
+    await saveStats(nextStats);
+    return nextStats;
 };
 
 import { Platform } from 'react-native';
 
 /**
- * Developer-only function to completely reset all local app data.
- * This clears AsyncStorage, localStorage (web), sessionStorage (web).
+ * Clear all local app data (stats, cache, and web storage).
  */
 export const resetAllAppData = async (): Promise<UserStats> => {
     try {

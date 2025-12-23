@@ -49,6 +49,18 @@ export async function getPendingEmails(): Promise<PendingEmail[]> {
 }
 
 /**
+ * Replace the pending emails list (used to restore after a reset).
+ */
+export async function setPendingEmails(pending: PendingEmail[]): Promise<void> {
+    try {
+        await AsyncStorage.setItem(PENDING_EMAILS_KEY, JSON.stringify(pending));
+    } catch (error) {
+        console.error('Error setting pending emails:', error);
+        throw error;
+    }
+}
+
+/**
  * Mark an email as synced
  */
 export async function markEmailSynced(email: string): Promise<void> {

@@ -1,10 +1,14 @@
 
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Alert, Platform, UIManager, LayoutAnimation, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platform, UIManager, LayoutAnimation, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useCallback, useEffect } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { loadStats, updateStats, resetAllAppData, UserStats, INITIAL_STATS } from '../../data/stats';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import { getPendingEmails, saveEmailLocally, setPendingEmails } from '../../data/supabase';
+import { startEmailSync } from '../../utils/emailSync';
+import { restartApp } from '../../utils/restartApp';
+import { showAlert, showConfirm } from '../../utils/alerts';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -16,6 +20,7 @@ const AVATARS = [
     { id: 'road', source: require('../../assets/avatars/wheel.png') },
     { id: 'user', source: require('../../assets/avatars/driver.png') },
 ];
+const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function ProfileScreen() {
     const insets = useSafeAreaInsets();
@@ -25,7 +30,8 @@ export default function ProfileScreen() {
 
     // Form State
     const [username, setUsername] = useState('');
-    const [email, setEmail] = useState(''); // Keep for UI, not saving yet
+    const [usernameError, setUsernameError] = useState(false);
+    const [subscribeEmail, setSubscribeEmail] = useState('');
     const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0].id);
     const [selectedClass, setSelectedClass] = useState<'Class A' | 'Class B'>('Class A');
 
@@ -57,9 +63,11 @@ export default function ProfileScreen() {
 
     const handleSaveProfile = async () => {
         if (!username.trim()) {
-            Alert.alert("Username Required", "Please enter a username.");
+            showAlert("Username Required", "Please enter a username.");
+            setUsernameError(true);
             return;
         }
+        setUsernameError(false);
         LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
 
         const updates: Partial<UserStats> = {
@@ -74,51 +82,54 @@ export default function ProfileScreen() {
     };
 
     const handleLogout = async () => {
-        Alert.alert("Logout", "Are you sure you want to log out? This will reset your profile identity.", [
-            { text: "Cancel", style: "cancel" },
-            {
-                text: "Logout",
-                style: "destructive",
-                onPress: async () => {
-                    LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-                    const updated = await updateStats({ username: undefined });
-                    setStats(updated);
-                    // Reset local form state
-                    setUsername('');
-                    setSelectedAvatar('truck');
-                    setSelectedClass('Class A');
-                    setIsEditing(false);
-                }
+        const performLogout = async () => {
+            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+            const pendingEmails = await getPendingEmails();
+            const cleared = await resetAllAppData();
+            if (pendingEmails.length > 0) {
+                await setPendingEmails(pendingEmails);
             }
-        ]);
+            setStats(cleared);
+            // Reset local form state
+            setUsername('');
+            setSelectedAvatar('truck');
+            setSelectedClass('Class A');
+            setIsEditing(false);
+            setSubscribeEmail('');
+            const restarted = await restartApp();
+            if (!restarted && Platform.OS !== 'web') {
+                showAlert("Logged Out", "Local data cleared. Please restart the app if anything looks stale.");
+            }
+        };
+
+        showConfirm({
+            title: "Logout",
+            message: "Log out and clear all local data on this device?",
+            confirmText: "Logout",
+            cancelText: "Cancel",
+            isDestructive: true,
+            onConfirm: performLogout,
+        });
     };
+    const handleSubscribe = async () => {
+        const trimmed = subscribeEmail.trim().toLowerCase();
+        if (!trimmed) {
+            showAlert("Email Required", "Please enter an email to subscribe.");
+            return;
+        }
+        if (!EMAIL_REGEX.test(trimmed)) {
+            showAlert("Invalid Email", "Please enter a valid email address.");
+            return;
+        }
 
-    const handleResetAll = async () => {
-        Alert.alert(
-            "⚠️ Developer Reset",
-            "This will clear ALL app data and reset to fresh install state. Continue?",
-            [
-                { text: "Cancel", style: "cancel" },
-                {
-                    text: "Reset All",
-                    style: "destructive",
-                    onPress: async () => {
-                        await resetAllAppData();
-
-                        if (Platform.OS === 'web') {
-                            window.location.reload();
-                        } else {
-                            setStats(INITIAL_STATS);
-                            setUsername('');
-                            setSelectedAvatar('truck');
-                            setSelectedClass('Class A');
-                            setIsEditing(false);
-                            Alert.alert("Reset Complete", "Please restart the app for changes to take full effect.");
-                        }
-                    }
-                }
-            ]
-        );
+        try {
+            await saveEmailLocally(trimmed);
+            setSubscribeEmail('');
+            startEmailSync();
+            showAlert("Subscribed", "Thanks! We'll sync your email when you're online.");
+        } catch (error) {
+            showAlert("Subscription Failed", "Couldn't save your email. Please try again.");
+        }
     };
 
     if (isLoading) return null;
@@ -177,6 +188,24 @@ export default function ProfileScreen() {
         </View>
     );
 
+    const renderSubscribeSection = () => (
+        <View style={styles.subscribeCard}>
+            <Text style={styles.subscribeTitle}>Email Updates</Text>
+            <Text style={styles.subscribeSubtitle}>We only use this email for subscription updates.</Text>
+            <TextInput
+                style={styles.input}
+                placeholder="you@email.com"
+                value={subscribeEmail}
+                onChangeText={setSubscribeEmail}
+                autoCapitalize="none"
+                keyboardType="email-address"
+            />
+            <TouchableOpacity style={styles.subscribeButton} onPress={handleSubscribe}>
+                <Text style={styles.subscribeButtonText}>Subscribe</Text>
+            </TouchableOpacity>
+        </View>
+    );
+
     // Render Edit/Create Form
     if (!stats.username || isEditing) {
         return (
@@ -189,39 +218,32 @@ export default function ProfileScreen() {
                         </TouchableOpacity>
                     )}
                 </View>
-                <ScrollView contentContainerStyle={styles.content}>
+                <ScrollView contentContainerStyle={styles.content} keyboardShouldPersistTaps="handled">
 
                     {renderAvatarPicker()}
 
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>Username <Text style={{ color: 'red' }}>*</Text></Text>
                         <TextInput
-                            style={styles.input}
+                            style={[styles.input, usernameError && styles.inputError]}
                             placeholder="Display Name"
                             value={username}
-                            onChangeText={setUsername}
+                            onChangeText={(value) => {
+                                setUsername(value);
+                                if (usernameError && value.trim()) {
+                                    setUsernameError(false);
+                                }
+                            }}
                             autoCapitalize="words"
                         />
+                        {usernameError && (
+                            <Text style={styles.errorText}>Please enter a username.</Text>
+                        )}
                     </View>
 
                     {renderClassPicker()}
 
-                    {/* Optional Fields (Visual only for now) */}
-                    {!isEditing && (
-                        <>
-                            <View style={styles.inputGroup}>
-                                <Text style={styles.label}>Email (Optional)</Text>
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Enter your email"
-                                    value={email}
-                                    onChangeText={setEmail}
-                                    autoCapitalize="none"
-                                    keyboardType="email-address"
-                                />
-                            </View>
-                        </>
-                    )}
+                    {!isEditing && renderSubscribeSection()}
 
                     <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
                         <Text style={styles.saveButtonText}>{isEditing ? 'Save Changes' : 'Create Profile'}</Text>
@@ -235,7 +257,11 @@ export default function ProfileScreen() {
     const currentAvatar = AVATARS.find(a => a.id === stats.avatarId) || AVATARS[0];
 
     return (
-        <ScrollView style={[styles.container, { paddingTop: insets.top + 20 }]} contentContainerStyle={{ paddingBottom: 40 }}>
+        <ScrollView
+            style={[styles.container, { paddingTop: insets.top + 20 }]}
+            contentContainerStyle={{ paddingBottom: 40 }}
+            keyboardShouldPersistTaps="handled"
+        >
             <View style={[styles.header, { justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }]}>
                 <Text style={styles.headerTitle}>My Profile</Text>
                 <TouchableOpacity onPress={() => setIsEditing(true)} style={styles.editButtonHeader}>
@@ -287,6 +313,9 @@ export default function ProfileScreen() {
                     <Text style={styles.placeholderText}>Coming soon</Text>
                 </View>
             </View>
+            <View style={styles.sectionContainer}>
+                {renderSubscribeSection()}
+            </View>
 
             <View style={styles.footer}>
                 <Text style={styles.versionText}>v1.0.0</Text>
@@ -294,9 +323,7 @@ export default function ProfileScreen() {
                     <Text style={styles.logoutText}>Log Out</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity style={{ marginTop: 20 }} onPress={handleResetAll}>
-                    <Text style={{ color: '#FF9800', fontSize: 14, fontWeight: '600' }}>[DEV] Reset App Data</Text>
-                </TouchableOpacity>
+
             </View>
         </ScrollView>
     );
@@ -401,6 +428,39 @@ const styles = StyleSheet.create({
         marginTop: 8,
         fontStyle: 'italic',
     },
+    subscribeCard: {
+        backgroundColor: 'white',
+        borderRadius: 16,
+        padding: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.06,
+        shadowRadius: 3,
+        elevation: 2,
+    },
+    subscribeTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#333',
+        marginBottom: 4,
+    },
+    subscribeSubtitle: {
+        fontSize: 12,
+        color: '#666',
+        marginBottom: 12,
+    },
+    subscribeButton: {
+        backgroundColor: '#1565C0',
+        paddingVertical: 12,
+        borderRadius: 12,
+        alignItems: 'center',
+        marginTop: 10,
+    },
+    subscribeButtonText: {
+        color: 'white',
+        fontSize: 14,
+        fontWeight: '700',
+    },
 
     // Form Inputs
     inputGroup: {
@@ -423,6 +483,17 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 3,
         elevation: 2,
+    },
+    inputError: {
+        borderWidth: 1,
+        borderColor: '#C62828',
+        backgroundColor: '#FFEBEE',
+    },
+    errorText: {
+        color: '#C62828',
+        fontSize: 12,
+        marginTop: 6,
+        fontWeight: '600',
     },
     saveButton: {
         backgroundColor: '#1565C0',

@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Switch, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Switch, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Topic } from '../../data/mock';
@@ -14,6 +14,7 @@ import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Hoverable from '../../components/ui/Hoverable';
+import { showConfirm } from '../../utils/alerts';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -68,22 +69,20 @@ export default function TopicsScreen() {
     };
 
     const handleResetProgress = () => {
-        Alert.alert(
-            'Reset All Progress',
-            'Are you sure you want to reset all your progress? This cannot be undone.',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Reset',
-                    style: 'destructive',
-                    onPress: async () => {
-                        const freshStats = await resetStats();
-                        setStats(freshStats);
-                        setIsMenuOpen(false);
-                    }
-                }
-            ]
-        );
+        const performReset = async () => {
+            const freshStats = await resetStats();
+            setStats(freshStats);
+            setIsMenuOpen(false);
+        };
+
+        showConfirm({
+            title: 'Reset All Progress',
+            message: 'Are you sure you want to reset all your progress? Achievements will not be cleared.',
+            confirmText: 'Reset',
+            cancelText: 'Cancel',
+            isDestructive: true,
+            onConfirm: performReset,
+        });
     };
 
     const getTopicColor = (imageName: string) => {
