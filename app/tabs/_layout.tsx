@@ -51,7 +51,7 @@ export default function TabLayout() {
                 tabBarShowLabel: false, // We render label inside icon
                 tabBarStyle: {
                     position: 'absolute',
-                    bottom: 25,
+                    bottom: 18,
                     left: 20,
                     right: 20,
                     backgroundColor: 'transparent',
