@@ -8,31 +8,33 @@ function TabBarIcon({ name, focused, label }: { name: React.ComponentProps<typeo
     const { colors, typography } = useTheme();
 
     return (
-        <View style={{ alignItems: 'center', justifyContent: 'center', top: Platform.OS === 'ios' ? 10 : 0 }}>
+        <View style={{
+            alignItems: 'center',
+            justifyContent: 'center',
+            top: 10, // Push down slightly
+        }}>
             <View style={{
                 flexDirection: 'row',
                 alignItems: 'center',
-                paddingVertical: 8,
-                paddingHorizontal: 16,
-                borderRadius: 20,
-                backgroundColor: focused ? (colors.primary + '15') : 'transparent', // 15% opacity primary
+                justifyContent: 'center',
+                width: 60,
+                height: 60,
+                borderRadius: 30,
+                backgroundColor: colors.surface, // Individual card background
+                // Shadow for the button
+                shadowColor: '#000',
+                shadowOffset: { width: 0, height: 4 },
+                shadowOpacity: 0.15,
+                shadowRadius: 8,
+                elevation: 4,
             }}>
                 <FontAwesome
                     name={name}
-                    size={20}
+                    size={24}
                     color={focused ? colors.primary : colors.textSecondary}
                 />
-                {focused && (
-                    <Text style={{
-                        color: colors.primary,
-                        marginLeft: 8,
-                        fontWeight: '600',
-                        fontSize: 12
-                    }}>
-                        {label}
-                    </Text>
-                )}
             </View>
+            {/* Optional: Small label below the bubble if desired, or keep clean */}
         </View>
     );
 }
@@ -52,16 +54,11 @@ export default function TabLayout() {
                     bottom: 25,
                     left: 20,
                     right: 20,
-                    elevation: 5,
-                    backgroundColor: colors.surface,
-                    borderRadius: 25,
-                    height: 70,
+                    backgroundColor: 'transparent',
+                    elevation: 0,
+                    height: 80,
+                    borderRadius: 0,
                     borderTopWidth: 0,
-                    // Shadow for iOS
-                    shadowColor: '#000',
-                    shadowOffset: { width: 0, height: 4 },
-                    shadowOpacity: 0.15,
-                    shadowRadius: 10,
                     paddingBottom: 0,
                 }
             }}>
@@ -98,6 +95,6 @@ export default function TabLayout() {
                     tabBarIcon: ({ focused }) => <TabBarIcon name="user" focused={focused} label="Profile" />,
                 }}
             />
-        </Tabs>
+        </Tabs >
     );
 }

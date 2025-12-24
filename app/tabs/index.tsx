@@ -163,7 +163,7 @@ export default function TopicsScreen() {
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <LinearGradient
                 colors={colors.headerGradient}
-                style={[styles.headerBackground, { paddingTop: 60, paddingBottom: 50, paddingHorizontal: spacing.lg, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
+                style={[styles.headerBackground, { paddingTop: 40, paddingBottom: 30, paddingHorizontal: spacing.lg, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
             >
                 <View style={styles.headerRow}>
                     <View>
@@ -242,7 +242,7 @@ export default function TopicsScreen() {
                     title={selectedTopic ? `${selectedTopic.title} Progress` : 'Your Progress'}
                 />
 
-                <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.sm, marginTop: spacing.md, marginBottom: spacing.sm }]}>SELECT TOPIC:</Text>
+                <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.sm, marginTop: spacing.lg, marginBottom: spacing.sm }]}>SELECT TOPIC:</Text>
 
                 <Hoverable
                     style={({ hovered }) => [
@@ -384,7 +384,7 @@ export default function TopicsScreen() {
                     </Hoverable>
                 )}
 
-                <View style={{ height: 100 }} />
+                <View style={{ height: 130 }} />
             </ScrollView>
 
             {/* Info Card Overlay */}
@@ -524,7 +524,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     scrollContent: {
-        paddingTop: 20,
+        paddingTop: 30,
     },
     sectionTitle: {
         fontWeight: '700',

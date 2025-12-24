@@ -179,7 +179,7 @@ export default function AchievementsScreen() {
                         />
                     ))}
                 </View>
-                <View style={{ height: 40 }} />
+                <View style={{ height: 130 }} />
             </ScrollView>
         </View>
     );

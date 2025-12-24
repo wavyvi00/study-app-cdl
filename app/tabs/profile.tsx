@@ -235,7 +235,7 @@ export default function ProfileScreen() {
     return (
         <ScrollView
             style={[styles.container, { paddingTop: insets.top + 20 }]}
-            contentContainerStyle={{ paddingBottom: 40 }}
+            contentContainerStyle={{ paddingBottom: 130 }}
             keyboardShouldPersistTaps="handled"
         >
             <View style={[styles.header, { justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }]}>
