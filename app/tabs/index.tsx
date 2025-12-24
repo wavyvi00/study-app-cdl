@@ -250,34 +250,49 @@ export default function TopicsScreen() {
                                 ]}
                                 padding="md"
                             >
-                                <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md }}>
+                                <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: spacing.md }}>
                                     <View style={[styles.iconBox, { backgroundColor: getTopicColor(selectedTopic.image) }]}>
                                         <FontAwesome name={getTopicIcon(selectedTopic.id)} size={20} color="#FFFFFF" />
                                     </View>
-                                    <View style={{ marginLeft: spacing.md }}>
-                                        <Text style={[styles.topicCardTitle, { color: colors.text, fontSize: typography.lg }]}>{selectedTopic.title}</Text>
-                                        <Text style={[styles.topicCardSubtitle, { color: colors.textSecondary }]}>{selectedTopic.questions.length} questions available</Text>
+                                    <View style={{ marginLeft: spacing.md, flex: 1 }}>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <Text style={[styles.topicCardTitle, { color: colors.text, fontSize: typography.lg }]}>{selectedTopic.title}</Text>
+                                            <TouchableOpacity
+                                                onPress={() => Alert.alert(selectedTopic.title, selectedTopic.details || 'No details available.', [{ text: 'Close' }])}
+                                                style={{ padding: 8, opacity: 0.6 }}
+                                            >
+                                                <FontAwesome name="ellipsis-h" size={16} color={colors.textSecondary} />
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Text style={[styles.topicCardSubtitle, { color: colors.textSecondary, marginTop: 4 }]}>
+                                            {selectedTopic.summary || 'Essential CDL knowledge.'}
+                                        </Text>
                                     </View>
                                 </View>
 
                                 <View style={styles.actionRow}>
                                     <Button
                                         title="Study Guide"
+                                        variant="secondary"
                                         onPress={() => router.push({ pathname: '/study', params: { topicId: selectedTopic.id } })}
-                                        style={{ flex: 1, marginRight: spacing.sm }}
-                                        icon={<FontAwesome name="book" size={14} color='#FFFFFF' style={{ marginRight: 8 }} />}
+                                        style={{ flex: 1, marginRight: 8, height: 42, borderRadius: 12 }}
+                                        textStyle={{ fontSize: 13, fontWeight: '600' }}
+                                        icon={<FontAwesome name="book" size={12} color={colors.primary} style={{ marginRight: 6 }} />}
                                     />
                                     <Button
                                         title="Practice"
                                         variant="outline"
                                         onPress={() => startQuiz(selectedTopic.id, 'practice')}
-                                        style={{ flex: 1, marginHorizontal: spacing.xs }}
+                                        style={{ flex: 1, marginRight: 8, height: 42, borderRadius: 12, borderColor: colors.border }}
+                                        textStyle={{ fontSize: 13, fontWeight: '600', color: colors.textSecondary }}
                                     />
                                     <Button
                                         title="Exam"
-                                        variant="accent"
+                                        variant="outline"
                                         onPress={() => startQuiz(selectedTopic.id, 'exam')}
-                                        style={{ flex: 1, marginLeft: spacing.sm }}
+                                        style={{ flex: 1, height: 42, borderRadius: 12, borderColor: colors.border }}
+                                        textStyle={{ fontSize: 13, fontWeight: '600', color: colors.error }}
+                                        icon={<FontAwesome name="clock-o" size={12} color={colors.error} style={{ marginRight: 6 }} />}
                                     />
                                 </View>
                             </Card>
