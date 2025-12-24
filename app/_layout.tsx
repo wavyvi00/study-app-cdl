@@ -5,6 +5,7 @@ import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { View } from 'react-native';
+import { Analytics } from '@vercel/analytics/react';
 
 import { ThemeProvider, useTheme } from '../context/ThemeContext';
 import { LocalizationProvider } from '../context/LocalizationContext';
@@ -51,6 +52,7 @@ function AppContent({ fontsLoaded }: { fontsLoaded: boolean }) {
             {!isSplashFinished && (
                 <EntryScreen onFinish={() => setIsSplashFinished(true)} />
             )}
+            <Analytics />
         </View>
     );
 }
