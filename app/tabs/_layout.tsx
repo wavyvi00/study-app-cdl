@@ -1,6 +1,7 @@
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { Tabs } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
+import { useLocalization } from '../../context/LocalizationContext';
 import { View, Text, Platform, StyleSheet } from 'react-native';
 
 // Custom Tab Icon Component with "Pill" design
@@ -41,6 +42,7 @@ function TabBarIcon({ name, focused, label }: { name: React.ComponentProps<typeo
 
 export default function TabLayout() {
     const { colors, isDark } = useTheme();
+    const { t } = useLocalization();
 
     return (
         <Tabs
@@ -60,20 +62,20 @@ export default function TabLayout() {
                     borderRadius: 0,
                     borderTopWidth: 0,
                     paddingBottom: 0,
-                }
+                },
             }}>
             <Tabs.Screen
                 name="index"
                 options={{
-                    title: 'Topics',
-                    tabBarIcon: ({ focused }) => <TabBarIcon name="list" focused={focused} label="Topics" />,
+                    title: t('topics'),
+                    tabBarIcon: ({ focused }) => <TabBarIcon name="list" focused={focused} label={t('topics')} />,
                 }}
             />
             <Tabs.Screen
                 name="achievements"
                 options={{
-                    title: 'Awards',
-                    tabBarIcon: ({ focused }) => <TabBarIcon name="trophy" focused={focused} label="Awards" />,
+                    title: t('awards'),
+                    tabBarIcon: ({ focused }) => <TabBarIcon name="trophy" focused={focused} label={t('awards')} />,
                 }}
             />
             <Tabs.Screen
@@ -91,8 +93,8 @@ export default function TabLayout() {
             <Tabs.Screen
                 name="profile"
                 options={{
-                    title: 'Profile',
-                    tabBarIcon: ({ focused }) => <TabBarIcon name="user" focused={focused} label="Profile" />,
+                    title: t('profile'),
+                    tabBarIcon: ({ focused }) => <TabBarIcon name="user" focused={focused} label={t('profile')} />,
                 }}
             />
         </Tabs >

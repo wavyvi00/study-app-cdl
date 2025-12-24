@@ -269,6 +269,8 @@ export default function QuizScreen() {
         );
     }
 
+
+
     if (questionOrder.length === 0) return null; // Wait for init
 
     const currentQuestionIndex = questionOrder[currentIndex];
@@ -285,7 +287,7 @@ export default function QuizScreen() {
             const { savePracticeSession } = await import('../data/stats');
             savePracticeSession({
                 topicId: topicId as string,
-                questionIds: questions.map(q => q.id),
+                questionIds: questions.map(q => q.id), // Always use original IDs
                 currentIndex: newIndex,
                 score: newScore,
                 wrongAnswers: newWrong.map(w => ({ questionId: w.question.id, selectedIndex: w.selectedIndex })),
