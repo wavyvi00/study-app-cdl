@@ -16,6 +16,7 @@
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-native-community/netinfo": "^11.4.1",
     "@supabase/supabase-js": "^2.87.3",
+    "@vercel/analytics": "^1.4.0",
     "@types/crypto-js": "^4.2.2",
     "crypto-js": "^4.2.0",
     "expo": "~54.0.29",
