@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Question } from '../data/mock';
 import { useQuestions } from '../context/QuestionsContext';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '../utils/haptics';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
 import { recordQuizResult, logActivityStart } from '../data/stats';
@@ -177,6 +177,19 @@ export default function QuizScreen() {
         return () => clearInterval(interval);
     }, [mode, isFinished]);
 
+    // Handle Quit (Finish early)
+    const handleQuit = () => {
+        // If we haven't answered anything, just exit
+        if (currentIndex === 0 && selectedOption === null) {
+            router.back();
+            return;
+        }
+
+        // Show simplified alert or just finish
+        // For 'Study App' flow, just finishing is cleanest.
+        setIsFinished(true);
+    };
+
     // Record results when finished
     useEffect(() => {
         if (isFinished && !hasRecordedRef.current && questions.length > 0) {
@@ -184,34 +197,47 @@ export default function QuizScreen() {
 
             // CHECK FOR TIMEOUT SUBMISSION
             let finalScore = score;
-            let currentWrong = wrongAnswers;
+            let finalWrong = [...wrongAnswers];
 
-            // If we timed out and had a selection, count it
+            // If we timed out (or quit?) and had a selection, count it
+            // Note: If I Quit, I might have a selected option?
+            // If I selected but didn't submit, should it count? 
+            // Usually 'Next' submits. 'Quit' abandons current question?
+            // Let's assume 'Quit' abandons the *current* unfinished question unless time ran out.
+            // If time ran out (timeLeft <= 0), we force submit.
+            // If voluntary quit, we ignore current selection.
+
             if (timeLeft <= 0 && selectedOption !== null && questions[currentIndex]) {
                 const currentQ = questions[currentIndex];
                 const isCorrect = selectedOption === currentQ.correctIndex;
 
                 if (isCorrect) {
                     finalScore += 1;
-                    setScore(s => s + 1);
                 } else {
-                    setWrongAnswers(prev => {
-                        const updated = [...prev, {
-                            question: currentQ,
-                            selectedIndex: selectedOption
-                        }];
-                        currentWrong = updated;
-                        return updated;
+                    finalWrong.push({
+                        question: currentQ,
+                        selectedIndex: selectedOption
                     });
                 }
             }
 
-            const percentage = (finalScore / questions.length) * 100;
-            const passed = percentage >= APP_CONFIG.PASSING_SCORE_PERCENTAGE;
+            // Calculate Stats based on ANSWERED questions, not TOTAL
+            const answeredCount = finalScore + finalWrong.length;
+
+            // Accuracy percentage (based on what was answered)
+            // If 0 answered, 0%
+            const accuracyPercentage = answeredCount > 0
+                ? (finalScore / answeredCount) * 100
+                : 0;
+
+            // Completion percentage (for UI 'Pass/Fail')
+            const completionPercentage = (finalScore / questions.length) * 100;
+            // const passed = completionPercentage >= APP_CONFIG.PASSING_SCORE_PERCENTAGE; 
+            // (We stick to passed logic based on strict completion for "Exam" feel, but stats use accuracy)
 
             recordQuizResult(
-                percentage,
-                questions.length,
+                accuracyPercentage, // Use ACCURACY for stats (average score)
+                answeredCount,      // Use ACTUAL COUNT for total questions stats
                 mode === 'exam',
                 topicId
             ).then(result => {
@@ -295,7 +321,7 @@ export default function QuizScreen() {
         }
 
         if (isLastQuestion) {
-            setIsFinished(true);
+            setIsFinished(true); // Triggers recording
         } else {
             const nextIndex = currentIndex + 1;
             setCurrentIndex(nextIndex);
@@ -331,6 +357,7 @@ export default function QuizScreen() {
     };
 
     if (isFinished) {
+        // Calculate based on ALL questions for UI "Grade"
         const percentage = (score / questions.length) * 100;
         const passed = percentage >= APP_CONFIG.PASSING_SCORE_PERCENTAGE;
 
@@ -441,7 +468,7 @@ export default function QuizScreen() {
             <Stack.Screen options={{ headerShown: false }} />
 
             <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border, paddingTop: insets.top + 12, paddingBottom: 12 }]}>
-                <TouchableOpacity onPress={() => router.back()} style={styles.quitButton}>
+                <TouchableOpacity onPress={handleQuit} style={styles.quitButton}>
                     <FontAwesome name="arrow-left" size={18} color={colors.textSecondary} />
                     <Text style={[styles.quitText, { color: colors.textSecondary }]}>Quit</Text>
                 </TouchableOpacity>
@@ -503,6 +530,13 @@ export default function QuizScreen() {
                                 activeOpacity={0.8}
                                 onPress={() => handleOptionPress(index)}
                                 disabled={isPractice && selectedOption !== null}
+                                accessibilityRole="radio"
+                                accessibilityLabel={`Answer ${String.fromCharCode(65 + index)}: ${option}`}
+                                accessibilityState={{
+                                    checked: isSelected,
+                                    disabled: isPractice && selectedOption !== null
+                                }}
+                                accessibilityHint={isSelected && isPractice && isCorrect ? "Correct answer" : isSelected && isPractice && !isCorrect ? "Incorrect answer" : "Double tap to select this answer"}
                             >
                                 <Card style={[styles.optionCard, cardStyle]} padding="md">
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -520,6 +554,13 @@ export default function QuizScreen() {
                                             )}
                                         </View>
                                         <Text style={[{ fontSize: 16, flex: 1 }, textStyle]}>{option}</Text>
+                                        {/* Additional visual indicator for correct/incorrect */}
+                                        {isSelected && isPractice && isCorrect && (
+                                            <FontAwesome name="check-circle" size={20} color={colors.success} style={{ marginLeft: 8 }} />
+                                        )}
+                                        {isSelected && isPractice && !isCorrect && (
+                                            <FontAwesome name="times-circle" size={20} color={colors.error} style={{ marginLeft: 8 }} />
+                                        )}
                                     </View>
                                 </Card>
                             </TouchableOpacity>
@@ -527,14 +568,16 @@ export default function QuizScreen() {
                     })}
                 </View>
 
-                {isPractice && selectedOption !== null && !!currentQuestion.explanation && (
-                    <View style={[styles.explanationBox, { backgroundColor: colors.background, borderLeftColor: colors.primary, borderLeftWidth: 4, padding: spacing.md, marginTop: spacing.lg, borderRadius: radius.md }]}>
-                        <Text style={{ fontWeight: 'bold', color: colors.text, marginBottom: 4 }}>Explanation:</Text>
-                        <Text style={{ color: colors.textSecondary, lineHeight: 22 }}>{currentQuestion.explanation}</Text>
-                    </View>
-                )}
+                {
+                    isPractice && selectedOption !== null && !!currentQuestion.explanation && (
+                        <View style={[styles.explanationBox, { backgroundColor: colors.background, borderLeftColor: colors.primary, borderLeftWidth: 4, padding: spacing.md, marginTop: spacing.lg, borderRadius: radius.md }]}>
+                            <Text style={{ fontWeight: 'bold', color: colors.text, marginBottom: 4 }}>Explanation:</Text>
+                            <Text style={{ color: colors.textSecondary, lineHeight: 22 }}>{currentQuestion.explanation}</Text>
+                        </View>
+                    )
+                }
 
-            </ScrollView>
+            </ScrollView >
 
             <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border, paddingBottom: insets.bottom + 20 }]}>
                 <View style={styles.footerButtons}>
@@ -555,7 +598,7 @@ export default function QuizScreen() {
                     />
                 </View>
             </View>
-        </View>
+        </View >
     );
 }
 

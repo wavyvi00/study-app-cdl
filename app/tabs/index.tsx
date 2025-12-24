@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Switch, Alert, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Switch, ActivityIndicator } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { Topic } from '../../data/mock';
@@ -13,6 +13,10 @@ import { useTheme } from '../../context/ThemeContext';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
+import Hoverable from '../../components/ui/Hoverable';
+import SubscriptionCard from '../../components/SubscriptionCard';
+import { showConfirm } from '../../utils/alerts';
+import { getPendingEmails, isSubscriptionDismissed, markSubscriptionDismissed } from '../../data/supabase';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -26,16 +30,52 @@ export default function TopicsScreen() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
+    const [infoTopic, setInfoTopic] = useState<Topic | null>(null);
+    const [showSubscriptionPopup, setShowSubscriptionPopup] = useState(false);
 
-    // Load stats whenever the screen comes into focus
+    // ... (rest of component logic remains same until return)
+
+    // Load stats and check subscription status whenever the screen comes into focus
     useFocusEffect(
         useCallback(() => {
             loadStats().then(setStats);
+            // Check if we should show subscription popup
+            Promise.all([getPendingEmails(), isSubscriptionDismissed()]).then(([emails, dismissed]) => {
+                if (emails.length === 0 && !dismissed) {
+                    setShowSubscriptionPopup(true);
+                }
+            });
         }, [])
     );
 
+    // ESC key handler for info card overlay
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && infoTopic) {
+                setInfoTopic(null);
+            }
+        };
+        if (Platform.OS === 'web') {
+            window.addEventListener('keydown', handleEsc);
+            return () => window.removeEventListener('keydown', handleEsc);
+        }
+    }, [infoTopic]);
+
+    // ESC key handler for subscription popup
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && showSubscriptionPopup) {
+                markSubscriptionDismissed();
+                setShowSubscriptionPopup(false);
+            }
+        };
+        if (Platform.OS === 'web') {
+            window.addEventListener('keydown', handleEsc);
+            return () => window.removeEventListener('keydown', handleEsc);
+        }
+    }, [showSubscriptionPopup]);
+
     // Set initial topic once loaded
-    // Set initial topic once loaded or update refreshing
     useEffect(() => {
         if (topics.length > 0) {
             if (!selectedTopic) {
@@ -66,22 +106,20 @@ export default function TopicsScreen() {
     };
 
     const handleResetProgress = () => {
-        Alert.alert(
-            'Reset All Progress',
-            'Are you sure you want to reset all your progress? This cannot be undone.',
-            [
-                { text: 'Cancel', style: 'cancel' },
-                {
-                    text: 'Reset',
-                    style: 'destructive',
-                    onPress: async () => {
-                        const freshStats = await resetStats();
-                        setStats(freshStats);
-                        setIsMenuOpen(false);
-                    }
-                }
-            ]
-        );
+        const performReset = async () => {
+            const freshStats = await resetStats();
+            setStats(freshStats);
+            setIsMenuOpen(false);
+        };
+
+        showConfirm({
+            title: 'Reset All Progress',
+            message: 'Are you sure you want to reset all your progress? Achievements will not be cleared.',
+            confirmText: 'Reset',
+            cancelText: 'Cancel',
+            isDestructive: true,
+            onConfirm: performReset,
+        });
     };
 
     const getTopicColor = (imageName: string) => {
@@ -125,12 +163,13 @@ export default function TopicsScreen() {
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <LinearGradient
                 colors={colors.headerGradient}
-                style={[styles.headerBackground, { paddingTop: 60, paddingBottom: 40, paddingHorizontal: spacing.lg, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
+                style={[styles.headerBackground, { paddingTop: 60, paddingBottom: 50, paddingHorizontal: spacing.lg, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
             >
                 <View style={styles.headerRow}>
                     <View>
-                        <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]}>Study Topics</Text>
-                        <Text style={[styles.headerSubtitle, { color: 'rgba(255,255,255,0.8)', fontSize: typography.md }]}>Choose a subject to master</Text>
+                        <Text style={styles.headerLabel}>OFFICIAL CDL PREPARATION</Text>
+                        <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]}>STUDY CENTER</Text>
+                        <Text style={[styles.headerSubtitle, { color: 'rgba(255,255,255,0.85)', fontSize: typography.md }]}>Prepare. Practice. Pass.</Text>
                     </View>
                     <TouchableOpacity
                         onPress={() => setIsMenuOpen(!isMenuOpen)}
@@ -148,33 +187,47 @@ export default function TopicsScreen() {
                             style={[styles.menuItem, { borderBottomColor: colors.border }]}
                             onPress={() => {
                                 setIsMenuOpen(false);
-                                router.push('/privacy'); // Adjust if route doesn't exist, but per original it might
+                                router.push('/privacy');
                             }}
+                            accessibilityRole="button"
+                            accessibilityLabel="Privacy Policy"
+                            accessibilityHint="Double tap to view privacy policy"
                         >
                             <FontAwesome name="shield" size={16} color={colors.textSecondary} style={styles.menuIcon} />
                             <Text style={[styles.menuText, { color: colors.text }]}>Privacy Policy</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={[styles.menuItem, { borderBottomColor: colors.border }]}
-                            onPress={toggleTheme}
+                        <View
+                            accessible={true}
+                            accessibilityRole="switch"
+                            accessibilityLabel="Theme mode"
+                            accessibilityValue={{ text: isDark ? 'Dark mode enabled' : 'Light mode enabled' }}
+                            accessibilityHint="Double tap to toggle between light and dark mode"
                         >
-                            <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={colors.textSecondary} style={styles.menuIcon} />
-                            <Text style={[styles.menuText, { color: colors.text }]}>{isDark ? 'Dark Mode' : 'Light Mode'}</Text>
-                            <View pointerEvents="none">
-                                <Switch
-                                    value={isDark}
-                                    onValueChange={toggleTheme}
-                                    trackColor={{ false: "#767577", true: colors.secondary }}
-                                    thumbColor={isDark ? colors.highlight : "#f4f3f4"}
-                                    style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
-                                />
-                            </View>
-                        </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.menuItem, { borderBottomColor: colors.border }]}
+                                onPress={toggleTheme}
+                            >
+                                <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                                <Text style={[styles.menuText, { color: colors.text }]}>{isDark ? 'Dark Mode' : 'Light Mode'}</Text>
+                                <View pointerEvents="none">
+                                    <Switch
+                                        value={isDark}
+                                        onValueChange={toggleTheme}
+                                        trackColor={{ false: "#767577", true: colors.secondary }}
+                                        thumbColor={isDark ? colors.highlight : "#f4f3f4"}
+                                        style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        </View>
 
                         <TouchableOpacity
                             style={[styles.menuItem, { borderBottomWidth: 0 }]}
                             onPress={handleResetProgress}
+                            accessibilityRole="button"
+                            accessibilityLabel="Reset Progress"
+                            accessibilityHint="Double tap to reset all your progress data"
                         >
                             <FontAwesome name="refresh" size={16} color={colors.error} style={styles.menuIcon} />
                             <Text style={[styles.menuText, { color: colors.error }]}>Reset Progress</Text>
@@ -185,14 +238,25 @@ export default function TopicsScreen() {
 
             <ScrollView contentContainerStyle={[styles.scrollContent, { padding: spacing.lg }]}>
                 <StatsOverview
-                    stats={stats}
+                    stats={selectedTopic ? (stats.topicStats[selectedTopic.id] || INITIAL_TOPIC_STATS) : stats}
+                    title={selectedTopic ? `${selectedTopic.title} Progress` : 'Your Progress'}
                 />
 
-                <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.sm, marginTop: spacing.xl, marginBottom: spacing.md }]}>SELECT TOPIC:</Text>
+                <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.sm, marginTop: spacing.md, marginBottom: spacing.sm }]}>SELECT TOPIC:</Text>
 
-                <TouchableOpacity
-                    style={[styles.dropdownButton, { backgroundColor: colors.surface, borderColor: colors.border }]}
+                <Hoverable
+                    style={({ hovered }) => [
+                        styles.dropdownButton,
+                        {
+                            backgroundColor: colors.surface,
+                            borderColor: hovered ? colors.primary : colors.border
+                        }
+                    ]}
                     onPress={toggleDropdown}
+                    accessibilityRole="button"
+                    accessibilityLabel={selectedTopic ? `Selected topic: ${selectedTopic.title}` : "Select a topic"}
+                    accessibilityHint="Double tap to open topic selector"
+                    accessibilityState={{ expanded: isDropdownOpen }}
                 >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <View style={[styles.dot, { backgroundColor: selectedTopic ? getTopicColor(selectedTopic.image) : colors.primary }]} />
@@ -200,66 +264,191 @@ export default function TopicsScreen() {
                             {selectedTopic ? selectedTopic.title : "Select a Topic"}
                         </Text>
                     </View>
-                    <FontAwesome name={isDropdownOpen ? "chevron-up" : "chevron-down"} size={14} color={colors.textSecondary} />
-                </TouchableOpacity>
+                    <FontAwesome name={isDropdownOpen ? "chevron-up" : "chevron-down"} size={12} color={colors.textSecondary} />
+                </Hoverable>
 
                 {isDropdownOpen && (
                     <View style={[styles.dropdownList, { backgroundColor: colors.surface, borderColor: colors.border }]}>
                         {topics.map((topic) => (
-                            <TouchableOpacity
+                            <Hoverable
                                 key={topic.id}
-                                style={[styles.dropdownItem, { borderBottomColor: colors.border }]}
+                                style={({ hovered }) => [
+                                    styles.dropdownItem,
+                                    {
+                                        borderBottomColor: colors.border,
+                                        backgroundColor: hovered ? (isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.03)') : 'transparent'
+                                    }
+                                ]}
                                 onPress={() => handleSelectTopic(topic)}
+                                accessibilityRole="radio"
+                                accessibilityLabel={topic.title}
+                                accessibilityState={{ checked: selectedTopic?.id === topic.id }}
+                                accessibilityHint="Double tap to select this topic"
                             >
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <View style={[styles.dot, { backgroundColor: getTopicColor(topic.image), marginRight: 12 }]} />
                                     <Text style={[styles.dropdownItemText, { color: colors.text }]}>{topic.title}</Text>
                                 </View>
                                 {selectedTopic?.id === topic.id && (
-                                    <FontAwesome name="check" size={14} color={colors.primary} />
+                                    <FontAwesome name="check" size={12} color={colors.primary} />
                                 )}
-                            </TouchableOpacity>
+                            </Hoverable>
                         ))}
                     </View>
                 )}
 
                 {selectedTopic && (
-                    <Card style={{ marginTop: spacing.xl }} padding="lg">
-                        <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md }}>
-                            <View style={[styles.iconBox, { backgroundColor: getTopicColor(selectedTopic.image) }]}>
-                                <FontAwesome name={getTopicIcon(selectedTopic.id)} size={20} color="#FFFFFF" />
-                            </View>
-                            <View style={{ marginLeft: spacing.md }}>
-                                <Text style={[styles.topicCardTitle, { color: colors.text, fontSize: typography.lg }]}>{selectedTopic.title}</Text>
-                                <Text style={[styles.topicCardSubtitle, { color: colors.textSecondary }]}>{selectedTopic.questions.length} questions available</Text>
-                            </View>
-                        </View>
+                    <Hoverable style={{ marginTop: spacing.lg }}>
+                        {({ hovered }) => (
+                            <Card
+                                style={[
+                                    styles.topicCard,
+                                    hovered && {
+                                        transform: [{ translateY: -2 }],
+                                        shadowOpacity: isDark ? 0.35 : 0.12
+                                    }
+                                ]}
+                                padding="md"
+                            >
+                                <View style={{ flexDirection: 'row', alignItems: 'flex-start', marginBottom: spacing.md }}>
+                                    <View style={[styles.iconBox, { backgroundColor: getTopicColor(selectedTopic.image) }]}>
+                                        <FontAwesome name={getTopicIcon(selectedTopic.id)} size={20} color="#FFFFFF" />
+                                    </View>
+                                    <View style={{ marginLeft: spacing.md, flex: 1 }}>
+                                        <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+                                            <Text style={[styles.topicCardTitle, { color: colors.text, fontSize: typography.lg }]}>{selectedTopic.title}</Text>
+                                            <TouchableOpacity
+                                                onPress={() => setInfoTopic(selectedTopic)}
+                                                style={{ padding: 12, minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}
+                                                accessibilityRole="button"
+                                                accessibilityLabel={`More information about ${selectedTopic.title}`}
+                                                accessibilityHint="Double tap to view topic details"
+                                            >
+                                                <FontAwesome name="ellipsis-h" size={16} color={colors.textSecondary} />
+                                            </TouchableOpacity>
+                                        </View>
+                                        <Text style={[styles.topicCardSubtitle, { color: colors.textSecondary, marginTop: 4 }]}>
+                                            {selectedTopic.summary || 'Essential CDL knowledge.'}
+                                        </Text>
+                                    </View>
+                                </View>
 
-                        <View style={styles.actionRow}>
-                            <Button
-                                title="Study Guide"
-                                onPress={() => router.push({ pathname: '/study', params: { topicId: selectedTopic.id } })}
-                                style={{ flex: 1, marginRight: spacing.sm }}
-                                icon={<FontAwesome name="book" size={16} color='#FFFFFF' style={{ marginRight: 8 }} />}
-                            />
-                            <Button
-                                title="Practice"
-                                variant="outline"
-                                onPress={() => startQuiz(selectedTopic.id, 'practice')}
-                                style={{ flex: 1, marginHorizontal: spacing.xs }}
-                            />
-                            <Button
-                                title="Exam"
-                                variant="accent"
-                                onPress={() => startQuiz(selectedTopic.id, 'exam')}
-                                style={{ flex: 1, marginLeft: spacing.sm }}
-                            />
-                        </View>
-                    </Card>
+                                {stats.questionsAnswered < 10 && (
+                                    <View style={{
+                                        backgroundColor: isDark ? 'rgba(33, 150, 243, 0.1)' : 'rgba(33, 150, 243, 0.08)',
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 12,
+                                        borderRadius: 8,
+                                        marginBottom: spacing.sm,
+                                        borderLeftWidth: 3,
+                                        borderLeftColor: colors.primary
+                                    }}>
+                                        <Text style={{
+                                            fontSize: 12,
+                                            color: colors.primary,
+                                            fontWeight: '600',
+                                            lineHeight: 16
+                                        }}>
+                                            💡 New here? Try Practice first to learn as you go.
+                                        </Text>
+                                    </View>
+                                )}
+
+                                <View style={styles.actionRow}>
+                                    <Button
+                                        title="Study Guide"
+                                        variant="outline"
+                                        onPress={() => router.push({ pathname: '/study', params: { topicId: selectedTopic.id } })}
+                                        style={{ flex: 1, marginRight: 8, height: 42, borderRadius: 12, borderColor: colors.primary, borderWidth: 1.5 }}
+                                        textStyle={{ fontSize: 13, fontWeight: '600', color: colors.primary }}
+                                        icon={<FontAwesome name="book" size={12} color={colors.primary} style={{ marginRight: 6 }} />}
+                                    />
+                                    <Button
+                                        title="Practice"
+                                        variant="outline"
+                                        onPress={() => startQuiz(selectedTopic.id, 'practice')}
+                                        style={{ flex: 1, marginRight: 8, height: 42, borderRadius: 12, borderColor: colors.border }}
+                                        textStyle={{ fontSize: 13, fontWeight: '600', color: colors.textSecondary }}
+                                    />
+                                    <Button
+                                        title="Exam"
+                                        variant="outline"
+                                        onPress={() => startQuiz(selectedTopic.id, 'exam')}
+                                        style={{ flex: 1, height: 42, borderRadius: 12, borderColor: colors.border }}
+                                        textStyle={{ fontSize: 13, fontWeight: '600', color: colors.error }}
+                                        icon={<FontAwesome name="clock-o" size={12} color={colors.error} style={{ marginRight: 6 }} />}
+                                    />
+                                </View>
+                            </Card>
+                        )}
+                    </Hoverable>
                 )}
 
                 <View style={{ height: 100 }} />
             </ScrollView>
+
+            {/* Info Card Overlay */}
+            {infoTopic && (
+                <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }]}>
+                    <TouchableOpacity
+                        style={StyleSheet.absoluteFill}
+                        activeOpacity={1}
+                        onPress={() => setInfoTopic(null)}
+                    />
+                    <View style={{
+                        width: '85%',
+                        backgroundColor: colors.surface,
+                        borderRadius: 24,
+                        padding: 24,
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 8 },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 16,
+                        elevation: 10
+                    }}>
+                        <View style={{ alignItems: 'center', marginBottom: 20 }}>
+                            <View style={[styles.iconBox, { backgroundColor: getTopicColor(infoTopic.image), width: 64, height: 64, borderRadius: 20, marginBottom: 16 }]}>
+                                <FontAwesome name={getTopicIcon(infoTopic.id)} size={32} color="#FFFFFF" />
+                            </View>
+                            <Text style={{ fontSize: 20, fontWeight: '700', color: colors.text, textAlign: 'center', marginBottom: 8 }}>{infoTopic.title}</Text>
+                            <Text style={{ fontSize: 14, color: colors.textSecondary, textAlign: 'center', fontStyle: 'italic' }}>{infoTopic.summary}</Text>
+                        </View>
+
+                        <View style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#F5F5F7', padding: 16, borderRadius: 16, marginBottom: 24 }}>
+                            <Text style={{ fontSize: 15, color: colors.text, lineHeight: 22, textAlign: 'center' }}>
+                                {infoTopic.details || "This topic covers essential knowledge for the Commercial Driver's License test. Study the materials carefully before attempting the exam."}
+                            </Text>
+                        </View>
+
+                        <Button
+                            title="Close"
+                            variant="primary"
+                            onPress={() => setInfoTopic(null)}
+                            style={{ width: '100%', borderRadius: 16, height: 50 }}
+                        />
+                    </View>
+                </View>
+            )}
+
+            {/* Subscription Popup */}
+            {showSubscriptionPopup && (
+                <View style={{
+                    position: 'absolute',
+                    bottom: 100,
+                    left: spacing.lg,
+                    right: spacing.lg,
+                    zIndex: 900,
+                }}>
+                    <SubscriptionCard
+                        showCloseButton
+                        onClose={() => {
+                            markSubscriptionDismissed();
+                            setShowSubscriptionPopup(false);
+                        }}
+                        onSuccess={() => setShowSubscriptionPopup(false)}
+                    />
+                </View>
+            )}
         </View>
     );
 }
@@ -275,10 +464,10 @@ const styles = StyleSheet.create({
     headerBackground: {
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.1,
-        shadowRadius: 10,
-        elevation: 5,
-        marginBottom: -20, // Overlap effect
+        shadowOpacity: 0.15,
+        shadowRadius: 12,
+        elevation: 6,
+        marginBottom: 0,
         zIndex: 1,
     },
     headerRow: {
@@ -286,12 +475,23 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         alignItems: 'flex-start',
     },
-    headerTitle: {
-        fontWeight: '800',
+    headerLabel: {
+        color: 'rgba(255,255,255,0.7)',
+        fontSize: 11,
+        fontWeight: '600',
+        letterSpacing: 2,
         marginBottom: 4,
+        textTransform: 'uppercase',
+    },
+    headerTitle: {
+        fontWeight: '900',
+        letterSpacing: 1.5,
+        marginBottom: 6,
+        textTransform: 'uppercase',
     },
     headerSubtitle: {
-        fontWeight: '500',
+        fontWeight: '600',
+        letterSpacing: 0.5,
     },
     settingsButton: {
         width: 44,
@@ -324,19 +524,20 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     scrollContent: {
-        paddingTop: 30, // Compensate for overlap
+        paddingTop: 20,
     },
     sectionTitle: {
-        fontWeight: '600',
-        letterSpacing: 1,
+        fontWeight: '700',
+        letterSpacing: 0.8,
+        opacity: 0.7,
     },
     dropdownButton: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
         paddingHorizontal: 16,
-        paddingVertical: 14,
-        borderRadius: 12,
+        paddingVertical: 12, // Reduced from 14
+        borderRadius: 16, // Softer radius
         borderWidth: 1,
     },
     dot: {
@@ -346,16 +547,16 @@ const styles = StyleSheet.create({
         marginRight: 10,
     },
     dropdownText: {
-        fontWeight: '500',
+        fontWeight: '600',
     },
     dropdownList: {
         marginTop: 8,
-        borderRadius: 12,
+        borderRadius: 16,
         borderWidth: 1,
         overflow: 'hidden',
     },
     dropdownItem: {
-        paddingVertical: 14,
+        paddingVertical: 12, // Reduced padding
         paddingHorizontal: 16,
         borderBottomWidth: 1,
         flexDirection: 'row',
@@ -363,7 +564,17 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     dropdownItemText: {
-        fontSize: 16,
+        fontSize: 15, // Slightly smaller
+        fontWeight: '500',
+    },
+    topicCard: {
+        // Softer shadow to match progress section
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.08,
+        shadowRadius: 8,
+        elevation: 3,
+        borderRadius: 20,
     },
     topicCardTitle: {
         fontWeight: '700',
@@ -373,9 +584,9 @@ const styles = StyleSheet.create({
         marginTop: 2,
     },
     iconBox: {
-        width: 48,
-        height: 48,
-        borderRadius: 12,
+        width: 44, // Reduced from 48
+        height: 44,
+        borderRadius: 14, // Softer radius
         justifyContent: 'center',
         alignItems: 'center',
     },

@@ -7,6 +7,31 @@ export interface PendingEmail {
 }
 
 const PENDING_EMAILS_KEY = 'pending_emails';
+const SUBSCRIPTION_DISMISSED_KEY = 'subscription_popup_dismissed';
+
+/**
+ * Mark the subscription popup as dismissed
+ */
+export async function markSubscriptionDismissed(): Promise<void> {
+    try {
+        await AsyncStorage.setItem(SUBSCRIPTION_DISMISSED_KEY, 'true');
+    } catch (error) {
+        console.error('Error marking subscription dismissed:', error);
+    }
+}
+
+/**
+ * Check if the subscription popup has been dismissed
+ */
+export async function isSubscriptionDismissed(): Promise<boolean> {
+    try {
+        const value = await AsyncStorage.getItem(SUBSCRIPTION_DISMISSED_KEY);
+        return value === 'true';
+    } catch (error) {
+        console.error('Error checking subscription dismissal:', error);
+        return false;
+    }
+}
 
 /**
  * Save email locally for later sync to Supabase
@@ -45,6 +70,18 @@ export async function getPendingEmails(): Promise<PendingEmail[]> {
     } catch (error) {
         console.error('Error getting pending emails:', error);
         return [];
+    }
+}
+
+/**
+ * Replace the pending emails list (used to restore after a reset).
+ */
+export async function setPendingEmails(pending: PendingEmail[]): Promise<void> {
+    try {
+        await AsyncStorage.setItem(PENDING_EMAILS_KEY, JSON.stringify(pending));
+    } catch (error) {
+        console.error('Error setting pending emails:', error);
+        throw error;
     }
 }
 

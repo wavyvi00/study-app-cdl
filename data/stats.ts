@@ -311,6 +311,44 @@ export const saveStudyProgress = async (topicId: string, sectionIndex: number) =
 
 // Reset all stats to initial values
 export const resetStats = async (): Promise<UserStats> => {
-    await saveStats(INITIAL_STATS);
-    return INITIAL_STATS;
+    const current = await loadStats();
+    const nextStats: UserStats = {
+        ...INITIAL_STATS,
+        unlockedAchievements: current.unlockedAchievements || [],
+    };
+    await saveStats(nextStats);
+    return nextStats;
+};
+
+import { Platform } from 'react-native';
+
+/**
+ * Clear all local app data (stats, cache, and web storage).
+ */
+export const resetAllAppData = async (): Promise<UserStats> => {
+    try {
+        // 1. Get all keys and remove them
+        const keys = await AsyncStorage.getAllKeys();
+        if (keys.length > 0) {
+            await AsyncStorage.multiRemove(keys);
+        }
+
+        // 2. Clear Web Storage explicitly
+        if (Platform.OS === 'web') {
+            try {
+                localStorage.clear();
+                sessionStorage.clear();
+            } catch (e) {
+                console.warn('Failed to clear web storage:', e);
+            }
+        }
+
+        // 3. Final Clear
+        await AsyncStorage.clear();
+
+        return INITIAL_STATS;
+    } catch (error) {
+        console.error('Error resetting app data:', error);
+        return INITIAL_STATS;
+    }
 };

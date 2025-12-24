@@ -9,6 +9,7 @@ import { View } from 'react-native';
 import { ThemeProvider, useTheme } from '../context/ThemeContext';
 import { QuestionsProvider } from '../context/QuestionsContext';
 import EntryScreen from '../components/EntryScreen';
+import { startEmailSync } from '../utils/emailSync';
 
 // Prevent the splash screen from auto-hiding before asset loading is complete.
 SplashScreen.preventAutoHideAsync();
@@ -58,6 +59,9 @@ export default function RootLayout() {
         // We can load custom fonts here later
         // SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     });
+    useEffect(() => {
+        startEmailSync();
+    }, []);
 
     return (
         <ThemeProvider>
