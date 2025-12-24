@@ -171,7 +171,7 @@ export default function TopicsScreen() {
             >
                 <View style={styles.headerRow}>
                     <View>
-                        <Text style={styles.headerLabel}>OFFICIAL CDL PREPARATION</Text>
+                        <Text style={styles.headerLabel}>{t('officialCDLPreparation')}</Text>
                         <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]}>{t('appTitle')}</Text>
                         <Text style={[styles.headerSubtitle, { color: 'rgba(255,255,255,0.85)', fontSize: typography.md }]}>{t('appSubtitle')}</Text>
                     </View>
@@ -296,7 +296,7 @@ export default function TopicsScreen() {
             <ScrollView contentContainerStyle={[styles.scrollContent, { padding: spacing.lg }]}>
                 <StatsOverview
                     stats={selectedTopic ? (stats.topicStats[selectedTopic.id] || INITIAL_TOPIC_STATS) : stats}
-                    title={selectedTopic ? `${selectedTopic.title} Progress` : 'Your Progress'}
+                    title={selectedTopic ? `${selectedTopic.title} ${t('yourProgress')}` : t('yourProgress')}
                 />
 
                 <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.sm, marginTop: spacing.lg, marginBottom: spacing.sm }]}>{t('selectTopic')}</Text>
@@ -311,14 +311,14 @@ export default function TopicsScreen() {
                     ]}
                     onPress={toggleDropdown}
                     accessibilityRole="button"
-                    accessibilityLabel={selectedTopic ? `Selected topic: ${selectedTopic.title}` : "Select a topic"}
+                    accessibilityLabel={selectedTopic ? `${t('selectTopic')} ${selectedTopic.title}` : t('selectTopicDropdown')}
                     accessibilityHint="Double tap to open topic selector"
                     accessibilityState={{ expanded: isDropdownOpen }}
                 >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <View style={[styles.dot, { backgroundColor: selectedTopic ? getTopicColor(selectedTopic.image) : colors.primary }]} />
                         <Text style={[styles.dropdownText, { color: colors.text, fontSize: typography.md }]}>
-                            {selectedTopic ? selectedTopic.title : "Select a Topic"}
+                            {selectedTopic ? selectedTopic.title : t('selectTopicDropdown')}
                         </Text>
                     </View>
                     <FontAwesome name={isDropdownOpen ? "chevron-up" : "chevron-down"} size={12} color={colors.textSecondary} />
