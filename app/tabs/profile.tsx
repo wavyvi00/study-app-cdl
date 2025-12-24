@@ -115,18 +115,30 @@ export default function ProfileScreen() {
         <View style={styles.pickerSection}>
             <Text style={styles.label}>Choose Avatar</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.avatarList}>
-                {AVATARS.map((avatar) => (
-                    <TouchableOpacity
-                        key={avatar.id}
-                        style={[
-                            styles.avatarOption,
-                            selectedAvatar === avatar.id && styles.selectedAvatarOption
-                        ]}
-                        onPress={() => setSelectedAvatar(avatar.id)}
-                    >
-                        <Image source={avatar.source} style={styles.avatarImage} />
-                    </TouchableOpacity>
-                ))}
+                {AVATARS.map((avatar) => {
+                    const avatarNames: Record<string, string> = {
+                        'truck': 'Semi truck',
+                        'bus': 'Bus',
+                        'road': 'Steering wheel',
+                        'user': 'Driver'
+                    };
+                    return (
+                        <TouchableOpacity
+                            key={avatar.id}
+                            style={[
+                                styles.avatarOption,
+                                selectedAvatar === avatar.id && styles.selectedAvatarOption
+                            ]}
+                            onPress={() => setSelectedAvatar(avatar.id)}
+                            accessibilityRole="radio"
+                            accessibilityLabel={avatarNames[avatar.id] || avatar.id}
+                            accessibilityState={{ checked: selectedAvatar === avatar.id }}
+                            accessibilityHint="Double tap to select this avatar"
+                        >
+                            <Image source={avatar.source} style={styles.avatarImage} />
+                        </TouchableOpacity>
+                    );
+                })}
             </ScrollView>
         </View>
     );
@@ -143,6 +155,10 @@ export default function ProfileScreen() {
                             selectedClass === cls && styles.selectedClassOption
                         ]}
                         onPress={() => setSelectedClass(cls as 'Class A' | 'Class B')}
+                        accessibilityRole="radio"
+                        accessibilityLabel={cls}
+                        accessibilityState={{ checked: selectedClass === cls }}
+                        accessibilityHint={cls === 'Class A' ? 'Combination vehicles' : 'Single heavy vehicles'}
                     >
                         <Text style={[
                             styles.classOptionText,
@@ -168,7 +184,12 @@ export default function ProfileScreen() {
                 <View style={styles.header}>
                     <Text style={styles.headerTitle}>{isEditing ? 'Edit Profile' : 'Create Profile'}</Text>
                     {isEditing && (
-                        <TouchableOpacity onPress={() => setIsEditing(false)}>
+                        <TouchableOpacity
+                            onPress={() => setIsEditing(false)}
+                            accessibilityRole="button"
+                            accessibilityLabel="Cancel"
+                            accessibilityHint="Double tap to cancel editing"
+                        >
                             <Text style={styles.cancelText}>Cancel</Text>
                         </TouchableOpacity>
                     )}

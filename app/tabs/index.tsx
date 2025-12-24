@@ -48,6 +48,33 @@ export default function TopicsScreen() {
         }, [])
     );
 
+    // ESC key handler for info card overlay
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && infoTopic) {
+                setInfoTopic(null);
+            }
+        };
+        if (Platform.OS === 'web') {
+            window.addEventListener('keydown', handleEsc);
+            return () => window.removeEventListener('keydown', handleEsc);
+        }
+    }, [infoTopic]);
+
+    // ESC key handler for subscription popup
+    useEffect(() => {
+        const handleEsc = (e: KeyboardEvent) => {
+            if (e.key === 'Escape' && showSubscriptionPopup) {
+                markSubscriptionDismissed();
+                setShowSubscriptionPopup(false);
+            }
+        };
+        if (Platform.OS === 'web') {
+            window.addEventListener('keydown', handleEsc);
+            return () => window.removeEventListener('keydown', handleEsc);
+        }
+    }, [showSubscriptionPopup]);
+
     // Set initial topic once loaded
     useEffect(() => {
         if (topics.length > 0) {
@@ -162,31 +189,45 @@ export default function TopicsScreen() {
                                 setIsMenuOpen(false);
                                 router.push('/privacy');
                             }}
+                            accessibilityRole="button"
+                            accessibilityLabel="Privacy Policy"
+                            accessibilityHint="Double tap to view privacy policy"
                         >
                             <FontAwesome name="shield" size={16} color={colors.textSecondary} style={styles.menuIcon} />
                             <Text style={[styles.menuText, { color: colors.text }]}>Privacy Policy</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={[styles.menuItem, { borderBottomColor: colors.border }]}
-                            onPress={toggleTheme}
+                        <View
+                            accessible={true}
+                            accessibilityRole="switch"
+                            accessibilityLabel="Theme mode"
+                            accessibilityValue={{ text: isDark ? 'Dark mode enabled' : 'Light mode enabled' }}
+                            accessibilityHint="Double tap to toggle between light and dark mode"
                         >
-                            <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={colors.textSecondary} style={styles.menuIcon} />
-                            <Text style={[styles.menuText, { color: colors.text }]}>{isDark ? 'Dark Mode' : 'Light Mode'}</Text>
-                            <View pointerEvents="none">
-                                <Switch
-                                    value={isDark}
-                                    onValueChange={toggleTheme}
-                                    trackColor={{ false: "#767577", true: colors.secondary }}
-                                    thumbColor={isDark ? colors.highlight : "#f4f3f4"}
-                                    style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
-                                />
-                            </View>
-                        </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.menuItem, { borderBottomColor: colors.border }]}
+                                onPress={toggleTheme}
+                            >
+                                <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                                <Text style={[styles.menuText, { color: colors.text }]}>{isDark ? 'Dark Mode' : 'Light Mode'}</Text>
+                                <View pointerEvents="none">
+                                    <Switch
+                                        value={isDark}
+                                        onValueChange={toggleTheme}
+                                        trackColor={{ false: "#767577", true: colors.secondary }}
+                                        thumbColor={isDark ? colors.highlight : "#f4f3f4"}
+                                        style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+                                    />
+                                </View>
+                            </TouchableOpacity>
+                        </View>
 
                         <TouchableOpacity
                             style={[styles.menuItem, { borderBottomWidth: 0 }]}
                             onPress={handleResetProgress}
+                            accessibilityRole="button"
+                            accessibilityLabel="Reset Progress"
+                            accessibilityHint="Double tap to reset all your progress data"
                         >
                             <FontAwesome name="refresh" size={16} color={colors.error} style={styles.menuIcon} />
                             <Text style={[styles.menuText, { color: colors.error }]}>Reset Progress</Text>
@@ -212,6 +253,10 @@ export default function TopicsScreen() {
                         }
                     ]}
                     onPress={toggleDropdown}
+                    accessibilityRole="button"
+                    accessibilityLabel={selectedTopic ? `Selected topic: ${selectedTopic.title}` : "Select a topic"}
+                    accessibilityHint="Double tap to open topic selector"
+                    accessibilityState={{ expanded: isDropdownOpen }}
                 >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <View style={[styles.dot, { backgroundColor: selectedTopic ? getTopicColor(selectedTopic.image) : colors.primary }]} />
@@ -235,6 +280,10 @@ export default function TopicsScreen() {
                                     }
                                 ]}
                                 onPress={() => handleSelectTopic(topic)}
+                                accessibilityRole="radio"
+                                accessibilityLabel={topic.title}
+                                accessibilityState={{ checked: selectedTopic?.id === topic.id }}
+                                accessibilityHint="Double tap to select this topic"
                             >
                                 <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                                     <View style={[styles.dot, { backgroundColor: getTopicColor(topic.image), marginRight: 12 }]} />
@@ -270,7 +319,10 @@ export default function TopicsScreen() {
                                             <Text style={[styles.topicCardTitle, { color: colors.text, fontSize: typography.lg }]}>{selectedTopic.title}</Text>
                                             <TouchableOpacity
                                                 onPress={() => setInfoTopic(selectedTopic)}
-                                                style={{ padding: 8, opacity: 0.6 }}
+                                                style={{ padding: 12, minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}
+                                                accessibilityRole="button"
+                                                accessibilityLabel={`More information about ${selectedTopic.title}`}
+                                                accessibilityHint="Double tap to view topic details"
                                             >
                                                 <FontAwesome name="ellipsis-h" size={16} color={colors.textSecondary} />
                                             </TouchableOpacity>

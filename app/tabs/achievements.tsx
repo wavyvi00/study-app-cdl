@@ -30,7 +30,7 @@ const AchievementItem = ({ achievement, index, total, stats, isDark, colors, spa
 
     // Timeline styles
     const lineColor = unlocked ? '#4CAF50' : (isStarted ? '#2196F3' : (isDark ? '#333' : '#E0E0E0'));
-    const markerSize = 28;
+    const markerSize = 32; // Increased for 44x44 touch target minimum
 
     return (
         <View style={styles.timelineRow}>

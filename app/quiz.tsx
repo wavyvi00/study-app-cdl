@@ -5,7 +5,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Question } from '../data/mock';
 import { useQuestions } from '../context/QuestionsContext';
 import { LinearGradient } from 'expo-linear-gradient';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '../utils/haptics';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
 import { recordQuizResult, logActivityStart } from '../data/stats';
@@ -530,6 +530,13 @@ export default function QuizScreen() {
                                 activeOpacity={0.8}
                                 onPress={() => handleOptionPress(index)}
                                 disabled={isPractice && selectedOption !== null}
+                                accessibilityRole="radio"
+                                accessibilityLabel={`Answer ${String.fromCharCode(65 + index)}: ${option}`}
+                                accessibilityState={{
+                                    checked: isSelected,
+                                    disabled: isPractice && selectedOption !== null
+                                }}
+                                accessibilityHint={isSelected && isPractice && isCorrect ? "Correct answer" : isSelected && isPractice && !isCorrect ? "Incorrect answer" : "Double tap to select this answer"}
                             >
                                 <Card style={[styles.optionCard, cardStyle]} padding="md">
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -547,6 +554,13 @@ export default function QuizScreen() {
                                             )}
                                         </View>
                                         <Text style={[{ fontSize: 16, flex: 1 }, textStyle]}>{option}</Text>
+                                        {/* Additional visual indicator for correct/incorrect */}
+                                        {isSelected && isPractice && isCorrect && (
+                                            <FontAwesome name="check-circle" size={20} color={colors.success} style={{ marginLeft: 8 }} />
+                                        )}
+                                        {isSelected && isPractice && !isCorrect && (
+                                            <FontAwesome name="times-circle" size={20} color={colors.error} style={{ marginLeft: 8 }} />
+                                        )}
                                     </View>
                                 </Card>
                             </TouchableOpacity>
@@ -554,14 +568,16 @@ export default function QuizScreen() {
                     })}
                 </View>
 
-                {isPractice && selectedOption !== null && !!currentQuestion.explanation && (
-                    <View style={[styles.explanationBox, { backgroundColor: colors.background, borderLeftColor: colors.primary, borderLeftWidth: 4, padding: spacing.md, marginTop: spacing.lg, borderRadius: radius.md }]}>
-                        <Text style={{ fontWeight: 'bold', color: colors.text, marginBottom: 4 }}>Explanation:</Text>
-                        <Text style={{ color: colors.textSecondary, lineHeight: 22 }}>{currentQuestion.explanation}</Text>
-                    </View>
-                )}
+                {
+                    isPractice && selectedOption !== null && !!currentQuestion.explanation && (
+                        <View style={[styles.explanationBox, { backgroundColor: colors.background, borderLeftColor: colors.primary, borderLeftWidth: 4, padding: spacing.md, marginTop: spacing.lg, borderRadius: radius.md }]}>
+                            <Text style={{ fontWeight: 'bold', color: colors.text, marginBottom: 4 }}>Explanation:</Text>
+                            <Text style={{ color: colors.textSecondary, lineHeight: 22 }}>{currentQuestion.explanation}</Text>
+                        </View>
+                    )
+                }
 
-            </ScrollView>
+            </ScrollView >
 
             <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border, paddingBottom: insets.bottom + 20 }]}>
                 <View style={styles.footerButtons}>
@@ -582,7 +598,7 @@ export default function QuizScreen() {
                     />
                 </View>
             </View>
-        </View>
+        </View >
     );
 }
 

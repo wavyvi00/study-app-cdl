@@ -7,7 +7,7 @@ import { saveStudyProgress, loadStats, logActivityStart } from '../data/stats';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useState, useRef, useEffect } from 'react';
 import { STUDY_GUIDES } from '../data/study_content';
-import * as Haptics from 'expo-haptics';
+import * as Haptics from '../utils/haptics';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
