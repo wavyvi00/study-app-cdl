@@ -3,10 +3,11 @@ import { View, Text, ScrollView, TouchableOpacity, StyleSheet, ViewStyle, TextSt
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import { useQuestions } from '../context/QuestionsContext';
+import { useLocalization } from '../context/LocalizationContext'; // Added
 import { saveStudyProgress, loadStats, logActivityStart } from '../data/stats';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useState, useRef, useEffect } from 'react';
-import { STUDY_GUIDES } from '../data/study_content';
+import { STUDY_GUIDES, getStudyGuide } from '../data/study_content'; // Updated
 import * as Haptics from '../utils/haptics';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
@@ -17,12 +18,15 @@ export default function StudyScreen() {
     const router = useRouter();
     const { colors, spacing, typography, radius, isDark } = useTheme();
     const { topics } = useQuestions();
+    const { locale } = useLocalization(); // Added
     const insets = useSafeAreaInsets();
     const scrollViewRef = useRef<ScrollView>(null);
 
     const topicId = typeof params.topicId === 'string' ? params.topicId : '';
     const topic = topics.find(t => t.id === topicId);
-    const studyGuide = STUDY_GUIDES[topicId];
+
+    // Get localized study guide
+    const studyGuide = getStudyGuide(topicId, locale);
 
     const [sectionIndex, setSectionIndex] = useState(0);
     // Track selected answers: { questionId: selectedIndex }

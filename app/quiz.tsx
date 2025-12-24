@@ -16,6 +16,10 @@ import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 
+import { useLocalization } from '../context/LocalizationContext'; // Added import
+
+// ... imports
+
 export default function QuizScreen() {
     const params = useLocalSearchParams();
     const topicId = typeof params.topicId === 'string' ? params.topicId : '';
@@ -24,6 +28,7 @@ export default function QuizScreen() {
 
     const router = useRouter();
     const { colors, spacing, typography, radius, isDark } = useTheme();
+    const { t } = useLocalization(); // Added hook
     const { getQuestions, topics } = useQuestions();
     const insets = useSafeAreaInsets();
 
@@ -263,11 +268,13 @@ export default function QuizScreen() {
     if (questions.length === 0) {
         return (
             <View style={[styles.container, { backgroundColor: colors.background, justifyContent: 'center', alignItems: 'center', padding: spacing.xl }]}>
-                <Text style={{ color: colors.text, fontSize: typography.lg, marginBottom: spacing.lg }}>No questions found.</Text>
-                <Button title="Go Back" onPress={() => router.back()} />
+                <Text style={{ color: colors.text, fontSize: typography.lg, marginBottom: spacing.lg }}>{t('noQuestionsFound')}</Text>
+                <Button title={t('goBack')} onPress={() => router.back()} />
             </View>
         );
     }
+
+
 
     if (questionOrder.length === 0) return null; // Wait for init
 
@@ -285,7 +292,7 @@ export default function QuizScreen() {
             const { savePracticeSession } = await import('../data/stats');
             savePracticeSession({
                 topicId: topicId as string,
-                questionIds: questions.map(q => q.id),
+                questionIds: questions.map(q => q.id), // Always use original IDs
                 currentIndex: newIndex,
                 score: newScore,
                 wrongAnswers: newWrong.map(w => ({ questionId: w.question.id, selectedIndex: w.selectedIndex })),
@@ -368,16 +375,16 @@ export default function QuizScreen() {
                     <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border, paddingTop: insets.top + 12 }]}>
                         <TouchableOpacity onPress={() => setShowReview(false)} style={styles.quitButton}>
                             <FontAwesome name="arrow-left" size={18} color={colors.textSecondary} />
-                            <Text style={[styles.quitText, { color: colors.textSecondary }]}>Back</Text>
+                            <Text style={[styles.quitText, { color: colors.textSecondary }]}>{t('back')}</Text>
                         </TouchableOpacity>
-                        <Text style={[styles.headerTitle, { color: colors.text }]}>Review ({wrongAnswers.length} missed)</Text>
+                        <Text style={[styles.headerTitle, { color: colors.text }]}>{t('reviewHeader')} ({wrongAnswers.length} {t('missed')})</Text>
                         <View style={{ width: 60 }} />
                     </View>
 
                     <ScrollView contentContainerStyle={styles.scrollContent}>
                         {wrongAnswers.map((item, index) => (
                             <Card key={index} style={styles.reviewCard} padding="md">
-                                <Text style={[styles.reviewQuestionNumber, { color: colors.textSecondary }]}>Question {index + 1}</Text>
+                                <Text style={[styles.reviewQuestionNumber, { color: colors.textSecondary }]}>{t('question')} {index + 1}</Text>
                                 <Text style={{ fontSize: 16, fontWeight: '600', color: colors.text, marginBottom: 12 }}>{item.question.text}</Text>
 
                                 <View style={styles.reviewAnswerRow}>
@@ -392,7 +399,7 @@ export default function QuizScreen() {
 
                                 {item.question.explanation && (
                                     <View style={[styles.reviewExplanation, { backgroundColor: colors.background, borderColor: colors.primary }]}>
-                                        <Text style={{ fontWeight: 'bold', color: colors.text, marginBottom: 4 }}>Explanation:</Text>
+                                        <Text style={{ fontWeight: 'bold', color: colors.text, marginBottom: 4 }}>{t('explanation')}:</Text>
                                         <Text style={{ color: colors.textSecondary }}>{item.question.explanation}</Text>
                                     </View>
                                 )}
@@ -401,7 +408,7 @@ export default function QuizScreen() {
                     </ScrollView>
 
                     <View style={[styles.footer, { backgroundColor: colors.surface, borderTopColor: colors.border, paddingBottom: insets.bottom + 20 }]}>
-                        <Button title="Done" onPress={() => router.back()} />
+                        <Button title={t('done')} onPress={() => router.back()} />
                     </View>
                 </View>
             );
@@ -414,18 +421,18 @@ export default function QuizScreen() {
                     <View style={styles.resultIconContainer}>
                         <FontAwesome name={passed ? "trophy" : "book"} size={60} color={passed ? colors.highlight : "#fff"} />
                     </View>
-                    <Text style={styles.resultTitle}>{passed ? "Great Job!" : "Keep Studying!"}</Text>
+                    <Text style={styles.resultTitle}>{passed ? t('greatJob') : t('keepStudying')}</Text>
 
                     <View style={styles.scoreCircle}>
                         <Text style={[styles.scoreNumber, { color: colors.primary }]}>{Math.round(percentage)}%</Text>
                     </View>
                     <Text style={{ color: 'rgba(255,255,255,0.9)', fontSize: 16, marginBottom: 40 }}>
-                        {score} out of {questions.length} correct
+                        {score} {t('outOf')} {questions.length} {t('correctLowerCase')}
                     </Text>
 
                     {recentAchievements.length > 0 && (
                         <View style={styles.achievementsContainer}>
-                            <Text style={styles.achievementsHeader}>New Awards Earned!</Text>
+                            <Text style={styles.achievementsHeader}>{t('newAwardsEarned')}</Text>
                             {recentAchievements.map((achievement) => (
                                 <View key={achievement.id} style={styles.achievementBadge}>
                                     <FontAwesome name={achievement.icon as any} size={20} color="#FFD700" />
@@ -441,7 +448,7 @@ export default function QuizScreen() {
                     <View style={styles.resultButtonsContainer}>
                         {wrongAnswers.length > 0 && (
                             <Button
-                                title={`Review ${wrongAnswers.length} Wrong`}
+                                title={`${t('reviewWrong')} (${wrongAnswers.length})`}
                                 onPress={() => setShowReview(true)}
                                 variant="secondary"
                                 style={{ marginBottom: 16, width: '100%' }}
@@ -450,7 +457,7 @@ export default function QuizScreen() {
                         )}
 
                         <Button
-                            title="Back to Home"
+                            title={t('backToHome')}
                             onPress={() => router.back()}
                             variant="outline"
                             style={{ width: '100%', borderColor: 'white', backgroundColor: 'rgba(255,255,255,0.1)' }}
@@ -470,9 +477,9 @@ export default function QuizScreen() {
             <View style={[styles.header, { backgroundColor: colors.surface, borderBottomColor: colors.border, paddingTop: insets.top + 12, paddingBottom: 12 }]}>
                 <TouchableOpacity onPress={handleQuit} style={styles.quitButton}>
                     <FontAwesome name="arrow-left" size={18} color={colors.textSecondary} />
-                    <Text style={[styles.quitText, { color: colors.textSecondary }]}>Quit</Text>
+                    <Text style={[styles.quitText, { color: colors.textSecondary }]}>{t('quit')}</Text>
                 </TouchableOpacity>
-                <Text style={[styles.headerTitle, { color: colors.text }]}>{isPractice ? 'Practice' : 'Exam'}</Text>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>{isPractice ? t('practice') : t('exam')}</Text>
                 {mode === 'exam' ? (
                     <Badge
                         label={formatTime(timeLeft)}
@@ -485,7 +492,7 @@ export default function QuizScreen() {
             </View>
 
             <View style={[styles.progressContainer, { backgroundColor: colors.surface }]}>
-                <Text style={[styles.progressText, { color: colors.textSecondary }]}>Question {currentIndex + 1} / {questions.length}</Text>
+                <Text style={[styles.progressText, { color: colors.textSecondary }]}>{t('question')} {currentIndex + 1} / {questions.length}</Text>
                 <View style={[styles.progressBarBg, { backgroundColor: colors.border }]}>
                     <View style={[styles.progressBarFill, { backgroundColor: colors.primary, width: `${((currentIndex + 1) / questions.length) * 100}%` }]} />
                 </View>
@@ -531,12 +538,12 @@ export default function QuizScreen() {
                                 onPress={() => handleOptionPress(index)}
                                 disabled={isPractice && selectedOption !== null}
                                 accessibilityRole="radio"
-                                accessibilityLabel={`Answer ${String.fromCharCode(65 + index)}: ${option}`}
+                                accessibilityLabel={`${t('answer')} ${String.fromCharCode(65 + index)}: ${option}`}
                                 accessibilityState={{
                                     checked: isSelected,
                                     disabled: isPractice && selectedOption !== null
                                 }}
-                                accessibilityHint={isSelected && isPractice && isCorrect ? "Correct answer" : isSelected && isPractice && !isCorrect ? "Incorrect answer" : "Double tap to select this answer"}
+                                accessibilityHint={isSelected && isPractice && isCorrect ? t('correctHeadsUp') : isSelected && isPractice && !isCorrect ? t('incorrectHeadsUp') : t('doubleTapToSelect')}
                             >
                                 <Card style={[styles.optionCard, cardStyle]} padding="md">
                                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
@@ -571,7 +578,7 @@ export default function QuizScreen() {
                 {
                     isPractice && selectedOption !== null && !!currentQuestion.explanation && (
                         <View style={[styles.explanationBox, { backgroundColor: colors.background, borderLeftColor: colors.primary, borderLeftWidth: 4, padding: spacing.md, marginTop: spacing.lg, borderRadius: radius.md }]}>
-                            <Text style={{ fontWeight: 'bold', color: colors.text, marginBottom: 4 }}>Explanation:</Text>
+                            <Text style={{ fontWeight: 'bold', color: colors.text, marginBottom: 4 }}>{t('explanation')}:</Text>
                             <Text style={{ color: colors.textSecondary, lineHeight: 22 }}>{currentQuestion.explanation}</Text>
                         </View>
                     )

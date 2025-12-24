@@ -10,12 +10,14 @@ import { loadStats, resetStats, INITIAL_STATS, INITIAL_TOPIC_STATS, UserStats } 
 import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
+import { useLocalization } from '../../context/LocalizationContext';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Hoverable from '../../components/ui/Hoverable';
 import SubscriptionCard from '../../components/SubscriptionCard';
 import { showConfirm } from '../../utils/alerts';
+
 import { getPendingEmails, isSubscriptionDismissed, markSubscriptionDismissed } from '../../data/supabase';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
@@ -25,10 +27,12 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 export default function TopicsScreen() {
     const router = useRouter();
     const { theme, toggleTheme, isDark, colors, spacing, typography, radius } = useTheme();
+    const { t, locale, setLocale } = useLocalization();
     const { topics, isLoading } = useQuestions();
     const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const [isLangDropdownOpen, setIsLangDropdownOpen] = useState(false);
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
     const [infoTopic, setInfoTopic] = useState<Topic | null>(null);
     const [showSubscriptionPopup, setShowSubscriptionPopup] = useState(false);
@@ -113,10 +117,10 @@ export default function TopicsScreen() {
         };
 
         showConfirm({
-            title: 'Reset All Progress',
-            message: 'Are you sure you want to reset all your progress? Achievements will not be cleared.',
-            confirmText: 'Reset',
-            cancelText: 'Cancel',
+            title: t('confirmReset'),
+            message: t('confirmResetMessage'),
+            confirmText: t('reset'),
+            cancelText: t('cancel'),
             isDestructive: true,
             onConfirm: performReset,
         });
@@ -167,18 +171,28 @@ export default function TopicsScreen() {
             >
                 <View style={styles.headerRow}>
                     <View>
-                        <Text style={styles.headerLabel}>OFFICIAL CDL PREPARATION</Text>
-                        <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]}>STUDY CENTER</Text>
-                        <Text style={[styles.headerSubtitle, { color: 'rgba(255,255,255,0.85)', fontSize: typography.md }]}>Prepare. Practice. Pass.</Text>
+                        <Text style={styles.headerLabel}>{t('officialCDLPreparation')}</Text>
+                        <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]}>{t('appTitle')}</Text>
+                        <Text style={[styles.headerSubtitle, { color: 'rgba(255,255,255,0.85)', fontSize: typography.md }]}>{t('appSubtitle')}</Text>
                     </View>
-                    <TouchableOpacity
-                        onPress={() => setIsMenuOpen(!isMenuOpen)}
-                        style={[styles.settingsButton, { backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: radius.xl }]}
-                        accessibilityRole="button"
-                        accessibilityLabel="Open settings menu"
-                    >
-                        <FontAwesome name={isMenuOpen ? "times" : "bars"} size={24} color="#FFFFFF" />
-                    </TouchableOpacity>
+                    <View style={{ flexDirection: 'row', gap: 8 }}>
+                        <TouchableOpacity
+                            onPress={() => setIsLangDropdownOpen(!isLangDropdownOpen)}
+                            style={[styles.settingsButton, { backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: radius.xl }]}
+                            accessibilityRole="button"
+                            accessibilityLabel="Select language"
+                        >
+                            <Text style={{ fontSize: 20 }}>{locale === 'en' ? '🇺🇸' : locale === 'es' ? '🇪🇸' : '🇷🇺'}</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            onPress={() => setIsMenuOpen(!isMenuOpen)}
+                            style={[styles.settingsButton, { backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: radius.xl }]}
+                            accessibilityRole="button"
+                            accessibilityLabel="Open settings menu"
+                        >
+                            <FontAwesome name={isMenuOpen ? "times" : "bars"} size={24} color="#FFFFFF" />
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
                 {isMenuOpen && (
@@ -194,7 +208,7 @@ export default function TopicsScreen() {
                             accessibilityHint="Double tap to view privacy policy"
                         >
                             <FontAwesome name="shield" size={16} color={colors.textSecondary} style={styles.menuIcon} />
-                            <Text style={[styles.menuText, { color: colors.text }]}>Privacy Policy</Text>
+                            <Text style={[styles.menuText, { color: colors.text }]}>{t('privacyPolicy')}</Text>
                         </TouchableOpacity>
 
                         <View
@@ -209,7 +223,7 @@ export default function TopicsScreen() {
                                 onPress={toggleTheme}
                             >
                                 <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={colors.textSecondary} style={styles.menuIcon} />
-                                <Text style={[styles.menuText, { color: colors.text }]}>{isDark ? 'Dark Mode' : 'Light Mode'}</Text>
+                                <Text style={[styles.menuText, { color: colors.text }]}>{t(isDark ? 'darkMode' : 'lightMode')}</Text>
                                 <View pointerEvents="none">
                                     <Switch
                                         value={isDark}
@@ -222,6 +236,8 @@ export default function TopicsScreen() {
                             </TouchableOpacity>
                         </View>
 
+
+
                         <TouchableOpacity
                             style={[styles.menuItem, { borderBottomWidth: 0 }]}
                             onPress={handleResetProgress}
@@ -230,7 +246,48 @@ export default function TopicsScreen() {
                             accessibilityHint="Double tap to reset all your progress data"
                         >
                             <FontAwesome name="refresh" size={16} color={colors.error} style={styles.menuIcon} />
-                            <Text style={[styles.menuText, { color: colors.error }]}>Reset Progress</Text>
+                            <Text style={[styles.menuText, { color: colors.error }]}>{t('resetProgress')}</Text>
+                        </TouchableOpacity>
+                    </Card>
+                )}
+
+                {isLangDropdownOpen && (
+                    <Card style={[styles.menuDropdown, { right: 68 }]} padding="sm">
+                        <TouchableOpacity
+                            style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
+                            onPress={() => {
+                                setLocale('en');
+                                setIsLangDropdownOpen(false);
+                            }}
+                            accessibilityRole="button"
+                        >
+                            <Text style={{ fontSize: 20, marginRight: 10 }}>🇺🇸</Text>
+                            <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>English</Text>
+                            {locale === 'en' && <FontAwesome name="check" size={14} color={colors.primary} />}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
+                            onPress={() => {
+                                setLocale('es');
+                                setIsLangDropdownOpen(false);
+                            }}
+                            accessibilityRole="button"
+                        >
+                            <Text style={{ fontSize: 20, marginRight: 10 }}>🇪🇸</Text>
+                            <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Español</Text>
+                            {locale === 'es' && <FontAwesome name="check" size={14} color={colors.primary} />}
+                        </TouchableOpacity>
+                        <TouchableOpacity
+                            style={[styles.langMenuItem, { borderBottomWidth: 0 }]}
+                            onPress={() => {
+                                setLocale('ru');
+                                setIsLangDropdownOpen(false);
+                            }}
+                            accessibilityRole="button"
+                        >
+                            <Text style={{ fontSize: 20, marginRight: 10 }}>🇷🇺</Text>
+                            <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Русский</Text>
+                            {locale === 'ru' && <FontAwesome name="check" size={14} color={colors.primary} />}
                         </TouchableOpacity>
                     </Card>
                 )}
@@ -239,10 +296,10 @@ export default function TopicsScreen() {
             <ScrollView contentContainerStyle={[styles.scrollContent, { padding: spacing.lg }]}>
                 <StatsOverview
                     stats={selectedTopic ? (stats.topicStats[selectedTopic.id] || INITIAL_TOPIC_STATS) : stats}
-                    title={selectedTopic ? `${selectedTopic.title} Progress` : 'Your Progress'}
+                    title={selectedTopic ? `${selectedTopic.title} ${t('yourProgress')}` : t('yourProgress')}
                 />
 
-                <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.sm, marginTop: spacing.lg, marginBottom: spacing.sm }]}>SELECT TOPIC:</Text>
+                <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.sm, marginTop: spacing.lg, marginBottom: spacing.sm }]}>{t('selectTopic')}</Text>
 
                 <Hoverable
                     style={({ hovered }) => [
@@ -254,14 +311,14 @@ export default function TopicsScreen() {
                     ]}
                     onPress={toggleDropdown}
                     accessibilityRole="button"
-                    accessibilityLabel={selectedTopic ? `Selected topic: ${selectedTopic.title}` : "Select a topic"}
+                    accessibilityLabel={selectedTopic ? `${t('selectTopic')} ${selectedTopic.title}` : t('selectTopicDropdown')}
                     accessibilityHint="Double tap to open topic selector"
                     accessibilityState={{ expanded: isDropdownOpen }}
                 >
                     <View style={{ flexDirection: 'row', alignItems: 'center' }}>
                         <View style={[styles.dot, { backgroundColor: selectedTopic ? getTopicColor(selectedTopic.image) : colors.primary }]} />
                         <Text style={[styles.dropdownText, { color: colors.text, fontSize: typography.md }]}>
-                            {selectedTopic ? selectedTopic.title : "Select a Topic"}
+                            {selectedTopic ? selectedTopic.title : t('selectTopicDropdown')}
                         </Text>
                     </View>
                     <FontAwesome name={isDropdownOpen ? "chevron-up" : "chevron-down"} size={12} color={colors.textSecondary} />
@@ -356,7 +413,7 @@ export default function TopicsScreen() {
 
                                 <View style={styles.actionRow}>
                                     <Button
-                                        title="Study Guide"
+                                        title={t('studyGuide')}
                                         variant="outline"
                                         onPress={() => router.push({ pathname: '/study', params: { topicId: selectedTopic.id } })}
                                         style={{ flex: 1, marginRight: 8, height: 42, borderRadius: 12, borderColor: colors.primary, borderWidth: 1.5 }}
@@ -364,14 +421,14 @@ export default function TopicsScreen() {
                                         icon={<FontAwesome name="book" size={12} color={colors.primary} style={{ marginRight: 6 }} />}
                                     />
                                     <Button
-                                        title="Practice"
+                                        title={t('practice')}
                                         variant="outline"
                                         onPress={() => startQuiz(selectedTopic.id, 'practice')}
                                         style={{ flex: 1, marginRight: 8, height: 42, borderRadius: 12, borderColor: colors.border }}
                                         textStyle={{ fontSize: 13, fontWeight: '600', color: colors.textSecondary }}
                                     />
                                     <Button
-                                        title="Exam"
+                                        title={t('exam')}
                                         variant="outline"
                                         onPress={() => startQuiz(selectedTopic.id, 'exam')}
                                         style={{ flex: 1, height: 42, borderRadius: 12, borderColor: colors.border }}
@@ -421,7 +478,7 @@ export default function TopicsScreen() {
                         </View>
 
                         <Button
-                            title="Close"
+                            title={t('close')}
                             variant="primary"
                             onPress={() => setInfoTopic(null)}
                             style={{ width: '100%', borderRadius: 16, height: 50 }}
@@ -593,5 +650,11 @@ const styles = StyleSheet.create({
     actionRow: {
         flexDirection: 'row',
         justifyContent: 'space-between',
+    },
+    langMenuItem: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 12,
+        borderBottomWidth: 1,
     },
 });

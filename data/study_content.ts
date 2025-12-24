@@ -574,3 +574,26 @@ export const STUDY_GUIDES: Record<string, StudyGuide> = {
     'general_knowledge': GeneralKnowledgeStudyGuide,
     // Future topics will be added here
 };
+
+// Localized study guide accessor
+export const getStudyGuide = (topicId: string, locale: string = 'en'): StudyGuide | undefined => {
+    if (topicId !== 'general_knowledge') return undefined;
+
+    // These will be enabled once translation script finishes
+    if (locale === 'es') {
+        try {
+            return require('./study_content_es').GeneralKnowledgeStudyGuide_ES;
+        } catch (e) {
+            console.warn('Spanish study guide not found, falling back to English');
+        }
+    }
+    if (locale === 'ru') {
+        try {
+            return require('./study_content_ru').GeneralKnowledgeStudyGuide_RU;
+        } catch (e) {
+            console.warn('Russian study guide not found, falling back to English');
+        }
+    }
+
+    return GeneralKnowledgeStudyGuide;
+};

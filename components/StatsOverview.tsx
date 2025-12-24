@@ -82,8 +82,13 @@ const StatItem = ({ config }: { config: StatConfig }) => {
     );
 };
 
-export default function StatsOverview({ stats, title = 'Your Progress' }: Props) {
+import { useLocalization } from '../context/LocalizationContext'; // Added
+
+// ... imports remain same
+
+export default function StatsOverview({ stats, title }: Props) { // title defaults handled in parent or here
     const { colors, spacing, isDark } = useTheme();
+    const { t } = useLocalization(); // Added
 
     // Handle both UserStats (has streakDays) and TopicStats (doesn't)
     const displayStats = {
@@ -97,28 +102,28 @@ export default function StatsOverview({ stats, title = 'Your Progress' }: Props)
         {
             icon: 'trophy',
             value: `${displayStats.averageScore}%`,
-            label: 'Avg Score',
+            label: t('averageScore'),
             gradientColors: ['#FFD54F', '#FFB300'],
             iconColor: '#F57F17',
         },
         {
             icon: 'file-text-o',
             value: displayStats.examAttempts,
-            label: 'Exams',
+            label: t('exams'), // 'Exams'
             gradientColors: ['#64B5F6', '#1E88E5'],
             iconColor: '#0D47A1',
         },
         {
             icon: 'check-square-o',
             value: displayStats.questionsAnswered,
-            label: 'Questions',
+            label: t('questions'),
             gradientColors: ['#81C784', '#43A047'],
             iconColor: '#1B5E20',
         },
         {
             icon: 'clock-o',
             value: `${Math.floor(displayStats.studyTimeMinutes / 60)}h ${displayStats.studyTimeMinutes % 60}m`,
-            label: 'Study Time',
+            label: t('studyTime'),
             gradientColors: ['#FF8A65', '#F4511E'],
             iconColor: '#BF360C',
         },
@@ -127,7 +132,7 @@ export default function StatsOverview({ stats, title = 'Your Progress' }: Props)
     return (
         <View style={[styles.container, { marginBottom: spacing.lg }]}>
             <Text style={[styles.sectionTitle, { color: colors.text }]}>
-                {title}
+                {title || t('yourProgress')}
             </Text>
 
             <View style={[styles.groupContainer, { backgroundColor: isDark ? colors.surface : '#FFFFFF' }]}>

@@ -8,6 +8,7 @@ import { View } from 'react-native';
 import { Analytics } from '@vercel/analytics/react';
 
 import { ThemeProvider, useTheme } from '../context/ThemeContext';
+import { LocalizationProvider } from '../context/LocalizationContext';
 import { QuestionsProvider } from '../context/QuestionsContext';
 import EntryScreen from '../components/EntryScreen';
 import { startEmailSync } from '../utils/emailSync';
@@ -67,9 +68,11 @@ export default function RootLayout() {
 
     return (
         <ThemeProvider>
-            <QuestionsProvider>
-                <AppContent fontsLoaded={loaded} />
-            </QuestionsProvider>
+            <LocalizationProvider>
+                <QuestionsProvider>
+                    <AppContent fontsLoaded={loaded} />
+                </QuestionsProvider>
+            </LocalizationProvider>
         </ThemeProvider>
     );
 }

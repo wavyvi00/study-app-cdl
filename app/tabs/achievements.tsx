@@ -8,6 +8,8 @@ import { ACHIEVEMENTS, Achievement } from '../../data/achievements';
 import { useFocusEffect } from 'expo-router';
 import Hoverable from '../../components/ui/Hoverable';
 import Card from '../../components/ui/Card';
+import { TranslationKey } from '../../data/translations';
+import { useLocalization } from '../../context/LocalizationContext';
 
 interface AchievementItemProps {
     achievement: Achievement;
@@ -22,11 +24,16 @@ interface AchievementItemProps {
 }
 
 const AchievementItem = ({ achievement, index, total, stats, isDark, colors, spacing, radius, typography }: AchievementItemProps) => {
+    const { t } = useLocalization();
     const unlocked = stats?.unlockedAchievements?.includes(achievement.id) || false;
     const { current, target } = achievement.getProgress(stats || INITIAL_STATS);
     const progressPercent = Math.min((current / target) * 100, 100);
     const isStarted = progressPercent > 0;
     const isLast = index === total - 1;
+
+    // Construct valid keys (assumes strict naming convention in translations.ts)
+    const titleKey = `achievement_${achievement.id}_title` as TranslationKey;
+    const descKey = `achievement_${achievement.id}_desc` as TranslationKey;
 
     // Timeline styles
     const lineColor = unlocked ? '#4CAF50' : (isStarted ? '#2196F3' : (isDark ? '#333' : '#E0E0E0'));
@@ -66,7 +73,7 @@ const AchievementItem = ({ achievement, index, total, stats, isDark, colors, spa
                 <View style={[
                     styles.timelineLine,
                     {
-                        backgroundColor: isLast ? 'transparent' : (unlocked ? '#4CAF50' : (isDark ? '#333' : '#E0E0E0')), // Only green if NEXT is also unlocked (simplified here, ideally checks next state)
+                        backgroundColor: isLast ? 'transparent' : (unlocked ? '#4CAF50' : (isDark ? '#333' : '#E0E0E0')),
                         flex: 1
                     }
                 ]} />
@@ -94,12 +101,12 @@ const AchievementItem = ({ achievement, index, total, stats, isDark, colors, spa
                                 <FontAwesome name={achievement.icon as any} size={16} color={isDark ? '#757575' : '#9E9E9E'} style={{ marginRight: 8 }} />
                             )}
                             <Text style={[styles.cardTitle, { color: colors.text, fontSize: typography.md }]}>
-                                {achievement.title}
+                                {t(titleKey)}
                             </Text>
                         </View>
 
                         <Text style={[styles.cardDescription, { color: colors.textSecondary, fontSize: typography.sm }]}>
-                            {achievement.description}
+                            {t(descKey)}
                         </Text>
 
                         {(isStarted || unlocked) && (
@@ -125,6 +132,7 @@ const AchievementItem = ({ achievement, index, total, stats, isDark, colors, spa
 
 export default function AchievementsScreen() {
     const { colors, spacing, radius, typography, isDark } = useTheme();
+    const { t } = useLocalization();
     const [stats, setStats] = useState<UserStats | null>(null);
     const [refreshing, setRefreshing] = useState(false);
 
@@ -151,10 +159,10 @@ export default function AchievementsScreen() {
                 colors={colors.headerGradient}
                 style={[styles.headerBackground, { paddingTop: 60, paddingBottom: 50, paddingHorizontal: spacing.lg, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
             >
-                <Text style={styles.headerLabel}>YOUR MILESTONES</Text>
-                <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]}>ROAD TO SUCCESS</Text>
+                <Text style={styles.headerLabel}>{t('yourMilestones')}</Text>
+                <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]}>{t('roadToSuccess')}</Text>
                 <Text style={[styles.headerSubtitle, { color: 'rgba(255,255,255,0.85)', fontSize: typography.md }]}>
-                    {stats?.unlockedAchievements?.length || 0} OF {ACHIEVEMENTS.length} MILESTONES REACHED
+                    {stats?.unlockedAchievements?.length || 0} {t('of')} {ACHIEVEMENTS.length} {t('milestonesReached')}
                 </Text>
             </LinearGradient>
 

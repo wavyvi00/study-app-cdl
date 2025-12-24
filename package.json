@@ -18,6 +18,7 @@
     "@supabase/supabase-js": "^2.87.3",
     "@vercel/analytics": "^1.4.0",
     "@types/crypto-js": "^4.2.2",
+    "@vercel/analytics": "^1.6.1",
     "crypto-js": "^4.2.0",
     "expo": "~54.0.29",
     "expo-build-properties": "~1.0.10",
@@ -44,8 +45,11 @@
     "react-native-worklets-core": "^1.6.2"
   },
   "devDependencies": {
+    "@aws-sdk/client-translate": "^3.958.0",
     "@types/react": "~19.1.0",
+    "@vitalets/google-translate-api": "^9.2.1",
     "babel-preset-expo": "^54.0.8",
+    "translatte": "^3.0.1",
     "typescript": "~5.9.2"
   },
   "private": true

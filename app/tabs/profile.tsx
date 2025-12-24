@@ -7,6 +7,7 @@ import { loadStats, updateStats, resetAllAppData, UserStats, INITIAL_STATS } fro
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { restartApp } from '../../utils/restartApp';
 import { showAlert, showConfirm } from '../../utils/alerts';
+import { useLocalization } from '../../context/LocalizationContext'; // Added
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -21,6 +22,7 @@ const AVATARS = [
 
 export default function ProfileScreen() {
     const insets = useSafeAreaInsets();
+    const { t } = useLocalization(); // Added
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -59,7 +61,7 @@ export default function ProfileScreen() {
 
     const handleSaveProfile = async () => {
         if (!username.trim()) {
-            showAlert("Username Required", "Please enter a username.");
+            showAlert(t('usernameRequired'), t('enterUsername')); // Translated
             setUsernameError(true);
             return;
         }
@@ -88,15 +90,15 @@ export default function ProfileScreen() {
             setIsEditing(false);
             const restarted = await restartApp();
             if (!restarted && Platform.OS !== 'web') {
-                showAlert("Logged Out", "Local data cleared. Please restart the app if anything looks stale.");
+                showAlert(t('logout'), "Local data cleared. Please restart the app if anything looks stale."); // Partial translate
             }
         };
 
         showConfirm({
-            title: "Logout",
-            message: "Log out and clear all local data on this device?",
-            confirmText: "Logout",
-            cancelText: "Cancel",
+            title: t('logoutTitle'),
+            message: t('logoutMessage'),
+            confirmText: t('logout'),
+            cancelText: t('cancel'),
             isDestructive: true,
             onConfirm: performLogout,
         });
@@ -113,7 +115,7 @@ export default function ProfileScreen() {
 
     const renderAvatarPicker = () => (
         <View style={styles.pickerSection}>
-            <Text style={styles.label}>Choose Avatar</Text>
+            <Text style={styles.label}>{t('chooseAvatar')}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.avatarList}>
                 {AVATARS.map((avatar) => {
                     const avatarNames: Record<string, string> = {
@@ -145,7 +147,7 @@ export default function ProfileScreen() {
 
     const renderClassPicker = () => (
         <View style={styles.pickerSection}>
-            <Text style={styles.label}>Select CDL Class</Text>
+            <Text style={styles.label}>{t('selectClass')}</Text>
             <View style={styles.classRow}>
                 {['Class A', 'Class B'].map((cls) => (
                     <TouchableOpacity
@@ -169,8 +171,8 @@ export default function ProfileScreen() {
             </View>
             <Text style={styles.helperText}>
                 {selectedClass === 'Class A'
-                    ? "Combination vehicles (truck + trailer)."
-                    : "Single heavy vehicles (straight trucks, buses)."}
+                    ? t('classADesc')
+                    : t('classBDesc')}
             </Text>
         </View>
     );
@@ -182,7 +184,7 @@ export default function ProfileScreen() {
         return (
             <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
                 <View style={styles.header}>
-                    <Text style={styles.headerTitle}>{isEditing ? 'Edit Profile' : 'Create Profile'}</Text>
+                    <Text style={styles.headerTitle}>{isEditing ? t('editProfile') : t('createProfile')}</Text>
                     {isEditing && (
                         <TouchableOpacity
                             onPress={() => setIsEditing(false)}
@@ -190,7 +192,7 @@ export default function ProfileScreen() {
                             accessibilityLabel="Cancel"
                             accessibilityHint="Double tap to cancel editing"
                         >
-                            <Text style={styles.cancelText}>Cancel</Text>
+                            <Text style={styles.cancelText}>{t('cancel')}</Text>
                         </TouchableOpacity>
                     )}
                 </View>
@@ -199,10 +201,10 @@ export default function ProfileScreen() {
                     {renderAvatarPicker()}
 
                     <View style={styles.inputGroup}>
-                        <Text style={styles.label}>Username <Text style={{ color: 'red' }}>*</Text></Text>
+                        <Text style={styles.label}>{t('username')} <Text style={{ color: 'red' }}>*</Text></Text>
                         <TextInput
                             style={[styles.input, usernameError && styles.inputError]}
-                            placeholder="Display Name"
+                            placeholder={t('displayName')}
                             value={username}
                             onChangeText={(value) => {
                                 setUsername(value);
@@ -213,7 +215,7 @@ export default function ProfileScreen() {
                             autoCapitalize="words"
                         />
                         {usernameError && (
-                            <Text style={styles.errorText}>Please enter a username.</Text>
+                            <Text style={styles.errorText}>{t('enterUsername')}</Text>
                         )}
                     </View>
 
@@ -222,7 +224,7 @@ export default function ProfileScreen() {
 
 
                     <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
-                        <Text style={styles.saveButtonText}>{isEditing ? 'Save Changes' : 'Create Profile'}</Text>
+                        <Text style={styles.saveButtonText}>{isEditing ? t('saveChanges') : t('createProfile')}</Text>
                     </TouchableOpacity>
                 </ScrollView>
             </View>
@@ -239,9 +241,9 @@ export default function ProfileScreen() {
             keyboardShouldPersistTaps="handled"
         >
             <View style={[styles.header, { justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }]}>
-                <Text style={styles.headerTitle}>My Profile</Text>
+                <Text style={styles.headerTitle}>{t('myProfile')}</Text>
                 <TouchableOpacity onPress={() => setIsEditing(true)} style={styles.editButtonHeader}>
-                    <Text style={styles.editText}>Edit</Text>
+                    <Text style={styles.editText}>{t('editProfile')}</Text>
                 </TouchableOpacity>
             </View>
 
@@ -260,33 +262,33 @@ export default function ProfileScreen() {
 
             {/* Global Progress */}
             <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Global Progress</Text>
+                <Text style={styles.sectionTitle}>{t('globalProgress')}</Text>
                 <View style={styles.statsGrid}>
                     <View style={styles.statBox}>
                         <Text style={styles.statValue}>{stats.averageScore}%</Text>
-                        <Text style={styles.statLabel}>Accuracy</Text>
+                        <Text style={styles.statLabel}>{t('accuracy')}</Text>
                     </View>
                     <View style={styles.statBox}>
                         <Text style={styles.statValue}>{stats.questionsAnswered}</Text>
-                        <Text style={styles.statLabel}>Completed</Text>
+                        <Text style={styles.statLabel}>{t('completed')}</Text>
                     </View>
                     <View style={styles.statBox}>
                         <Text style={styles.statValue}>{Math.floor(stats.studyTimeMinutes / 60)}h {stats.studyTimeMinutes % 60}m</Text>
-                        <Text style={styles.statLabel}>Time Spent</Text>
+                        <Text style={styles.statLabel}>{t('timeSpent')}</Text>
                     </View>
                     <View style={styles.statBox}>
                         <Text style={styles.statValue}>{stats.examAttempts}</Text>
-                        <Text style={styles.statLabel}>Exams</Text>
+                        <Text style={styles.statLabel}>{t('exams')}</Text>
                     </View>
                 </View>
             </View>
 
             {/* Achievements Placeholder */}
             <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>Achievements</Text>
+                <Text style={styles.sectionTitle}>{t('achievements')}</Text>
                 <View style={styles.placeholderBox}>
                     <FontAwesome name="trophy" size={24} color="#ccc" style={{ marginBottom: 8 }} />
-                    <Text style={styles.placeholderText}>Coming soon</Text>
+                    <Text style={styles.placeholderText}>{t('comingSoon')}</Text>
                 </View>
             </View>
 
@@ -294,7 +296,7 @@ export default function ProfileScreen() {
             <View style={styles.footer}>
                 <Text style={styles.versionText}>v1.0.0</Text>
                 <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                    <Text style={styles.logoutText}>Log Out</Text>
+                    <Text style={styles.logoutText}>{t('logout')}</Text>
                 </TouchableOpacity>
 
 
