@@ -5,8 +5,6 @@ import { useState, useCallback, useEffect } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { loadStats, updateStats, resetAllAppData, UserStats, INITIAL_STATS } from '../../data/stats';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { getPendingEmails, saveEmailLocally, setPendingEmails } from '../../data/supabase';
-import { startEmailSync } from '../../utils/emailSync';
 import { restartApp } from '../../utils/restartApp';
 import { showAlert, showConfirm } from '../../utils/alerts';
 
@@ -20,7 +18,6 @@ const AVATARS = [
     { id: 'road', source: require('../../assets/avatars/wheel.png') },
     { id: 'user', source: require('../../assets/avatars/driver.png') },
 ];
-const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function ProfileScreen() {
     const insets = useSafeAreaInsets();
@@ -31,7 +28,6 @@ export default function ProfileScreen() {
     // Form State
     const [username, setUsername] = useState('');
     const [usernameError, setUsernameError] = useState(false);
-    const [subscribeEmail, setSubscribeEmail] = useState('');
     const [selectedAvatar, setSelectedAvatar] = useState(AVATARS[0].id);
     const [selectedClass, setSelectedClass] = useState<'Class A' | 'Class B'>('Class A');
 
@@ -84,18 +80,12 @@ export default function ProfileScreen() {
     const handleLogout = async () => {
         const performLogout = async () => {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-            const pendingEmails = await getPendingEmails();
             const cleared = await resetAllAppData();
-            if (pendingEmails.length > 0) {
-                await setPendingEmails(pendingEmails);
-            }
             setStats(cleared);
-            // Reset local form state
             setUsername('');
             setSelectedAvatar('truck');
             setSelectedClass('Class A');
             setIsEditing(false);
-            setSubscribeEmail('');
             const restarted = await restartApp();
             if (!restarted && Platform.OS !== 'web') {
                 showAlert("Logged Out", "Local data cleared. Please restart the app if anything looks stale.");
@@ -111,26 +101,7 @@ export default function ProfileScreen() {
             onConfirm: performLogout,
         });
     };
-    const handleSubscribe = async () => {
-        const trimmed = subscribeEmail.trim().toLowerCase();
-        if (!trimmed) {
-            showAlert("Email Required", "Please enter an email to subscribe.");
-            return;
-        }
-        if (!EMAIL_REGEX.test(trimmed)) {
-            showAlert("Invalid Email", "Please enter a valid email address.");
-            return;
-        }
 
-        try {
-            await saveEmailLocally(trimmed);
-            setSubscribeEmail('');
-            startEmailSync();
-            showAlert("Subscribed", "Thanks! We'll sync your email when you're online.");
-        } catch (error) {
-            showAlert("Subscription Failed", "Couldn't save your email. Please try again.");
-        }
-    };
 
     if (isLoading) return null;
 
@@ -188,23 +159,7 @@ export default function ProfileScreen() {
         </View>
     );
 
-    const renderSubscribeSection = () => (
-        <View style={styles.subscribeCard}>
-            <Text style={styles.subscribeTitle}>Email Updates</Text>
-            <Text style={styles.subscribeSubtitle}>We only use this email for subscription updates.</Text>
-            <TextInput
-                style={styles.input}
-                placeholder="you@email.com"
-                value={subscribeEmail}
-                onChangeText={setSubscribeEmail}
-                autoCapitalize="none"
-                keyboardType="email-address"
-            />
-            <TouchableOpacity style={styles.subscribeButton} onPress={handleSubscribe}>
-                <Text style={styles.subscribeButtonText}>Subscribe</Text>
-            </TouchableOpacity>
-        </View>
-    );
+
 
     // Render Edit/Create Form
     if (!stats.username || isEditing) {
@@ -243,7 +198,7 @@ export default function ProfileScreen() {
 
                     {renderClassPicker()}
 
-                    {!isEditing && renderSubscribeSection()}
+
 
                     <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
                         <Text style={styles.saveButtonText}>{isEditing ? 'Save Changes' : 'Create Profile'}</Text>
@@ -313,9 +268,7 @@ export default function ProfileScreen() {
                     <Text style={styles.placeholderText}>Coming soon</Text>
                 </View>
             </View>
-            <View style={styles.sectionContainer}>
-                {renderSubscribeSection()}
-            </View>
+
 
             <View style={styles.footer}>
                 <Text style={styles.versionText}>v1.0.0</Text>
@@ -376,6 +329,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         gap: 12,
         paddingVertical: 8,
+        paddingLeft: 4,
     },
     avatarOption: {
         width: 56,

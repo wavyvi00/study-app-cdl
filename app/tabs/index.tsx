@@ -14,7 +14,9 @@ import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Hoverable from '../../components/ui/Hoverable';
+import SubscriptionCard from '../../components/SubscriptionCard';
 import { showConfirm } from '../../utils/alerts';
+import { getPendingEmails, isSubscriptionDismissed, markSubscriptionDismissed } from '../../data/supabase';
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -28,13 +30,21 @@ export default function TopicsScreen() {
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
+    const [infoTopic, setInfoTopic] = useState<Topic | null>(null);
+    const [showSubscriptionPopup, setShowSubscriptionPopup] = useState(false);
 
     // ... (rest of component logic remains same until return)
 
-    // Load stats whenever the screen comes into focus
+    // Load stats and check subscription status whenever the screen comes into focus
     useFocusEffect(
         useCallback(() => {
             loadStats().then(setStats);
+            // Check if we should show subscription popup
+            Promise.all([getPendingEmails(), isSubscriptionDismissed()]).then(([emails, dismissed]) => {
+                if (emails.length === 0 && !dismissed) {
+                    setShowSubscriptionPopup(true);
+                }
+            });
         }, [])
     );
 
@@ -150,7 +160,7 @@ export default function TopicsScreen() {
                             style={[styles.menuItem, { borderBottomColor: colors.border }]}
                             onPress={() => {
                                 setIsMenuOpen(false);
-                                router.push('/privacy'); // Adjust if route doesn't exist, but per original it might
+                                router.push('/privacy');
                             }}
                         >
                             <FontAwesome name="shield" size={16} color={colors.textSecondary} style={styles.menuIcon} />
@@ -187,7 +197,8 @@ export default function TopicsScreen() {
 
             <ScrollView contentContainerStyle={[styles.scrollContent, { padding: spacing.lg }]}>
                 <StatsOverview
-                    stats={stats}
+                    stats={selectedTopic ? (stats.topicStats[selectedTopic.id] || INITIAL_TOPIC_STATS) : stats}
+                    title={selectedTopic ? `${selectedTopic.title} Progress` : 'Your Progress'}
                 />
 
                 <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.sm, marginTop: spacing.md, marginBottom: spacing.sm }]}>SELECT TOPIC:</Text>
@@ -258,7 +269,7 @@ export default function TopicsScreen() {
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
                                             <Text style={[styles.topicCardTitle, { color: colors.text, fontSize: typography.lg }]}>{selectedTopic.title}</Text>
                                             <TouchableOpacity
-                                                onPress={() => Alert.alert(selectedTopic.title, selectedTopic.details || 'No details available.', [{ text: 'Close' }])}
+                                                onPress={() => setInfoTopic(selectedTopic)}
                                                 style={{ padding: 8, opacity: 0.6 }}
                                             >
                                                 <FontAwesome name="ellipsis-h" size={16} color={colors.textSecondary} />
@@ -270,13 +281,34 @@ export default function TopicsScreen() {
                                     </View>
                                 </View>
 
+                                {stats.questionsAnswered < 10 && (
+                                    <View style={{
+                                        backgroundColor: isDark ? 'rgba(33, 150, 243, 0.1)' : 'rgba(33, 150, 243, 0.08)',
+                                        paddingVertical: 8,
+                                        paddingHorizontal: 12,
+                                        borderRadius: 8,
+                                        marginBottom: spacing.sm,
+                                        borderLeftWidth: 3,
+                                        borderLeftColor: colors.primary
+                                    }}>
+                                        <Text style={{
+                                            fontSize: 12,
+                                            color: colors.primary,
+                                            fontWeight: '600',
+                                            lineHeight: 16
+                                        }}>
+                                            💡 New here? Try Practice first to learn as you go.
+                                        </Text>
+                                    </View>
+                                )}
+
                                 <View style={styles.actionRow}>
                                     <Button
                                         title="Study Guide"
-                                        variant="secondary"
+                                        variant="outline"
                                         onPress={() => router.push({ pathname: '/study', params: { topicId: selectedTopic.id } })}
-                                        style={{ flex: 1, marginRight: 8, height: 42, borderRadius: 12 }}
-                                        textStyle={{ fontSize: 13, fontWeight: '600' }}
+                                        style={{ flex: 1, marginRight: 8, height: 42, borderRadius: 12, borderColor: colors.primary, borderWidth: 1.5 }}
+                                        textStyle={{ fontSize: 13, fontWeight: '600', color: colors.primary }}
                                         icon={<FontAwesome name="book" size={12} color={colors.primary} style={{ marginRight: 6 }} />}
                                     />
                                     <Button
@@ -302,6 +334,69 @@ export default function TopicsScreen() {
 
                 <View style={{ height: 100 }} />
             </ScrollView>
+
+            {/* Info Card Overlay */}
+            {infoTopic && (
+                <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.5)', justifyContent: 'center', alignItems: 'center', zIndex: 1000 }]}>
+                    <TouchableOpacity
+                        style={StyleSheet.absoluteFill}
+                        activeOpacity={1}
+                        onPress={() => setInfoTopic(null)}
+                    />
+                    <View style={{
+                        width: '85%',
+                        backgroundColor: colors.surface,
+                        borderRadius: 24,
+                        padding: 24,
+                        shadowColor: "#000",
+                        shadowOffset: { width: 0, height: 8 },
+                        shadowOpacity: 0.25,
+                        shadowRadius: 16,
+                        elevation: 10
+                    }}>
+                        <View style={{ alignItems: 'center', marginBottom: 20 }}>
+                            <View style={[styles.iconBox, { backgroundColor: getTopicColor(infoTopic.image), width: 64, height: 64, borderRadius: 20, marginBottom: 16 }]}>
+                                <FontAwesome name={getTopicIcon(infoTopic.id)} size={32} color="#FFFFFF" />
+                            </View>
+                            <Text style={{ fontSize: 20, fontWeight: '700', color: colors.text, textAlign: 'center', marginBottom: 8 }}>{infoTopic.title}</Text>
+                            <Text style={{ fontSize: 14, color: colors.textSecondary, textAlign: 'center', fontStyle: 'italic' }}>{infoTopic.summary}</Text>
+                        </View>
+
+                        <View style={{ backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#F5F5F7', padding: 16, borderRadius: 16, marginBottom: 24 }}>
+                            <Text style={{ fontSize: 15, color: colors.text, lineHeight: 22, textAlign: 'center' }}>
+                                {infoTopic.details || "This topic covers essential knowledge for the Commercial Driver's License test. Study the materials carefully before attempting the exam."}
+                            </Text>
+                        </View>
+
+                        <Button
+                            title="Close"
+                            variant="primary"
+                            onPress={() => setInfoTopic(null)}
+                            style={{ width: '100%', borderRadius: 16, height: 50 }}
+                        />
+                    </View>
+                </View>
+            )}
+
+            {/* Subscription Popup */}
+            {showSubscriptionPopup && (
+                <View style={{
+                    position: 'absolute',
+                    bottom: 100,
+                    left: spacing.lg,
+                    right: spacing.lg,
+                    zIndex: 900,
+                }}>
+                    <SubscriptionCard
+                        showCloseButton
+                        onClose={() => {
+                            markSubscriptionDismissed();
+                            setShowSubscriptionPopup(false);
+                        }}
+                        onSuccess={() => setShowSubscriptionPopup(false)}
+                    />
+                </View>
+            )}
         </View>
     );
 }
