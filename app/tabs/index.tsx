@@ -416,7 +416,7 @@ export default function TopicsScreen() {
                                         title={t('studyGuide')}
                                         variant="outline"
                                         onPress={() => router.push({ pathname: '/study', params: { topicId: selectedTopic.id } })}
-                                        style={{ flex: 1, marginRight: 8, height: 42, borderRadius: 12, borderColor: colors.primary, borderWidth: 1.5 }}
+                                        style={{ flex: 1, marginRight: 8, minHeight: 42, borderRadius: 12, borderColor: colors.primary, borderWidth: 1.5, paddingHorizontal: 4 }}
                                         textStyle={{ fontSize: 13, fontWeight: '600', color: colors.primary }}
                                         icon={<FontAwesome name="book" size={12} color={colors.primary} style={{ marginRight: 6 }} />}
                                     />
@@ -424,14 +424,14 @@ export default function TopicsScreen() {
                                         title={t('practice')}
                                         variant="outline"
                                         onPress={() => startQuiz(selectedTopic.id, 'practice')}
-                                        style={{ flex: 1, marginRight: 8, height: 42, borderRadius: 12, borderColor: colors.border }}
+                                        style={{ flex: 1, marginRight: 8, minHeight: 42, borderRadius: 12, borderColor: colors.border, paddingHorizontal: 4 }}
                                         textStyle={{ fontSize: 13, fontWeight: '600', color: colors.textSecondary }}
                                     />
                                     <Button
                                         title={t('exam')}
                                         variant="outline"
                                         onPress={() => startQuiz(selectedTopic.id, 'exam')}
-                                        style={{ flex: 1, height: 42, borderRadius: 12, borderColor: colors.border }}
+                                        style={{ flex: 1, minHeight: 42, borderRadius: 12, borderColor: colors.border, paddingHorizontal: 4 }}
                                         textStyle={{ fontSize: 13, fontWeight: '600', color: colors.error }}
                                         icon={<FontAwesome name="clock-o" size={12} color={colors.error} style={{ marginRight: 6 }} />}
                                     />

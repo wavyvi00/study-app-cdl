@@ -62,7 +62,6 @@ export default function Button({
                             { color: getTextColor(), fontSize: typography.md, marginLeft: icon ? spacing.sm : 0 },
                             textStyle
                         ]}
-                        numberOfLines={1}
                         adjustsFontSizeToFit
                         minimumFontScale={0.8}
                     >
