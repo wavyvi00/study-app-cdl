@@ -56,11 +56,16 @@ export default function Button({
             ) : (
                 <>
                     {icon}
-                    <Text style={[
-                        styles.text,
-                        { color: getTextColor(), fontSize: typography.md, marginLeft: icon ? spacing.sm : 0 },
-                        textStyle
-                    ]}>
+                    <Text
+                        style={[
+                            styles.text,
+                            { color: getTextColor(), fontSize: typography.md, marginLeft: icon ? spacing.sm : 0 },
+                            textStyle
+                        ]}
+                        numberOfLines={1}
+                        adjustsFontSizeToFit
+                        minimumFontScale={0.8}
+                    >
                         {title}
                     </Text>
                 </>

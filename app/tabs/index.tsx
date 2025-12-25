@@ -170,10 +170,10 @@ export default function TopicsScreen() {
                 style={[styles.headerBackground, { paddingTop: 40, paddingBottom: 30, paddingHorizontal: spacing.lg, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
             >
                 <View style={styles.headerRow}>
-                    <View>
+                    <View style={{ flex: 1, marginRight: 12 }}>
                         <Text style={styles.headerLabel}>{t('officialCDLPreparation')}</Text>
-                        <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]}>{t('appTitle')}</Text>
-                        <Text style={[styles.headerSubtitle, { color: 'rgba(255,255,255,0.85)', fontSize: typography.md }]}>{t('appSubtitle')}</Text>
+                        <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>{t('appTitle')}</Text>
+                        <Text style={[styles.headerSubtitle, { color: 'rgba(255,255,255,0.85)', fontSize: typography.md }]} numberOfLines={1} adjustsFontSizeToFit>{t('appSubtitle')}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', gap: 8 }}>
                         <TouchableOpacity
@@ -296,7 +296,7 @@ export default function TopicsScreen() {
             <ScrollView contentContainerStyle={[styles.scrollContent, { padding: spacing.lg }]}>
                 <StatsOverview
                     stats={selectedTopic ? (stats.topicStats[selectedTopic.id] || INITIAL_TOPIC_STATS) : stats}
-                    title={selectedTopic ? `${selectedTopic.title} ${t('yourProgress')}` : t('yourProgress')}
+                    title={selectedTopic ? `${selectedTopic.title} - ${t('yourProgress')}` : t('yourProgress')}
                 />
 
                 <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.sm, marginTop: spacing.lg, marginBottom: spacing.sm }]}>{t('selectTopic')}</Text>
@@ -406,7 +406,7 @@ export default function TopicsScreen() {
                                             fontWeight: '600',
                                             lineHeight: 16
                                         }}>
-                                            💡 New here? Try Practice first to learn as you go.
+                                            💡 {t('newHereTip')}
                                         </Text>
                                     </View>
                                 )}

@@ -13,6 +13,7 @@ export type TranslationKey =
     | 'privacyPolicy'
     | 'selectTopic'
     | 'studyGuide'
+    | 'newHereTip'
     | 'practice'
     | 'exam'
     | 'questions'
@@ -114,6 +115,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         privacyPolicy: 'Privacy Policy',
         selectTopic: 'SELECT TOPIC:',
         studyGuide: 'Study Guide',
+        newHereTip: 'New here? Try Practice first to learn as you go.',
         practice: 'Practice',
         exam: 'Exam',
         questions: 'Questions',
@@ -224,6 +226,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         privacyPolicy: 'Política de Privacidad',
         selectTopic: 'SELECCIONAR TEMA:',
         studyGuide: 'Guía de Estudio',
+        newHereTip: '¿Nuevo aquí? Prueba la Práctica para aprender.',
         practice: 'Práctica',
         exam: 'Examen',
         questions: 'Preguntas',
@@ -334,6 +337,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         privacyPolicy: 'Конфиденциальность',
         selectTopic: 'ВЫБЕРИТЕ ТЕМУ:',
         studyGuide: 'Учебник',
+        newHereTip: 'Новичок? Попробуйте Практику, чтобы учиться на ходу.',
         practice: 'Практика',
         exam: 'Экзамен',
         questions: 'Вопросы',
