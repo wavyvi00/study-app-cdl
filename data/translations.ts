@@ -99,7 +99,10 @@ export type TranslationKey =
     | 'answer'
     | 'correctHeadsUp'
     | 'incorrectHeadsUp'
-    | 'doubleTapToSelect';
+    | 'incorrectHeadsUp'
+    | 'doubleTapToSelect'
+    | 'keyTakeaways'
+    | 'checkYourUnderstanding';
 
 export const translations: Record<Locale, Record<TranslationKey, string>> = {
     en: {
@@ -211,7 +214,9 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         answer: 'Answer',
         correctHeadsUp: 'Correct answer',
         incorrectHeadsUp: 'Incorrect answer',
-        doubleTapToSelect: 'Double tap to select this answer'
+        doubleTapToSelect: 'Double tap to select this answer',
+        keyTakeaways: 'Key Takeaways',
+        checkYourUnderstanding: 'Check Your Understanding'
     },
     es: {
         appTitle: 'CENTRO DE ESTUDIO',
@@ -322,7 +327,9 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         answer: 'Respuesta',
         correctHeadsUp: 'Respuesta correcta',
         incorrectHeadsUp: 'Respuesta incorrecta',
-        doubleTapToSelect: 'Toca dos veces para seleccionar esta respuesta'
+        doubleTapToSelect: 'Toca dos veces para seleccionar esta respuesta',
+        keyTakeaways: 'Puntos Clave',
+        checkYourUnderstanding: 'Comprueba tu Comprensión'
     },
     ru: {
         appTitle: 'УЧЕБНЫЙ ЦЕНТР',
@@ -433,6 +440,8 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         answer: 'Ответ',
         correctHeadsUp: 'Правильный ответ',
         incorrectHeadsUp: 'Неправильный ответ',
-        doubleTapToSelect: 'Дважды коснитесь, чтобы выбрать этот ответ'
+        doubleTapToSelect: 'Дважды коснитесь, чтобы выбрать этот ответ',
+        keyTakeaways: 'Ключевые моменты',
+        checkYourUnderstanding: 'Проверьте свои знания'
     }
 };

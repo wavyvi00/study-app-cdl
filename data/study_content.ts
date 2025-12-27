@@ -277,6 +277,120 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
             ]
         },
         {
+            id: 'gk-distracted',
+            title: '2.9 Distracted Driving',
+            content: [
+                "Distracted driving is a major cause of crashes. A driver manual should discuss: The effects of distracted driving; Types of distractions; Cell phone usage.",
+                "Types of Distractions: Physical distractions (reaching for an object, eating, drinking) and Mental distractions (talking with a passenger, thinking about something else).",
+                "Mobile Phones: It is illegal for CMV drivers to use a hand-held mobile telephone while driving. Penalties include fines and disqualification. You may use a hands-free device if it can be initiated with a single touch.",
+                "Don't Engage in Distracting Activities: Pre-program radio stations. Review maps before starting. excessive eating or smoking."
+            ],
+            keyPoints: [
+                "Don't use hand-held cell phones while driving.",
+                "Mental distractions are just as dangerous as physical ones.",
+                "Penalties for hand-held phone use include fines and CDL disqualification."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'q-distracted',
+                    text: "What is the penalty for a CMV driver using a hand-held mobile phone while driving?",
+                    options: [
+                        "A warning ticket",
+                        "Fines and potential CDL disqualification",
+                        "Points on license only",
+                        "Increased insurance rates only"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Violation can result in civil penalties (fines) up to $2,750 and driver disqualification for multiple offenses."
+                }
+            ]
+        },
+        {
+            id: 'gk-aggressive',
+            title: '2.10 Aggressive Drivers/Road Rage',
+            content: [
+                "Aggressive Driving: The act of operating a motor vehicle in a selfish, bold, or pushy manner, without regard for the rights or safety of others (e.g., tailgating, changing lanes frequently).",
+                "Road Rage: Operating a motor vehicle with the intent of doing physical harm to others or physically assaulting a driver or their vehicle.",
+                "How to Avoid Being a Victim: Do not make eye contact. Do not challenge them. Get out of their way. Report aggressive drivers to authorities when safe to do so."
+            ],
+            keyPoints: [
+                "Aggressive driving is selfish/pushy behavior.",
+                "Road rage is the intent to cause harm.",
+                "Avoid eye contact and do not engage with aggressive drivers."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'q-aggressive',
+                    text: "What is the main difference between aggressive driving and road rage?",
+                    options: [
+                        "Aggressive driving is faster",
+                        "Road rage involves the intent to do physical harm",
+                        "Aggressive driving is legal",
+                        "There is no difference"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Road rage involves the intent to do physical harm, whereas aggressive driving is selfish/bold operation."
+                }
+            ]
+        },
+        {
+            id: 'gk-night',
+            title: '2.11 Night Driving',
+            content: [
+                "You are at greater risk when you drive at night. Drivers can't see hazards as quickly as in daylight, so they have less time to respond. Drivers caught by surprise are less able to avoid a crash.",
+                "Factors: Vision (people can't see as well at night), Glare (from oncoming lights), Fatigue (more likely to be tired).",
+                "Headlights: Use high beams when it is safe and legal to do so. Low beams let you see about 250 feet ahead. High beams let you see about 350-500 feet ahead. You should dim your lights within 500 feet of an oncoming vehicle or when following another vehicle within 500 feet.",
+                "Speed: Do not overdrive your headlights. You should be able to stop within the distance you can see ahead."
+            ],
+            keyPoints: [
+                "Use high beams when safe/legal (see 350-500 ft).",
+                "Dim lights within 500 ft of other vehicles.",
+                "Don't overdrive your headlights (stop within seeing distance)."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'q-night',
+                    text: "When should you dim your headlights at night?",
+                    options: [
+                        "When driving in the city only",
+                        "Within 500 feet of an oncoming vehicle",
+                        "When you are tired",
+                        "Within 100 feet of an oncoming vehicle"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Dim your lights within 500 feet of an oncoming vehicle or when following another vehicle within 500 feet."
+                }
+            ]
+        },
+        {
+            id: 'gk-fog',
+            title: '2.12 Driving in Fog',
+            content: [
+                "Fog completely can obscure visibility. The best advice for driving in fog is: Don't. Pull off the road into a rest area or truck stop until visibility is better.",
+                "If You Must Drive in Fog: Obey all fog-related warning signs. Slow down before you enter the fog. Use low-beam headlights and fog lights for best visibility even in daytime, and be alert for other drivers who may have forgotten to turn on their lights. Turn on your 4-way flashers. This gives vehicles approaching you from behind a better chance to see your vehicle.",
+                "Watch for Vehicles on the Roadside: Vehicles may be parked on the shoulder. Avoid passing other vehicles."
+            ],
+            keyPoints: [
+                "Don't drive in fog if possible.",
+                "Use low-beam headlights (high beams reflect off fog).",
+                "Use 4-way flashers to warn others."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'q-fog',
+                    text: "What lights should you use when driving in fog?",
+                    options: [
+                        "High beams",
+                        "Parking lights only",
+                        "Low beams and fog lights",
+                        "No lights"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Use low-beam headlights and fog lights. High beams reflect off the water droplets in the fog and can blind you."
+                }
+            ]
+        },
+        {
             id: 'gk-winter',
             title: '2.13 Winter Driving',
             content: [
@@ -303,6 +417,98 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
                     ],
                     correctIndex: 1,
                     explanation: "Don't use the engine brake or speed retarder on slippery surfaces because they can cause the driving wheels to skid."
+                }
+            ]
+        },
+        {
+            id: 'gk-hot-weather',
+            title: '2.14 Driving in Very Hot Weather',
+            content: [
+                "Do not let air out or the pressure will be too low when the tires cool off. If a tire is too hot to touch, remain stopped until the tire cools off. Otherwise the tire may blow out or catch fire.",
+                "Tires: Check the tire mounting and air pressure. Inspect the tires every two hours or every 100 miles when driving in very hot weather. Air pressure increases with temperature.",
+                "Engine Oil: The engine oil helps keep the engine cool, as well as lubricating it. Make sure there is enough engine oil.",
+                "Engine Coolant: Before starting out, make sure the engine cooling system has enough water and antifreeze according to the engine manufacturer's directions.",
+                "Bleeding Tar: Tar in the road pavement frequently rises to the surface in very hot weather. Spots where tar 'bleeds' to the surface are very slippery."
+            ],
+            keyPoints: [
+                "Inspect tires every 2 hours/100 miles in hot weather.",
+                "Air pressure increases with heat - DO NOT let air out.",
+                "Watch for bleeding tar (slippery)."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'q-hot-weather',
+                    text: "What should you do if tire pressure is high due to hot weather?",
+                    options: [
+                        "Let air out until it reaches normal pressure",
+                        "Do not let air out",
+                        "Drive faster to cool them down",
+                        "Pour water on them"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Air pressure increases with temperature. Do not let air out or the pressure will be too low when they cool off."
+                }
+            ]
+        },
+        {
+            id: 'gk-railroad',
+            title: '2.15 Railroad-Highway Crossings',
+            content: [
+                "Railroad-highway grade crossings are a special kind of intersection where the roadway crosses train tracks. These crossings are always dangerous.",
+                "Passive Crossings: This type of crossing does not have any type of traffic control device. The decision to stop or proceed rests entirely in your hands.",
+                "Active Crossings: This type of crossing has a traffic control device installed at the crossing to regulate traffic (flashing red lights, bells, gates).",
+                "Advance Warning Signs: The round, black-on-yellow warning sign is placed ahead of a public railroad-highway crossing.",
+                "Driving Procedures: Never race a train to a crossing. Reduce speed. Look and listen. Double tracks require a double check.",
+                "Stopping: If you must stop, stop 15 to 50 feet from the nearest rail.",
+                "Crossing the Tracks: Do not shift gears while crossing railroad tracks. You could get stuck on the tracks."
+            ],
+            keyPoints: [
+                "Never race a train.",
+                "Stop 15-50 feet from the nearest rail if required.",
+                "DO NOT shift gears while crossing tracks."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'q-railroad',
+                    text: "When should you shift gears while crossing railroad tracks?",
+                    options: [
+                        "Always downshift on tracks",
+                        "Upshift for speed",
+                        "Never shift gears on tracks",
+                        "Only if the train is far away"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Do not shift gears while crossing railroad tracks. If you miss a gear, you could get stuck on the tracks."
+                }
+            ]
+        },
+        {
+            id: 'gk-mountain',
+            title: '2.16 Mountain Driving',
+            content: [
+                "In mountain driving, gravity plays a major role. On any upgrade, gravity slows you down. On downgrades, gravity speeds you up. You must select an appropriate safe speed, then a low gear, and use proper braking techniques.",
+                "Select a Safe Speed: Your most important consideration is to select a speed that is not too fast for the: Total weight of the vehicle and cargo; Length of the grade; Steepness of the grade; Road conditions; Weather.",
+                "Select the Right Gear: Shift into a low gear before you start down the grade. Don't try to downshift after your speed has already built up. You will not be able to shift into a lower gear.",
+                "Brake Fading or Failure: Brakes can fade or fail from excessive heat caused by using them too much and not relying on the engine braking effect.",
+                "Proper Braking Technique (Snub Braking): 1. Apply the brakes just hard enough to feel a definite slowdown. 2. When your speed has been reduced to approx. 5 mph below your safe speed, release the brakes. 3. When your speed has increased to your safe speed, repeat step 1. (Example: If safe speed is 40 mph, brake to 35 mph, release, wait for 40 mph, repeat)."
+            ],
+            keyPoints: [
+                "Gravity slows you on upgrades and speeds you on downgrades.",
+                "Shift into low gear BEFORE starting down a hill.",
+                "Use Snub Braking to control speed without overheating brakes."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'q-mountain',
+                    text: "What is the proper braking technique on a long downgrade?",
+                    options: [
+                        "Use light, steady pressure on the brakes",
+                        "Fan the brakes (pump them rapidly)",
+                        "Snub braking: Brake to 5 mph below safe speed, release, repeat",
+                        "Use only the emergency brake"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Snub braking involves applying brakes within a safe range (e.g., 40 to 35 mph) to prevent overheating."
                 }
             ]
         },
@@ -563,6 +769,63 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
                     ],
                     correctIndex: 2,
                     explanation: "You must check your cargo within the first 50 miles, and then every 3 hours or 150 miles thereafter."
+                }
+            ]
+        },
+        {
+            id: 'gk-weight-balance',
+            title: '3.2 Weight and Balance',
+            content: [
+                "Definitions: Gross Vehicle Weight (GVW) is the total weight of a single vehicle plus its load. Gross Combination Weight (GCW) is the total weight of a powered unit, plus trailer(s), plus the cargo. Gross Vehicle Weight Rating (GVWR) is the maximum GVW specified by the manufacturer.",
+                "Center of Gravity: The center of gravity is the point where the vehicle's weight is balanced. A high center of gravity means you are more likely to tip over. It is most dangerous in curves or if you swerve to avoid a hazard. Keep the cargo as close to the ground as possible and centered.",
+                "Balance the Weight: Poor weight balance can make vehicle handling unsafe. Too much weight on the steering axle can cause hard steering. Under-loaded front axles (caused by shifting weight fast to the rear) can make the steering axle weight too light to steer safely."
+            ],
+            keyPoints: [
+                "High center of gravity = High risk of rollover.",
+                "Keep cargo low and centered.",
+                "Poor weight balance affects steering and braking."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'q21',
+                    text: "What is the danger of a high center of gravity?",
+                    "options": [
+                        "It makes the vehicle slower",
+                        "It makes the vehicle more likely to tip over",
+                        "It saves fuel",
+                        "It improves traction"
+                    ],
+                    correctIndex: 1,
+                    explanation: "A high center of gravity makes the vehicle more unstable and likely to tip over, especially on curves."
+                }
+            ]
+        },
+        {
+            id: 'gk-special-cargo',
+            title: '3.4 Cargo Needing Special Attention',
+            content: [
+                "Dry Bulk: Dry bulk tanks require special care because they have a high center of gravity, and the load can shift. Be extremely diligent when going around curves and making sharp turns.",
+                "Hanging Meat: Hanging meat (suspended beef, pork, etc.) in a refrigerated truck can be a very unstable load with a high center of gravity. Caution on curves is needed to prevent the load from swaying and overturning the truck.",
+                "Livestock: Livestock can move around in a trailer, causing unsafe handling. With less than a full load, use false bulkheads to keep livestock bunched together. Even when bunched, expect the center of gravity to shift on curves.",
+                "Oversized Loads: Over-length, over-width, and/or overweight loads require special transit permits. Driving is usually limited to certain times. Special equipment may be necessary such as \"Wide Load\" signs, flashing lights, flags, etc."
+            ],
+            keyPoints: [
+                "Dry bulk and hanging meat have high centers of gravity.",
+                "Livestock can move and shift the vehicle's balance.",
+                "Oversized loads require special permits and signs."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'q22',
+                    text: "Which of these loads is known for having a high center of gravity and being unstable?",
+                    "options": [
+                        "Flatbed lumber",
+                        "Hanging meat",
+                        "Empty trailer",
+                        "Canned goods"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Hanging meat has a high center of gravity and can sway, making the truck unstable on curves."
                 }
             ]
         }

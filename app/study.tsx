@@ -18,7 +18,7 @@ export default function StudyScreen() {
     const router = useRouter();
     const { colors, spacing, typography, radius, isDark } = useTheme();
     const { topics } = useQuestions();
-    const { locale } = useLocalization(); // Added
+    const { locale, t } = useLocalization(); // Added
     const insets = useSafeAreaInsets();
     const scrollViewRef = useRef<ScrollView>(null);
 
@@ -214,7 +214,7 @@ export default function StudyScreen() {
                     <Card padding="lg" style={{ marginBottom: spacing.xl, backgroundColor: isDark ? '#2a2a20' : '#FFF9C4', borderColor: isDark ? '#444' : 'transparent' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md }}>
                             <FontAwesome name="lightbulb-o" size={20} color={colors.highlight} />
-                            <Text style={[styles.keyPointsTitle, { color: isDark ? colors.highlight : '#F57F17', fontSize: typography.lg, marginLeft: spacing.sm }]}>Key Takeaways</Text>
+                            <Text style={[styles.keyPointsTitle, { color: isDark ? colors.highlight : '#F57F17', fontSize: typography.lg, marginLeft: spacing.sm }]}>{t('keyTakeaways')}</Text>
                         </View>
                         {currentSection.keyPoints.map((point, idx) => (
                             <View key={idx} style={styles.bulletRow}>
@@ -228,7 +228,7 @@ export default function StudyScreen() {
                 {/* Comprehension Questions */}
                 {currentSection.reviewQuestions && currentSection.reviewQuestions.length > 0 && (
                     <View style={styles.quizSection}>
-                        <Text style={[styles.quizHeader, { color: colors.text, fontSize: typography.lg, marginBottom: spacing.md }]}>Check Your Understanding</Text>
+                        <Text style={[styles.quizHeader, { color: colors.text, fontSize: typography.lg, marginBottom: spacing.md }]}>{t('checkYourUnderstanding')}</Text>
 
                         {currentSection.reviewQuestions.map((q, idx) => {
                             const selected = answers[q.id];

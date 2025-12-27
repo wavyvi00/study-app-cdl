@@ -277,6 +277,120 @@ export const GeneralKnowledgeStudyGuide_ES: StudyGuide = {
             ]
         },
         {
+            "id": "gk-distracted",
+            "title": "2.9 Conducción Distraída",
+            "content": [
+                "La conducción distraída es una causa importante de accidentes. Un manual del conductor debe discutir: Los efectos de la conducción distraída; Tipos de distracciones; Uso de teléfonos celulares.",
+                "Tipos de Distracciones: Distracciones físicas (alcanzar un objeto, comer, beber) y distracciones mentales (hablar con un pasajero, pensar en otra cosa).",
+                "Teléfonos Móviles: Es ilegal que los conductores de CMV usen un teléfono móvil de mano mientras conducen. Las sanciones incluyen multas y descalificación. Puede usar un dispositivo manos libres si se puede iniciar con un solo toque.",
+                "No Participe en Actividades que Distraigan: Preprograme estaciones de radio. Revise los mapas antes de comenzar. Evite comer o fumar excesivamente."
+            ],
+            "keyPoints": [
+                "No use teléfonos celulares de mano mientras conduce.",
+                "Las distracciones mentales son tan peligrosas como las físicas.",
+                "Las sanciones por el uso de teléfonos de mano incluyen multas y descalificación de la CDL."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-distracted",
+                    "text": "¿Cuál es la sanción para un conductor de CMV que usa un teléfono móvil de mano mientras conduce?",
+                    "options": [
+                        "Una multa de advertencia",
+                        "Multas y posible descalificación de la CDL",
+                        "Solo puntos en la licencia",
+                        "Solo aumento de las tarifas de seguro"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "La violación puede resultar en sanciones civiles (multas) de hasta $2,750 y descalificación del conductor por múltiples ofensas."
+                }
+            ]
+        },
+        {
+            "id": "gk-aggressive",
+            "title": "2.10 Conductores Agresivos/Furia al Volante",
+            "content": [
+                "Conducción Agresiva: El acto de operar un vehículo de motor de manera egoísta, audaz o insistente, sin tener en cuenta los derechos o la seguridad de los demás (por ejemplo, seguir demasiado cerca, cambiar de carril frecuentemente).",
+                "Furia al Volante: Operar un vehículo de motor con la intención de causar daño físico a otros o agredir físicamente a un conductor o su vehículo.",
+                "Cómo Evitar Ser una Víctima: No haga contacto visual. No los desafíe. Apártese de su camino. Reporte a los conductores agresivos a las autoridades cuando sea seguro hacerlo."
+            ],
+            "keyPoints": [
+                "La conducción agresiva es un comportamiento egoísta/insistente.",
+                "La furia al volante es la intención de causar daño.",
+                "Evite el contacto visual y no interactúe con conductores agresivos."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-aggressive",
+                    "text": "¿Cuál es la principal diferencia entre la conducción agresiva y la furia al volante?",
+                    "options": [
+                        "La conducción agresiva es más rápida",
+                        "La furia al volante implica la intención de causar daño físico",
+                        "La conducción agresiva es legal",
+                        "No hay diferencia"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "La furia al volante implica la intención de causar daño físico, mientras que la conducción agresiva es una operación egoísta/audaz."
+                }
+            ]
+        },
+        {
+            "id": "gk-night",
+            "title": "2.11 Conducción Nocturna",
+            "content": [
+                "Usted corre mayor riesgo cuando conduce de noche. Los conductores no pueden ver los peligros tan rápido como a la luz del día, por lo que tienen menos tiempo para responder. Los conductores tomados por sorpresa son menos capaces de evitar un accidente.",
+                "Factores: Visión (la gente no puede ver tan bien de noche), Deslumbramiento (de las luces que vienen de frente), Fatiga (más probabilidad de estar cansado).",
+                "Faros: Use luces altas cuando sea seguro y legal hacerlo. Las luces bajas le permiten ver unos 250 pies por delante. Las luces altas le permiten ver unos 350-500 pies por delante. Debe atenuar sus luces dentro de los 500 pies de un vehículo que se aproxima o cuando sigue a otro vehículo dentro de los 500 pies.",
+                "Velocidad: No conduzca más rápido que el alcance de sus faros. Debería poder detenerse dentro de la distancia que puede ver por delante."
+            ],
+            "keyPoints": [
+                "Use luces altas cuando sea seguro/legal (ver 350-500 pies).",
+                "Atenúe las luces dentro de los 500 pies de otros vehículos.",
+                "No conduzca más rápido que sus faros (deténgase dentro de la distancia de visión)."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-night",
+                    "text": "¿Cuándo debe atenuar sus faros por la noche?",
+                    "options": [
+                        "Solo cuando se conduce en la ciudad",
+                        "Dentro de los 500 pies de un vehículo que se aproxima",
+                        "Cuando está cansado",
+                        "Dentro de los 100 pies de un vehículo que se aproxima"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "Atenúe sus luces dentro de los 500 pies de un vehículo que se aproxima o cuando siga a otro vehículo dentro de los 500 pies."
+                }
+            ]
+        },
+        {
+            "id": "gk-fog",
+            "title": "2.12 Conducción en Niebla",
+            "content": [
+                "La niebla puede oscurecer completamente la visibilidad. El mejor consejo para conducir en niebla es: No lo haga. Salga de la carretera hacia un área de descanso o parada de camiones hasta que la visibilidad sea mejor.",
+                "Si Debe Conducir en Niebla: Obedezca todas las señales de advertencia relacionadas con la niebla. Reduzca la velocidad antes de entrar en la niebla. Use luces bajas y luces antiniebla para una mejor visibilidad incluso durante el día, y esté alerta a otros conductores que pueden haber olvidado encender sus luces. Encienda sus luces intermitentes de 4 vías. Esto da a los vehículos que se acercan por detrás una mejor oportunidad de ver su vehículo.",
+                "Cuidado con los Vehículos en el Arcén: Los vehículos pueden estar estacionados en el hombro. Evite adelantar a otros vehículos."
+            ],
+            "keyPoints": [
+                "No conduzca en la niebla si es posible.",
+                "Use luces bajas (las luces altas se reflejan en la niebla).",
+                "Use luces intermitentes de 4 vías para advertir a los demás."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-fog",
+                    "text": "¿Qué luces debe usar al conducir en niebla?",
+                    "options": [
+                        "Luces altas",
+                        "Solo luces de estacionamiento",
+                        "Luces bajas y luces antiniebla",
+                        "Sin luces"
+                    ],
+                    "correctIndex": 2,
+                    "explanation": "Use luces bajas y luces antiniebla. Las luces altas se reflejan en las gotas de agua en la niebla y pueden cegarlo."
+                }
+            ]
+        },
+        {
             "id": "gk-winter",
             "title": "2.13 Conducción en invierno",
             "content": [
@@ -303,6 +417,98 @@ export const GeneralKnowledgeStudyGuide_ES: StudyGuide = {
                     ],
                     "correctIndex": 1,
                     "explanation": "No utilice el freno motor ni el retardador de velocidad en superficies resbaladizas porque pueden hacer que las ruedas motrices patinen."
+                }
+            ]
+        },
+        {
+            "id": "gk-hot-weather",
+            "title": "2.14 Conducción en Clima Muy Caluroso",
+            "content": [
+                "No deje salir el aire o la presión será demasiado baja cuando los neumáticos se enfríen. Si un neumático está demasiado caliente para tocarlo, permanezca detenido hasta que el neumático se enfríe. De lo contrario, el neumático puede reventar o incendiarse.",
+                "Neumáticos: Revise el montaje y la presión de aire de los neumáticos. Inspeccione los neumáticos cada dos horas o cada 100 millas cuando conduzca en clima muy caluroso. La presión del aire aumenta con la temperatura.",
+                "Aceite del Motor: El aceite del motor ayuda a mantener el motor fresco, además de lubricarlo. Asegúrese de que haya suficiente aceite de motor.",
+                "Refrigerante del Motor: Antes de salir, asegúrese de que el sistema de enfriamiento del motor tenga suficiente agua y anticongelante según las instrucciones del fabricante del motor.",
+                "Alquitrán Sangrante: El alquitrán en el pavimento de la carretera frecuentemente sube a la superficie en clima muy caluroso. Los puntos donde el alquitrán 'sangra' a la superficie son muy resbaladizos."
+            ],
+            "keyPoints": [
+                "Inspeccione los neumáticos cada 2 horas/100 millas en clima caluroso.",
+                "La presión del aire aumenta con el calor - NO deje salir el aire.",
+                "Cuidado con el alquitrán sangrante (resbaladizo)."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-hot-weather",
+                    "text": "¿Qué debe hacer si la presión de los neumáticos es alta debido al clima caluroso?",
+                    "options": [
+                        "Deje salir el aire hasta que alcance la presión normal",
+                        "No deje salir el aire",
+                        "Conduzca más rápido para enfriarlos",
+                        "Vierta agua sobre ellos"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "La presión del aire aumenta con la temperatura. No deje salir el aire o la presión será demasiado baja cuando se enfríen."
+                }
+            ]
+        },
+        {
+            "id": "gk-railroad",
+            "title": "2.15 Cruces de Ferrocarril-Carretera",
+            "content": [
+                "Los cruces a nivel de ferrocarril y carretera son un tipo especial de intersección donde la carretera cruza las vías del tren. Estos cruces siempre son peligrosos.",
+                "Cruces Pasivos: Este tipo de cruce no tiene ningún tipo de dispositivo de control de tráfico. La decisión de detenerse o proceder recae enteramente en sus manos.",
+                "Cruces Activos: Este tipo de cruce tiene un dispositivo de control de tráfico instalado en el cruce para regular el tráfico (luces rojas intermitentes, campanas, barreras).",
+                "Señales de Advertencia Anticipada: La señal de advertencia redonda, negra sobre amarillo, se coloca delante de un cruce público de ferrocarril y carretera.",
+                "Procedimientos de Conducción: Nunca corra contra un tren hacia un cruce. Reduzca la velocidad. Mire y escuche. Las vías dobles requieren una doble verificación.",
+                "Detención: Si debe detenerse, hágalo de 15 a 50 pies del riel más cercano.",
+                "Cruzar las Vías: No cambie de marcha mientras cruza las vías del tren. Podría quedarse atascado en las vías."
+            ],
+            "keyPoints": [
+                "Nunca corra contra un tren.",
+                "Deténgase de 15 a 50 pies del riel más cercano si es necesario.",
+                "NO cambie de marcha mientras cruza las vías."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-railroad",
+                    "text": "¿Cuándo debe cambiar de marcha al cruzar vías de tren?",
+                    "options": [
+                        "Siempre reduzca la marcha en las vías",
+                        "Suba la marcha para velocidad",
+                        "Nunca cambie de marcha en las vías",
+                        "Solo si el tren está lejos"
+                    ],
+                    "correctIndex": 2,
+                    "explanation": "No cambie de marcha mientras cruza las vías del tren. Si falla un cambio, podría quedarse atascado en las vías."
+                }
+            ]
+        },
+        {
+            "id": "gk-mountain",
+            "title": "2.16 Conducción en Montaña",
+            "content": [
+                "En la conducción en montaña, la gravedad juega un papel importante. En cualquier subida, la gravedad lo ralentiza. En las bajadas, la gravedad lo acelera. Debe seleccionar una velocidad segura adecuada, luego una marcha baja y usar técnicas de frenado adecuadas.",
+                "Seleccione una Velocidad Segura: Su consideración más importante es seleccionar una velocidad que no sea demasiado rápida para: El peso total del vehículo y la carga; La longitud de la pendiente; La inclinación de la pendiente; Las condiciones de la carretera; El clima.",
+                "Seleccione la Marcha Correcta: Cambie a una marcha baja antes de comenzar a bajar la pendiente. No intente reducir la marcha después de que su velocidad ya haya aumentado. No podrá cambiar a una marcha más baja.",
+                "Desvanecimiento o Falla de Frenos: Los frenos pueden desvanecerse o fallar por el calor excesivo causado por usarlos demasiado y no depender del efecto de frenado del motor.",
+                "Técnica de Frenado Adecuada (Frenado por Arrastre): 1. Aplique los frenos lo suficientemente fuerte como para sentir una desaceleración definida. 2. Cuando su velocidad se haya reducido a aprox. 5 mph por debajo de su velocidad segura, suelte los frenos. 3. Cuando su velocidad haya aumentado a su velocidad segura, repita el paso 1. (Ejemplo: Si la velocidad segura es 40 mph, frene a 35 mph, suelte, espere a 40 mph, repita)."
+            ],
+            "keyPoints": [
+                "La gravedad lo ralentiza en las subidas y lo acelera en las bajadas.",
+                "Cambie a marcha baja ANTES de comenzar a bajar una colina.",
+                "Use el Frenado por Arrastre (Snub Braking) para controlar la velocidad sin sobrecalentar los frenos."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-mountain",
+                    "text": "¿Cuál es la técnica de frenado adecuada en una bajada larga?",
+                    "options": [
+                        "Use presión ligera y constante en los frenos",
+                        "Abanique los frenos (bombéelos rápidamente)",
+                        "Frenado por arrastre: Frene a 5 mph por debajo de la velocidad segura, suelte, repita",
+                        "Use solo el freno de emergencia"
+                    ],
+                    "correctIndex": 2,
+                    "explanation": "El frenado por arrastre implica aplicar los frenos dentro de un rango seguro (por ejemplo, 40 a 35 mph) para evitar el sobrecalentamiento."
                 }
             ]
         },
@@ -563,6 +769,63 @@ export const GeneralKnowledgeStudyGuide_ES: StudyGuide = {
                     ],
                     "correctIndex": 2,
                     "explanation": "Debe revisar su carga dentro de las primeras 50 millas y luego cada 3 horas o 150 millas a partir de entonces."
+                }
+            ]
+        },
+        {
+            "id": "gk-weight-balance",
+            "title": "3.2 Peso y Equilibrio",
+            "content": [
+                "Definiciones: El Peso Bruto del Vehículo (GVW) es el peso total de un solo vehículo más su carga. El Peso Bruto Combinado (GCW) es el peso total de una unidad motorizada, más el remolque(s), más la carga. La Clasificación de Peso Bruto del Vehículo (GVWR) es el GVW máximo especificado por el fabricante.",
+                "Centro de Gravedad: El centro de gravedad es el punto donde el peso del vehículo está equilibrado. Un centro de gravedad alto significa que es más probable que se vuelque. Es más peligroso en curvas o si se desvía para evitar un peligro. Mantenga la carga lo más cerca posible del suelo y centrada.",
+                "Equilibrar el Peso: Un mal equilibrio del peso puede hacer que el manejo del vehículo sea inseguro. Demasiado peso en el eje de dirección puede causar una dirección dura. Los ejes delanteros con poca carga (causado por mover el peso rápidamente hacia atrás) pueden hacer que el peso del eje de dirección sea demasiado ligero para conducir con seguridad."
+            ],
+            "keyPoints": [
+                "Centro de gravedad alto = Alto riesgo de vuelco.",
+                "Mantenga la carga baja y centrada.",
+                "El mal equilibrio del peso afecta la dirección y el frenado."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q21",
+                    "text": "¿Cuál es el peligro de un centro de gravedad alto?",
+                    "options": [
+                        "Hace que el vehículo sea más lento",
+                        "Hace que el vehículo sea más propenso a volcarse",
+                        "Ahorra combustible",
+                        "Mejora la tracción"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "Un centro de gravedad alto hace que el vehículo sea más inestable y propenso a volcarse, especialmente en las curvas."
+                }
+            ]
+        },
+        {
+            "id": "gk-special-cargo",
+            "title": "3.4 Carga que Necesita Atención Especial",
+            "content": [
+                "Carga seca a granel: Los tanques de carga seca a granel requieren un cuidado especial porque tienen un centro de gravedad alto y la carga puede moverse. Sea extremadamente diligente al tomar curvas y hacer giros cerrados.",
+                "Carne colgada: La carne colgada (res, cerdo, etc. suspendida) en un camión refrigerado puede ser una carga muy inestable con un centro de gravedad alto. Se necesita precaución en las curvas para evitar que la carga se balancee y vuelque el camión.",
+                "Ganado: El ganado puede moverse en un remolque, causando un manejo inseguro. Con menos de una carga completa, use falsos mamparos para mantener al ganado agrupado. Incluso cuando están agrupados, espere que el centro de gravedad cambie en las curvas.",
+                "Cargas de gran tamaño: Las cargas de longitud excesiva, ancho excesivo y/o sobrepeso requieren permisos de tránsito especiales. La conducción suele estar limitada a ciertos horarios. Puede ser necesario equipo especial como letreros de \"Carga Ancha\", luces intermitentes, banderas, etc."
+            ],
+            "keyPoints": [
+                "La carga a granel seca y la carne colgada tienen centros de gravedad altos.",
+                "El ganado puede moverse y cambiar el equilibrio del vehículo.",
+                "Las cargas de gran tamaño requieren permisos y señalización especiales."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q22",
+                    "text": "¿Cuál de estas cargas es conocida por tener un centro de gravedad alto y ser inestable?",
+                    "options": [
+                        "Madera en plataforma",
+                        "Carne colgada",
+                        "Remolque vacío",
+                        "Productos enlatados"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "La carne colgada tiene un centro de gravedad alto y puede balancearse, haciendo que el camión sea inestable en las curvas."
                 }
             ]
         }
