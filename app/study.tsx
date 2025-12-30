@@ -12,6 +12,7 @@ import * as Haptics from '../utils/haptics';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
+import FeedbackModal from '../components/FeedbackModal';
 
 export default function StudyScreen() {
     const params = useLocalSearchParams();
@@ -33,6 +34,7 @@ export default function StudyScreen() {
     const [answers, setAnswers] = useState<Record<string, number>>({});
 
     const [isCompleted, setIsCompleted] = useState(false);
+    const [isFeedbackVisible, setFeedbackVisible] = useState(false);
 
     // Reset scroll and answers when section changes
     useEffect(() => {
@@ -192,7 +194,9 @@ export default function StudyScreen() {
                         <View style={[styles.progressBarFill, { backgroundColor: colors.primary, width: `${((sectionIndex + 1) / studyGuide.sections.length) * 100}%` }]} />
                     </View>
                 </View>
-                <View style={{ width: 60 }} />
+                <TouchableOpacity onPress={() => setFeedbackVisible(true)} style={{ width: 60, alignItems: 'flex-end', paddingRight: 8 }}>
+                    <FontAwesome name="flag" size={18} color={colors.textSecondary} />
+                </TouchableOpacity>
             </View>
 
             <ScrollView ref={scrollViewRef} contentContainerStyle={[styles.scrollViewContent, { padding: spacing.lg }]}>
@@ -344,6 +348,12 @@ export default function StudyScreen() {
                 <View style={{ height: 40 }} />
             </ScrollView>
 
+            <FeedbackModal
+                visible={isFeedbackVisible}
+                onClose={() => setFeedbackVisible(false)}
+                questionId={`study:${topic.id}:${sectionIndex}`}
+                questionTextShort={`Section: ${currentSection.title}`}
+            />
         </View>
     );
 }

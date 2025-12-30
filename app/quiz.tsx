@@ -15,6 +15,7 @@ import { APP_CONFIG } from '../constants/appConfig';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
+import FeedbackModal from '../components/FeedbackModal';
 
 import { useLocalization } from '../context/LocalizationContext'; // Added import
 
@@ -111,6 +112,7 @@ export default function QuizScreen() {
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
     const [isFinished, setIsFinished] = useState(false);
     const [showReview, setShowReview] = useState(false);
+    const [isFeedbackVisible, setFeedbackVisible] = useState(false);
 
     // Track wrong answers
     const [wrongAnswers, setWrongAnswers] = useState<Array<{
@@ -489,7 +491,9 @@ export default function QuizScreen() {
                         style={{ minWidth: 60, justifyContent: 'center' }}
                     />
                 ) : (
-                    <View style={styles.headerSpacer} />
+                    <TouchableOpacity onPress={() => setFeedbackVisible(true)} style={{ padding: 8 }}>
+                        <FontAwesome name="flag" size={16} color={colors.textSecondary} />
+                    </TouchableOpacity>
                 )}
             </View>
 
@@ -607,6 +611,13 @@ export default function QuizScreen() {
                     />
                 </View>
             </View>
+
+            <FeedbackModal
+                visible={isFeedbackVisible}
+                onClose={() => setFeedbackVisible(false)}
+                questionId={currentQuestion?.id || 'unknown'}
+                questionTextShort={currentQuestion?.text}
+            />
         </View >
     );
 }

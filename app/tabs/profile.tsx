@@ -2,8 +2,9 @@
 import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platform, UIManager, LayoutAnimation, Image } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useCallback, useEffect } from 'react';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { loadStats, updateStats, resetAllAppData, UserStats, INITIAL_STATS } from '../../data/stats';
+import { ACHIEVEMENTS, Achievement } from '../../data/achievements';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { restartApp } from '../../utils/restartApp';
 import { showAlert, showConfirm } from '../../utils/alerts';
@@ -21,6 +22,7 @@ const AVATARS = [
 ];
 
 export default function ProfileScreen() {
+    const router = useRouter();
     const insets = useSafeAreaInsets();
     const { t } = useLocalization(); // Added
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
@@ -283,12 +285,63 @@ export default function ProfileScreen() {
                 </View>
             </View>
 
-            {/* Achievements Placeholder */}
+            {/* Achievements Summary */}
             <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>{t('achievements')}</Text>
-                <View style={styles.placeholderBox}>
-                    <FontAwesome name="trophy" size={24} color="#ccc" style={{ marginBottom: 8 }} />
-                    <Text style={styles.placeholderText}>{t('comingSoon')}</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('achievements')}</Text>
+                    <TouchableOpacity onPress={() => router.push('/achievements')}>
+                        <Text style={{ color: '#1565C0', fontWeight: '600' }}>{t('viewAllAwards')}</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.achievementsList}>
+                    {ACHIEVEMENTS.sort((a, b) => {
+                        const unlockA = stats.unlockedAchievements?.includes(a.id) ? 1 : 0;
+                        const unlockB = stats.unlockedAchievements?.includes(b.id) ? 1 : 0;
+                        return unlockB - unlockA; // Unlocked first
+                    }).slice(0, 3).map((ach) => {
+                        const isUnlocked = stats.unlockedAchievements?.includes(ach.id);
+                        const progress = ach.getProgress(stats);
+                        const percentage = Math.min(100, Math.round((progress.current / progress.target) * 100));
+
+                        // Construct translation keys dynamically
+                        const title = t(`achievement_${ach.id}_title` as any);
+                        const desc = t(`achievement_${ach.id}_desc` as any);
+
+                        return (
+                            <View key={ach.id} style={[styles.achievementCard, !isUnlocked && styles.achievementCardLocked]}>
+                                <View style={[styles.achievementIcon, isUnlocked ? styles.iconUnlocked : styles.iconLocked]}>
+                                    <FontAwesome
+                                        name={ach.icon as any}
+                                        size={24}
+                                        color={isUnlocked ? '#fff' : '#999'}
+                                    />
+                                </View>
+                                <View style={styles.achievementContent}>
+                                    <View style={styles.achievementHeader}>
+                                        <Text style={[styles.achievementTitle, !isUnlocked && styles.textLocked]}>
+                                            {title}
+                                        </Text>
+                                        {isUnlocked && (
+                                            <FontAwesome name="check-circle" size={16} color="#4CAF50" />
+                                        )}
+                                    </View>
+                                    <Text style={styles.achievementDesc}>{desc}</Text>
+
+                                    {!isUnlocked && (
+                                        <View style={styles.progressContainer}>
+                                            <View style={styles.progressBarBg}>
+                                                <View style={[styles.progressBarFill, { width: `${percentage}%` }]} />
+                                            </View>
+                                            <Text style={styles.progressText}>
+                                                {progress.current} / {progress.target}
+                                            </Text>
+                                        </View>
+                                    )}
+                                </View>
+                            </View>
+                        );
+                    })}
                 </View>
             </View>
 
@@ -581,6 +634,87 @@ const styles = StyleSheet.create({
     placeholderText: {
         color: '#999',
         fontSize: 14,
+    },
+    achievementsList: {
+        gap: 12,
+    },
+    achievementCard: {
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        padding: 16,
+        borderRadius: 12,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
+    },
+    achievementCardLocked: {
+        backgroundColor: '#f9f9f9',
+        opacity: 0.8,
+    },
+    achievementIcon: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+    },
+    iconUnlocked: {
+        backgroundColor: '#FFC107', // Gold
+        shadowColor: '#FFC107',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+    },
+    iconLocked: {
+        backgroundColor: '#e0e0e0',
+    },
+    achievementContent: {
+        flex: 1,
+    },
+    achievementHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 4,
+    },
+    achievementTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#333',
+    },
+    textLocked: {
+        color: '#666',
+    },
+    achievementDesc: {
+        fontSize: 12,
+        color: '#666',
+        marginBottom: 8,
+    },
+    progressContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    progressBarBg: {
+        flex: 1,
+        height: 6,
+        backgroundColor: '#eee',
+        borderRadius: 3,
+        overflow: 'hidden',
+    },
+    progressBarFill: {
+        height: '100%',
+        backgroundColor: '#1565C0',
+        borderRadius: 3,
+    },
+    progressText: {
+        fontSize: 10,
+        color: '#999',
+        fontWeight: '600',
     },
     footer: {
         alignItems: 'center',

@@ -136,7 +136,8 @@ export type TranslationKey =
     | 'onboardingTitle3' | 'onboardingDesc3'
     | 'getStarted'
     | 'chooseLanguage'
-    | 'startEngine';
+    | 'startEngine'
+    | 'viewAllAwards';
 
 export const translations: Record<Locale, Record<TranslationKey, string>> = {
     en: {
@@ -287,7 +288,8 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         onboardingDesc3: 'Monitor your improvement and know exactly when you are ready to pass the real exam.',
         getStarted: 'Get Started',
         chooseLanguage: 'Choose Language',
-        startEngine: 'Start Engine'
+        startEngine: 'Start Engine',
+        viewAllAwards: 'View All Awards'
     },
     es: {
         appTitle: 'CENTRO DE ESTUDIO',
@@ -437,7 +439,8 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         onboardingDesc3: 'Monitorea tu mejora y sabe exactamente cuándo estás listo para aprobar el examen real.',
         getStarted: 'Empezar',
         chooseLanguage: 'Elegir Idioma',
-        startEngine: 'Arrancar Motor'
+        startEngine: 'Arrancar Motor',
+        viewAllAwards: 'Ver Todos los Premios'
     },
     ru: {
         appTitle: 'УЧЕБНЫЙ ЦЕНТР',
@@ -587,6 +590,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         onboardingDesc3: 'Следите за улучшениями и знайте точно, когда вы готовы к реальному экзамену.',
         getStarted: 'Начать',
         chooseLanguage: 'Выберите язык',
-        startEngine: 'Поехали'
+        startEngine: 'Поехали',
+        viewAllAwards: 'Посмотреть все награды'
     }
 };
