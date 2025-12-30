@@ -11,6 +11,7 @@ export type TranslationKey =
     | 'lightMode'
     | 'resetProgress'
     | 'privacyPolicy'
+    | 'termsOfService'
     | 'selectTopic'
     | 'studyGuide'
     | 'newHereTip'
@@ -102,7 +103,40 @@ export type TranslationKey =
     | 'incorrectHeadsUp'
     | 'doubleTapToSelect'
     | 'keyTakeaways'
-    | 'checkYourUnderstanding';
+    | 'checkYourUnderstanding'
+    // Terms of Service
+    | 'termsTitle'
+    | 'termsAcceptanceTitle'
+    | 'termsAcceptanceText'
+    | 'termsEducationalTitle'
+    | 'termsEducationalText'
+    | 'termsIPTitle'
+    | 'termsIPText'
+    | 'termsUserConductTitle'
+    | 'termsUserConductText'
+    | 'termsDisclaimerTitle'
+    | 'termsDisclaimerText'
+    | 'termsLiabilityTitle'
+    | 'termsLiabilityText'
+    | 'termsChangesTitle'
+    | 'termsChangesText'
+    | 'termsContactTitle'
+    | 'termsContactText'
+    | 'viewFullTerms'
+    | 'lastUpdated'
+    // Onboarding
+    | 'onboardingWelcomeTitle'
+    | 'onboardingWelcomeText'
+    | 'onboardingFeaturesTitle'
+    | 'onboardingFeaturesText'
+    | 'onboardingOfflineTitle'
+    | 'onboardingOfflineText'
+    | 'onboardingTitle1' | 'onboardingDesc1'
+    | 'onboardingTitle2' | 'onboardingDesc2'
+    | 'onboardingTitle3' | 'onboardingDesc3'
+    | 'getStarted'
+    | 'chooseLanguage'
+    | 'startEngine';
 
 export const translations: Record<Locale, Record<TranslationKey, string>> = {
     en: {
@@ -116,6 +150,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         lightMode: 'Light Mode',
         resetProgress: 'Reset Progress',
         privacyPolicy: 'Privacy Policy',
+        termsOfService: 'Terms of Service',
         selectTopic: 'SELECT TOPIC:',
         studyGuide: 'Study Guide',
         newHereTip: 'New here? Try Practice first to learn as you go.',
@@ -216,7 +251,43 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         incorrectHeadsUp: 'Incorrect answer',
         doubleTapToSelect: 'Double tap to select this answer',
         keyTakeaways: 'Key Takeaways',
-        checkYourUnderstanding: 'Check Your Understanding'
+        checkYourUnderstanding: 'Check Your Understanding',
+        // Terms of Service
+        termsTitle: 'Terms of Service',
+        termsAcceptanceTitle: '1. Acceptance of Terms',
+        termsAcceptanceText: 'By downloading, installing, or using CDL Zero: Permit Practice ("the App"), you agree to be bound by these Terms of Service. If you do not agree to these terms, please do not use the App.',
+        termsEducationalTitle: '2. Educational Purpose Only',
+        termsEducationalText: 'The App is designed as a supplementary study tool for CDL permit exam preparation. The content is based on publicly available CDL handbooks but is NOT an official DMV product. We do not guarantee that using this App will result in passing your CDL exam. Always consult your state\'s official DMV handbook for the most accurate and up-to-date information.',
+        termsIPTitle: '3. Intellectual Property',
+        termsIPText: 'All content within the App, including but not limited to text, graphics, logos, icons, and software, is the property of CDL Zero and is protected by copyright and intellectual property laws. You may not reproduce, distribute, or create derivative works without express written permission.',
+        termsUserConductTitle: '4. User Conduct',
+        termsUserConductText: 'You agree to use the App only for lawful purposes. You may not attempt to reverse engineer, decompile, or extract source code from the App. You may not use the App in any way that could damage, disable, or impair the App\'s functionality.',
+        termsDisclaimerTitle: '5. Disclaimer of Warranties',
+        termsDisclaimerText: 'THE APP IS PROVIDED "AS IS" WITHOUT WARRANTIES OF ANY KIND, EXPRESS OR IMPLIED. WE DO NOT WARRANT THAT THE APP WILL BE ERROR-FREE, UNINTERRUPTED, OR FREE OF HARMFUL COMPONENTS. YOUR USE OF THE APP IS AT YOUR OWN RISK.',
+        termsLiabilityTitle: '6. Limitation of Liability',
+        termsLiabilityText: 'TO THE FULLEST EXTENT PERMITTED BY LAW, CDL ZERO SHALL NOT BE LIABLE FOR ANY INDIRECT, INCIDENTAL, SPECIAL, CONSEQUENTIAL, OR PUNITIVE DAMAGES ARISING FROM YOUR USE OF THE APP, INCLUDING BUT NOT LIMITED TO FAILURE TO PASS A CDL EXAM.',
+        termsChangesTitle: '7. Changes to Terms',
+        termsChangesText: 'We reserve the right to modify these Terms at any time. Continued use of the App after changes constitutes acceptance of the new Terms. We encourage you to review these Terms periodically.',
+        termsContactTitle: '8. Contact Information',
+        termsContactText: 'If you have questions about these Terms of Service, please contact us through the App Store listing or visit our website.',
+        viewFullTerms: 'View Full Terms Online',
+        lastUpdated: 'Last updated: December 2025',
+        // Onboarding
+        onboardingWelcomeTitle: 'Master Your CDL',
+        onboardingWelcomeText: 'Get ready to ace your Commercial Driver\'s License exam with our comprehensive practice tools.',
+        onboardingFeaturesTitle: 'Practice & Simulate',
+        onboardingFeaturesText: 'Build confidence with topic-specific quizzes and realistic exam simulations.',
+        onboardingOfflineTitle: 'Study Anywhere',
+        onboardingOfflineText: 'No internet? No problem. All content and progress tracking works completely offline.',
+        onboardingTitle1: 'Welcome to CDL Zero',
+        onboardingDesc1: 'Your journey to getting your Commercial Driver\'s License starts here. Master the permit test with ease.',
+        onboardingTitle2: 'Learn & Practice',
+        onboardingDesc2: 'Access official study materials and practice with realistic exam simulations in multiple languages.',
+        onboardingTitle3: 'Track Progress',
+        onboardingDesc3: 'Monitor your improvement and know exactly when you are ready to pass the real exam.',
+        getStarted: 'Get Started',
+        chooseLanguage: 'Choose Language',
+        startEngine: 'Start Engine'
     },
     es: {
         appTitle: 'CENTRO DE ESTUDIO',
@@ -229,6 +300,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         lightMode: 'Modo Claro',
         resetProgress: 'Reiniciar Progreso',
         privacyPolicy: 'Política de Privacidad',
+        termsOfService: 'Términos de Servicio',
         selectTopic: 'SELECCIONAR TEMA:',
         studyGuide: 'Guía de Estudio',
         newHereTip: '¿Nuevo aquí? Prueba la Práctica para aprender.',
@@ -329,7 +401,43 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         incorrectHeadsUp: 'Respuesta incorrecta',
         doubleTapToSelect: 'Toca dos veces para seleccionar esta respuesta',
         keyTakeaways: 'Puntos Clave',
-        checkYourUnderstanding: 'Comprueba tu Comprensión'
+        checkYourUnderstanding: 'Comprueba tu Comprensión',
+        // Terms of Service
+        termsTitle: 'Términos de Servicio',
+        termsAcceptanceTitle: '1. Aceptación de Términos',
+        termsAcceptanceText: 'Al descargar, instalar o usar CDL Zero: Permit Practice ("la App"), usted acepta estos Términos de Servicio. Si no está de acuerdo con estos términos, por favor no use la App.',
+        termsEducationalTitle: '2. Solo con Fines Educativos',
+        termsEducationalText: 'La App está diseñada como herramienta de estudio complementaria para la preparación del examen de permiso CDL. El contenido se basa en manuales CDL disponibles públicamente, pero NO es un producto oficial del DMV. No garantizamos que el uso de esta App resulte en aprobar su examen CDL. Siempre consulte el manual oficial del DMV de su estado.',
+        termsIPTitle: '3. Propiedad Intelectual',
+        termsIPText: 'Todo el contenido de la App, incluyendo texto, gráficos, logos, iconos y software, es propiedad de CDL Zero y está protegido por leyes de derechos de autor y propiedad intelectual. No puede reproducir, distribuir o crear obras derivadas sin permiso escrito expreso.',
+        termsUserConductTitle: '4. Conducta del Usuario',
+        termsUserConductText: 'Usted acepta usar la App solo para fines legales. No puede intentar realizar ingeniería inversa, descompilar o extraer el código fuente de la App. No puede usar la App de ninguna manera que pueda dañar, deshabilitar o perjudicar su funcionalidad.',
+        termsDisclaimerTitle: '5. Descargo de Garantías',
+        termsDisclaimerText: 'LA APP SE PROPORCIONA "TAL CUAL" SIN GARANTÍAS DE NINGÚN TIPO, EXPRESAS O IMPLÍCITAS. NO GARANTIZAMOS QUE LA APP ESTARÁ LIBRE DE ERRORES, ININTERRUMPIDA O LIBRE DE COMPONENTES DAÑINOS. EL USO DE LA APP ES BAJO SU PROPIO RIESGO.',
+        termsLiabilityTitle: '6. Limitación de Responsabilidad',
+        termsLiabilityText: 'EN LA MÁXIMA MEDIDA PERMITIDA POR LA LEY, CDL ZERO NO SERÁ RESPONSABLE POR DAÑOS INDIRECTOS, INCIDENTALES, ESPECIALES, CONSECUENTES O PUNITIVOS DERIVADOS DEL USO DE LA APP, INCLUYENDO LA FALTA DE APROBACIÓN DE UN EXAMEN CDL.',
+        termsChangesTitle: '7. Cambios en los Términos',
+        termsChangesText: 'Nos reservamos el derecho de modificar estos Términos en cualquier momento. El uso continuado de la App después de los cambios constituye aceptación de los nuevos Términos. Le recomendamos revisar estos Términos periódicamente.',
+        termsContactTitle: '8. Información de Contacto',
+        termsContactText: 'Si tiene preguntas sobre estos Términos de Servicio, contáctenos a través del listado de la App Store o visite nuestro sitio web.',
+        viewFullTerms: 'Ver Términos Completos en Línea',
+        lastUpdated: 'Última actualización: Diciembre 2025',
+        // Onboarding
+        onboardingWelcomeTitle: 'Domina tu CDL',
+        onboardingWelcomeText: 'Prepárate para aprobar tu examen de licencia comercial con nuestras herramientas completas.',
+        onboardingFeaturesTitle: 'Practica y Simula',
+        onboardingFeaturesText: 'Gana confianza con cuestionarios por tema y simulaciones de examen realistas.',
+        onboardingOfflineTitle: 'Estudia Donde Sea',
+        onboardingOfflineText: '¿Sin internet? Sin problema. Todo el contenido y progreso funciona sin conexión.',
+        onboardingTitle1: 'Bienvenido a CDL Zero',
+        onboardingDesc1: 'Tu viaje para obtener tu Licencia Comercial comienza aquí. Domina el examen con facilidad.',
+        onboardingTitle2: 'Aprende y Practica',
+        onboardingDesc2: 'Accede a materiales de estudio oficiales y practica con simulaciones de examen realistas.',
+        onboardingTitle3: 'Sigue tu Progreso',
+        onboardingDesc3: 'Monitorea tu mejora y sabe exactamente cuándo estás listo para aprobar el examen real.',
+        getStarted: 'Empezar',
+        chooseLanguage: 'Elegir Idioma',
+        startEngine: 'Arrancar Motor'
     },
     ru: {
         appTitle: 'УЧЕБНЫЙ ЦЕНТР',
@@ -342,6 +450,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         lightMode: 'Светлая тема',
         resetProgress: 'Сброс прогресса',
         privacyPolicy: 'Конфиденциальность',
+        termsOfService: 'Условия использования',
         selectTopic: 'ВЫБЕРИТЕ ТЕМУ:',
         studyGuide: 'Учебник',
         newHereTip: 'Новичок? Попробуйте Практику, чтобы учиться на ходу.',
@@ -442,6 +551,42 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         incorrectHeadsUp: 'Неправильный ответ',
         doubleTapToSelect: 'Дважды коснитесь, чтобы выбрать этот ответ',
         keyTakeaways: 'Ключевые моменты',
-        checkYourUnderstanding: 'Проверьте свои знания'
+        checkYourUnderstanding: 'Проверьте свои знания',
+        // Terms of Service
+        termsTitle: 'Условия использования',
+        termsAcceptanceTitle: '1. Принятие условий',
+        termsAcceptanceText: 'Загружая, устанавливая или используя CDL Zero: Permit Practice ("Приложение"), вы соглашаетесь с этими Условиями использования. Если вы не согласны, пожалуйста, не используйте Приложение.',
+        termsEducationalTitle: '2. Только для обучения',
+        termsEducationalText: 'Приложение разработано как дополнительный инструмент для подготовки к экзамену CDL. Содержимое основано на общедоступных справочниках CDL, но НЕ является официальным продуктом DMV. Мы не гарантируем сдачу экзамена CDL. Всегда обращайтесь к официальному справочнику DMV вашего штата.',
+        termsIPTitle: '3. Интеллектуальная собственность',
+        termsIPText: 'Весь контент Приложения, включая текст, графику, логотипы, значки и программное обеспечение, является собственностью CDL Zero и защищен законами об авторском праве. Вы не можете воспроизводить или распространять контент без письменного разрешения.',
+        termsUserConductTitle: '4. Поведение пользователя',
+        termsUserConductText: 'Вы соглашаетесь использовать Приложение только в законных целях. Вы не можете пытаться выполнить обратную разработку, декомпилировать или извлекать исходный код Приложения. Вы не можете использовать Приложение способом, который может повредить его функциональность.',
+        termsDisclaimerTitle: '5. Отказ от гарантий',
+        termsDisclaimerText: 'ПРИЛОЖЕНИЕ ПРЕДОСТАВЛЯЕТСЯ "КАК ЕСТЬ" БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ. МЫ НЕ ГАРАНТИРУЕМ, ЧТО ПРИЛОЖЕНИЕ БУДЕТ РАБОТАТЬ БЕЗ ОШИБОК ИЛИ ПРЕРЫВАНИЙ. ИСПОЛЬЗОВАНИЕ ПРИЛОЖЕНИЯ НА ВАШ СОБСТВЕННЫЙ РИСК.',
+        termsLiabilityTitle: '6. Ограничение ответственности',
+        termsLiabilityText: 'В МАКСИМАЛЬНОЙ СТЕПЕНИ, РАЗРЕШЕННОЙ ЗАКОНОМ, CDL ZERO НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ ЗА ЛЮБОЙ КОСВЕННЫЙ ИЛИ СПЕЦИАЛЬНЫЙ УЩЕРБ, ВКЛЮЧАЯ НЕСДАЧУ ЭКЗАМЕНА CDL.',
+        termsChangesTitle: '7. Изменение условий',
+        termsChangesText: 'Мы оставляем за собой право изменять эти Условия в любое время. Продолжение использования Приложения после изменений означает принятие новых Условий. Рекомендуем периодически проверять эти Условия.',
+        termsContactTitle: '8. Контактная информация',
+        termsContactText: 'Если у вас есть вопросы об этих Условиях использования, свяжитесь с нами через App Store или посетите наш сайт.',
+        viewFullTerms: 'Посмотреть полные Условия онлайн',
+        lastUpdated: 'Последнее обновление: Декабрь 2025',
+        // Onboarding
+        onboardingWelcomeTitle: 'Сдайте на CDL',
+        onboardingWelcomeText: 'Готовьтесь к экзамену на коммерческие права с нашими инструментами.',
+        onboardingFeaturesTitle: 'Практика и тесты',
+        onboardingFeaturesText: 'Укрепляйте уверенность с помощью тематических тестов и симуляторов экзамена.',
+        onboardingOfflineTitle: 'Учитесь везде',
+        onboardingOfflineText: 'Нет интернета? Не проблема. Весь контент и прогресс работают офлайн.',
+        onboardingTitle1: 'Добро пожаловать в CDL Zero',
+        onboardingDesc1: 'Ваш путь к получению прав CDL начинается здесь. Сдайте экзамен с легкостью.',
+        onboardingTitle2: 'Учитесь и практикуйтесь',
+        onboardingDesc2: 'Доступ к официальным материалам и реалистичным симуляторам экзамена на разных языках.',
+        onboardingTitle3: 'Отслеживайте прогресс',
+        onboardingDesc3: 'Следите за улучшениями и знайте точно, когда вы готовы к реальному экзамену.',
+        getStarted: 'Начать',
+        chooseLanguage: 'Выберите язык',
+        startEngine: 'Поехали'
     }
 };

@@ -1,8 +1,8 @@
 {
   "expo": {
-    "name": "CDL Prep Mastery",
+    "name": "CDL Zero: Permit Practice",
     "slug": "cdl-prep-mastery",
-    "scheme": "cdl-prep",
+    "scheme": "cdlzero",
     "version": "2.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
@@ -15,7 +15,39 @@
     },
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.victorrodriguez.cdlprepmastery"
+      "bundleIdentifier": "com.victorrodriguez.cdlzero",
+      "buildNumber": "1",
+      "config": {
+        "usesNonExemptEncryption": false
+      },
+      "infoPlist": {
+        "CFBundleDisplayName": "CDL Zero",
+        "CFBundleShortVersionString": "2.0.0",
+        "ITSAppUsesNonExemptEncryption": false,
+        "LSApplicationQueriesSchemes": [],
+        "UIRequiresFullScreen": false,
+        "UIStatusBarStyle": "UIStatusBarStyleDefault",
+        "UISupportedInterfaceOrientations": [
+          "UIInterfaceOrientationPortrait",
+          "UIInterfaceOrientationPortraitUpsideDown"
+        ],
+        "UISupportedInterfaceOrientations~ipad": [
+          "UIInterfaceOrientationPortrait",
+          "UIInterfaceOrientationPortraitUpsideDown",
+          "UIInterfaceOrientationLandscapeLeft",
+          "UIInterfaceOrientationLandscapeRight"
+        ]
+      },
+      "privacyManifests": {
+        "NSPrivacyAccessedAPITypes": [
+          {
+            "NSPrivacyAccessedAPIType": "NSPrivacyAccessedAPICategoryUserDefaults",
+            "NSPrivacyAccessedAPITypeReasons": [
+              "CA92.1"
+            ]
+          }
+        ]
+      }
     },
     "android": {
       "adaptiveIcon": {
@@ -24,7 +56,7 @@
       },
       "edgeToEdgeEnabled": true,
       "predictiveBackGestureEnabled": false,
-      "package": "com.victorrodriguez.cdlprepmastery"
+      "package": "com.victorrodriguez.cdlzero"
     },
     "web": {
       "favicon": "./assets/favicon.png"
@@ -34,6 +66,9 @@
       [
         "expo-build-properties",
         {
+          "ios": {
+            "deploymentTarget": "15.1"
+          },
           "android": {
             "minSdkVersion": 23,
             "targetSdkVersion": 34,
@@ -47,6 +82,13 @@
       "eas": {
         "projectId": "6778c31a-9b26-454f-ad0e-e9347cb2a4c7"
       }
+    },
+    "owner": "vmrod09",
+    "runtimeVersion": {
+      "policy": "appVersion"
+    },
+    "updates": {
+      "url": "https://u.expo.dev/6778c31a-9b26-454f-ad0e-e9347cb2a4c7"
     }
   }
 }

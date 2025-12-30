@@ -246,7 +246,9 @@ export default function QuizScreen() {
                 mode === 'exam',
                 topicId
             ).then(result => {
-                console.log('Stats updated:', result.stats);
+                if (__DEV__) {
+                    console.log('Stats updated:', result.stats);
+                }
                 if (result.newAchievements.length > 0) {
                     setRecentAchievements(result.newAchievements);
                     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);

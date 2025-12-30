@@ -3,15 +3,17 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
+import { useLocalization } from '../context/LocalizationContext';
 
-const PRIVACY_POLICY_URL = 'https://sites.google.com/view/cdlzeropermittest2026/home';
+const TERMS_URL = 'https://sites.google.com/view/cdlzeropermittest2026/terms';
 
-export default function PrivacyScreen() {
+export default function TermsScreen() {
     const router = useRouter();
     const { isDark } = useTheme();
+    const { t } = useLocalization();
 
-    const openExternalPolicy = () => {
-        Linking.openURL(PRIVACY_POLICY_URL);
+    const openExternalTerms = () => {
+        Linking.openURL(TERMS_URL);
     };
 
     return (
@@ -23,52 +25,80 @@ export default function PrivacyScreen() {
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <FontAwesome name="arrow-left" size={24} color="white" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Privacy Policy</Text>
+                <Text style={styles.headerTitle}>{t('termsTitle')}</Text>
             </LinearGradient>
 
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={[styles.section, isDark && styles.darkSection]}>
-                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>1. Data Collection</Text>
+                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>{t('termsAcceptanceTitle')}</Text>
                     <Text style={[styles.text, isDark && styles.darkSubText]}>
-                        This CDL Study App is designed as a standalone educational tool. We do not collect, store, or transmit any personal data to external servers. All progress, scores, and statistics are stored locally on your device.
+                        {t('termsAcceptanceText')}
                     </Text>
                 </View>
 
                 <View style={[styles.section, isDark && styles.darkSection]}>
-                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>2. Usage</Text>
+                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>{t('termsEducationalTitle')}</Text>
                     <Text style={[styles.text, isDark && styles.darkSubText]}>
-                        The information provided in this app is for study purposes only. While we strive for accuracy based on official CDL manuals, we cannot guarantee that the questions will exactly match your state's official exam. Always refer to your local DMV handbook.
+                        {t('termsEducationalText')}
                     </Text>
                 </View>
 
                 <View style={[styles.section, isDark && styles.darkSection]}>
-                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>3. Permissions</Text>
+                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>{t('termsIPTitle')}</Text>
                     <Text style={[styles.text, isDark && styles.darkSubText]}>
-                        This app requires no special permissions (such as camera, location, or contacts) to function.
+                        {t('termsIPText')}
                     </Text>
                 </View>
 
                 <View style={[styles.section, isDark && styles.darkSection]}>
-                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>4. Contact Us</Text>
+                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>{t('termsUserConductTitle')}</Text>
                     <Text style={[styles.text, isDark && styles.darkSubText]}>
-                        If you have any questions about this policy, please contact support.
+                        {t('termsUserConductText')}
                     </Text>
                 </View>
 
-                {/* External Privacy Policy Link */}
+                <View style={[styles.section, isDark && styles.darkSection]}>
+                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>{t('termsDisclaimerTitle')}</Text>
+                    <Text style={[styles.text, isDark && styles.darkSubText]}>
+                        {t('termsDisclaimerText')}
+                    </Text>
+                </View>
+
+                <View style={[styles.section, isDark && styles.darkSection]}>
+                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>{t('termsLiabilityTitle')}</Text>
+                    <Text style={[styles.text, isDark && styles.darkSubText]}>
+                        {t('termsLiabilityText')}
+                    </Text>
+                </View>
+
+                <View style={[styles.section, isDark && styles.darkSection]}>
+                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>{t('termsChangesTitle')}</Text>
+                    <Text style={[styles.text, isDark && styles.darkSubText]}>
+                        {t('termsChangesText')}
+                    </Text>
+                </View>
+
+                <View style={[styles.section, isDark && styles.darkSection]}>
+                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>{t('termsContactTitle')}</Text>
+                    <Text style={[styles.text, isDark && styles.darkSubText]}>
+                        {t('termsContactText')}
+                    </Text>
+                </View>
+
+                {/* External Terms Link */}
                 <TouchableOpacity
                     style={[styles.externalLink, isDark && styles.darkExternalLink]}
-                    onPress={openExternalPolicy}
-                    accessibilityLabel="View full privacy policy online"
+                    onPress={openExternalTerms}
+                    accessibilityLabel={t('viewFullTerms')}
                     accessibilityRole="link"
                 >
                     <FontAwesome name="external-link" size={18} color={isDark ? '#6ea8fe' : '#3b5998'} />
                     <Text style={[styles.externalLinkText, isDark && styles.darkExternalLinkText]}>
-                        View Full Privacy Policy Online
+                        {t('viewFullTerms')}
                     </Text>
                 </TouchableOpacity>
 
-                <Text style={[styles.footer, isDark && styles.darkFooterText]}>Last updated: December 2025</Text>
+                <Text style={[styles.footer, isDark && styles.darkFooterText]}>{t('lastUpdated')}</Text>
             </ScrollView>
         </View>
     );

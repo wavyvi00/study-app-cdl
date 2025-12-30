@@ -25,6 +25,8 @@ function RootNavigator() {
                 <Stack.Screen name="tabs" options={{ headerShown: false }} />
                 <Stack.Screen name="quiz" options={{ headerShown: false }} />
                 <Stack.Screen name="privacy" options={{ headerShown: false }} />
+                <Stack.Screen name="terms" options={{ headerShown: false }} />
+                <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
                 <Stack.Screen name="+not-found" />
             </Stack>
             <StatusBar style={theme === 'dark' ? 'light' : 'dark'} />

@@ -211,6 +211,20 @@ export default function TopicsScreen() {
                             <Text style={[styles.menuText, { color: colors.text }]}>{t('privacyPolicy')}</Text>
                         </TouchableOpacity>
 
+                        <TouchableOpacity
+                            style={[styles.menuItem, { borderBottomColor: colors.border }]}
+                            onPress={() => {
+                                setIsMenuOpen(false);
+                                router.push('/terms');
+                            }}
+                            accessibilityRole="button"
+                            accessibilityLabel="Terms of Service"
+                            accessibilityHint="Double tap to view terms of service"
+                        >
+                            <FontAwesome name="file-text-o" size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                            <Text style={[styles.menuText, { color: colors.text }]}>{t('termsOfService')}</Text>
+                        </TouchableOpacity>
+
                         <View
                             accessible={true}
                             accessibilityRole="switch"
