@@ -4,7 +4,7 @@ import { Stack } from 'expo-router';
 import * as SplashScreen from 'expo-splash-screen';
 import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
-import { View } from 'react-native';
+import { View, Platform } from 'react-native';
 import { Analytics } from '@vercel/analytics/react';
 
 import { ThemeProvider, useTheme } from '../context/ThemeContext';
@@ -57,7 +57,7 @@ function AppContent({ fontsLoaded }: { fontsLoaded: boolean }) {
             {!isSplashFinished && (
                 <EntryScreen onFinish={() => setIsSplashFinished(true)} />
             )}
-            <Analytics />
+            {Platform.OS === 'web' && <Analytics />}
         </View>
     );
 }
