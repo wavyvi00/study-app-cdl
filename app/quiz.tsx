@@ -17,7 +17,8 @@ import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
 import FeedbackModal from '../components/FeedbackModal';
 
-import { useLocalization } from '../context/LocalizationContext'; // Added import
+import { useLocalization } from '../context/LocalizationContext';
+import { useSubscription } from '../context/SubscriptionContext';
 
 // ... imports
 
@@ -29,9 +30,22 @@ export default function QuizScreen() {
 
     const router = useRouter();
     const { colors, spacing, typography, radius, isDark } = useTheme();
-    const { t } = useLocalization(); // Added hook
+    const { t } = useLocalization();
     const { getQuestions, topics } = useQuestions();
     const insets = useSafeAreaInsets();
+    const { checkCanAccessQuiz, refreshSubscriptionStatus } = useSubscription();
+
+    // Check subscription status on mount - redirect to paywall if limit reached
+    useEffect(() => {
+        const checkAccess = async () => {
+            await refreshSubscriptionStatus();
+            if (!checkCanAccessQuiz()) {
+                // User has hit the free trial limit, redirect to paywall
+                router.replace('/paywall');
+            }
+        };
+        checkAccess();
+    }, []);
 
     // State to hold potentially restored session data
     const [restoredSession, setRestoredSession] = useState<{

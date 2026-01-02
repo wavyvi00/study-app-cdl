@@ -137,7 +137,31 @@ export type TranslationKey =
     | 'getStarted'
     | 'chooseLanguage'
     | 'startEngine'
-    | 'viewAllAwards';
+    | 'viewAllAwards'
+    // Paywall Keys
+    | 'unlockCDLZeroPro'
+    | 'freeTrialEnded'
+    | 'whatYouGet'
+    | 'unlimitedPractice'
+    | 'allStudyGuides'
+    | 'allExamModes'
+    | 'allLanguages'
+    | 'bestValue'
+    | 'yearly'
+    | 'monthly'
+    | 'lifetime'
+    | 'save'
+    | 'oneTimePayment'
+    | 'restorePurchases'
+    | 'subscriptionTerms'
+    | 'trialQuestionsRemaining'
+    | 'upgradeToContinue'
+    | 'noThanks'
+    | 'maybeLater'
+    | 'errorLoadingProducts'
+    | 'productNotFound'
+    | 'mo'
+    | 'yr';
 
 export const translations: Record<Locale, Record<TranslationKey, string>> = {
     en: {
@@ -289,7 +313,31 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         getStarted: 'Get Started',
         chooseLanguage: 'Choose Language',
         startEngine: 'Start Engine',
-        viewAllAwards: 'View All Awards'
+        viewAllAwards: 'View All Awards',
+        // Paywall
+        unlockCDLZeroPro: 'Unlock CDL Zero Pro',
+        freeTrialEnded: 'You\'ve answered {count} free questions',
+        whatYouGet: 'What You Get',
+        unlimitedPractice: 'Unlimited practice questions',
+        allStudyGuides: 'All study guides & materials',
+        allExamModes: 'All exam simulation modes',
+        allLanguages: 'All language options',
+        bestValue: 'Best Value',
+        yearly: 'Yearly',
+        monthly: 'Monthly',
+        lifetime: 'Lifetime',
+        mo: 'mo',
+        save: 'Save',
+        oneTimePayment: 'One-time payment',
+        restorePurchases: 'Restore Purchases',
+        subscriptionTerms: 'Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period.',
+        trialQuestionsRemaining: '{count} free questions remaining',
+        upgradeToContinue: 'Upgrade to Continue',
+        noThanks: "No Thanks, maybe later",
+        maybeLater: "Maybe Later",
+        yr: "yr",
+        errorLoadingProducts: 'Unable to load products. Please check your configuration.',
+        productNotFound: 'Product not found. Please try again later.',
     },
     es: {
         appTitle: 'CENTRO DE ESTUDIO',
@@ -409,7 +457,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         termsAcceptanceTitle: '1. Aceptación de Términos',
         termsAcceptanceText: 'Al descargar, instalar o usar CDL Zero: Permit Practice ("la App"), usted acepta estos Términos de Servicio. Si no está de acuerdo con estos términos, por favor no use la App.',
         termsEducationalTitle: '2. Solo con Fines Educativos',
-        termsEducationalText: 'La App está diseñada como herramienta de estudio complementaria para la preparación del examen de permiso CDL. El contenido se basa en manuales CDL disponibles públicamente, pero NO es un producto oficial del DMV. No garantizamos que el uso de esta App resulte en aprobar su examen CDL. Siempre consulte el manual oficial del DMV de su estado.',
+        termsEducationalText: 'La App está diseñada como herramienta de estudio complementaria para la preparación del examen de permiso CDL. El contenido se basa en manuales CDL disponibles públicamente, pero NO es un producto oficial del DMV. No garantizamos que el uso de esta App resultará en aprobar su examen CDL. Siempre consulte el manual oficial del DMV de su estado.',
         termsIPTitle: '3. Propiedad Intelectual',
         termsIPText: 'Todo el contenido de la App, incluyendo texto, gráficos, logos, iconos y software, es propiedad de CDL Zero y está protegido por leyes de derechos de autor y propiedad intelectual. No puede reproducir, distribuir o crear obras derivadas sin permiso escrito expreso.',
         termsUserConductTitle: '4. Conducta del Usuario',
@@ -440,7 +488,31 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         getStarted: 'Empezar',
         chooseLanguage: 'Elegir Idioma',
         startEngine: 'Arrancar Motor',
-        viewAllAwards: 'Ver Todos los Premios'
+        viewAllAwards: 'Ver Todos los Premios',
+        // Paywall
+        unlockCDLZeroPro: 'Desbloquear CDL Zero Pro',
+        freeTrialEnded: 'Has respondido {count} preguntas gratis',
+        whatYouGet: 'Lo Que Obtienes',
+        unlimitedPractice: 'Preguntas de práctica ilimitadas',
+        allStudyGuides: 'Todas las guías de estudio',
+        allExamModes: 'Todos los modos de examen',
+        allLanguages: 'Todos los idiomas',
+        bestValue: 'Mejor Valor',
+        yearly: 'Anual',
+        monthly: 'Mensual',
+        lifetime: 'De por vida',
+        mo: 'mes',
+        save: 'Ahorra',
+        oneTimePayment: 'Pago único',
+        restorePurchases: 'Restaurar Compras',
+        subscriptionTerms: 'La suscripción se renueva automáticamente a menos que se desactive la renovación automática al menos 24 horas antes del final del periodo actual.',
+        trialQuestionsRemaining: 'Quedan {count} preguntas gratuitas',
+        upgradeToContinue: 'Actualizar para Continuar',
+        noThanks: "No gracias, quizás después",
+        maybeLater: "Quizás Después",
+        yr: "año",
+        errorLoadingProducts: 'No se pudieron cargar los productos. Por favor verifique su configuración.',
+        productNotFound: 'Producto no encontrado. Por favor intente más tarde.',
     },
     ru: {
         appTitle: 'УЧЕБНЫЙ ЦЕНТР',
@@ -560,19 +632,19 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         termsAcceptanceTitle: '1. Принятие условий',
         termsAcceptanceText: 'Загружая, устанавливая или используя CDL Zero: Permit Practice ("Приложение"), вы соглашаетесь с этими Условиями использования. Если вы не согласны, пожалуйста, не используйте Приложение.',
         termsEducationalTitle: '2. Только для обучения',
-        termsEducationalText: 'Приложение разработано как дополнительный инструмент для подготовки к экзамену CDL. Содержимое основано на общедоступных справочниках CDL, но НЕ является официальным продуктом DMV. Мы не гарантируем сдачу экзамена CDL. Всегда обращайтесь к официальному справочнику DMV вашего штата.',
+        termsEducationalText: 'Приложение разработано как дополнительный инструмент для подготовки к экзамену CDL. Содержимое основано на общедоступных справочниках CDL, но НЕ является официальным продуктом DMV. Мы не гарантируем, что использование этого Приложения приведет к сдаче экзамена CDL. Всегда обращайтесь к официальному справочнику DMV вашего штата.',
         termsIPTitle: '3. Интеллектуальная собственность',
-        termsIPText: 'Весь контент Приложения, включая текст, графику, логотипы, значки и программное обеспечение, является собственностью CDL Zero и защищен законами об авторском праве. Вы не можете воспроизводить или распространять контент без письменного разрешения.',
+        termsIPText: 'Весь контент Приложения, включая текст, графику, логотипы, значки и программное обеспечение, является собственностью CDL Zero и защищен законами об авторском праве. Вы не можете воспроизводить, распространять или создавать производные работы без письменного разрешения.',
         termsUserConductTitle: '4. Поведение пользователя',
-        termsUserConductText: 'Вы соглашаетесь использовать Приложение только в законных целях. Вы не можете пытаться выполнить обратную разработку, декомпилировать или извлекать исходный код Приложения. Вы не можете использовать Приложение способом, который может повредить его функциональность.',
+        termsUserConductText: 'Вы соглашаетесь использовать Приложение только в законных целях. Вы не можете пытаться выполнить обратную разработку, декомпилировать или извлекать исходный код Приложения. Вы не можете использовать Приложение способом, который может повредить, отключить или нарушить функциональность Приложения.',
         termsDisclaimerTitle: '5. Отказ от гарантий',
-        termsDisclaimerText: 'ПРИЛОЖЕНИЕ ПРЕДОСТАВЛЯЕТСЯ "КАК ЕСТЬ" БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ. МЫ НЕ ГАРАНТИРУЕМ, ЧТО ПРИЛОЖЕНИЕ БУДЕТ РАБОТАТЬ БЕЗ ОШИБОК ИЛИ ПРЕРЫВАНИЙ. ИСПОЛЬЗОВАНИЕ ПРИЛОЖЕНИЯ НА ВАШ СОБСТВЕННЫЙ РИСК.',
+        termsDisclaimerText: 'ПРИЛОЖЕНИЕ ПРЕДОСТАВЛЯЕТСЯ "КАК ЕСТЬ" БЕЗ КАКИХ-ЛИБО ГАРАНТИЙ, ЯВНЫХ ИЛИ ПОДРАЗУМЕВАЕМЫХ. МЫ НЕ ГАРАНТИРУЕМ, ЧТО ПРИЛОЖЕНИЕ БУДЕТ РАБОТАТЬ БЕЗ ОШИБОК, БЕСПЕРЕБОЙНО ИЛИ БЕЗ ВРЕДОНОСНЫХ КОМПОНЕНТОВ. ИСПОЛЬЗОВАНИЕ ПРИЛОЖЕНИЯ НА ВАШ СОБСТВЕННЫЙ РИСК.',
         termsLiabilityTitle: '6. Ограничение ответственности',
-        termsLiabilityText: 'В МАКСИМАЛЬНОЙ СТЕПЕНИ, РАЗРЕШЕННОЙ ЗАКОНОМ, CDL ZERO НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ ЗА ЛЮБОЙ КОСВЕННЫЙ ИЛИ СПЕЦИАЛЬНЫЙ УЩЕРБ, ВКЛЮЧАЯ НЕСДАЧУ ЭКЗАМЕНА CDL.',
+        termsLiabilityText: 'В МАКСИМАЛЬНОЙ СТЕПЕНИ, РАЗРЕШЕННОЙ ЗАКОНОМ, CDL ZERO НЕ НЕСЕТ ОТВЕТСТВЕННОСТИ ЗА ЛЮБЫЕ КОСВЕННЫЕ, СЛУЧАЙНЫЕ, СПЕЦИАЛЬНЫЕ, ПОСЛЕДУЮЩИЕ ИЛИ ШТРАФНЫЕ УБЫТКИ, ВОЗНИКАЮЩИЕ В РЕЗУЛЬТАТЕ ИСПОЛЬЗОВАНИЯ ВАМИ ПРИЛОЖЕНИЯ, ВКЛЮЧАЯ, ПОМИМО ПРОЧЕГО, НЕСДАЧУ ЭКЗАМЕНА CDL.',
         termsChangesTitle: '7. Изменение условий',
         termsChangesText: 'Мы оставляем за собой право изменять эти Условия в любое время. Продолжение использования Приложения после изменений означает принятие новых Условий. Рекомендуем периодически проверять эти Условия.',
         termsContactTitle: '8. Контактная информация',
-        termsContactText: 'Если у вас есть вопросы об этих Условиях использования, свяжитесь с нами через App Store или посетите наш сайт.',
+        termsContactText: 'Если у вас есть вопросы об этих Условиях использования, свяжитесь с нами через список App Store или посетите наш веб-сайт.',
         viewFullTerms: 'Посмотреть полные Условия онлайн',
         lastUpdated: 'Последнее обновление: Декабрь 2025',
         // Onboarding
@@ -591,6 +663,30 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         getStarted: 'Начать',
         chooseLanguage: 'Выберите язык',
         startEngine: 'Поехали',
-        viewAllAwards: 'Посмотреть все награды'
+        viewAllAwards: 'Посмотреть все награды',
+        // Paywall
+        unlockCDLZeroPro: 'Разблокировать CDL Zero Pro',
+        freeTrialEnded: 'Вы ответили на {count} бесплатных вопросов',
+        whatYouGet: 'Что Вы Получите',
+        unlimitedPractice: 'Неограниченные практические вопросы',
+        allStudyGuides: 'Все учебные материалы',
+        allExamModes: 'Все режимы экзамена',
+        allLanguages: 'Все языковые опции',
+        bestValue: 'Лучшая Цена',
+        yearly: 'Годовая',
+        monthly: 'Месячная',
+        lifetime: 'Навсегда',
+        mo: 'мес',
+        save: 'Скидка',
+        oneTimePayment: 'Одноразовый платеж',
+        restorePurchases: 'Восстановить покупки',
+        subscriptionTerms: 'Подписка продлевается автоматически, если автопродление не отключено по крайней мере за 24 часа до окончания текущего периода.',
+        trialQuestionsRemaining: 'Осталось {count} бесплатных вопросов',
+        upgradeToContinue: 'Обновить для продолжения',
+        noThanks: "Нет, спасибо, может быть позже",
+        maybeLater: "Может позже",
+        yr: "год",
+        errorLoadingProducts: 'Не удалось загрузить продукты. Пожалуйста, проверьте конфигурацию.',
+        productNotFound: 'Продукт не найден. Пожалуйста, попробуйте позже.',
     }
 };

@@ -21,6 +21,7 @@ export interface UserStats {
     examAttempts: number;
     averageScore: number;
     questionsAnswered: number;
+    questionsAnsweredTotal: number; // Lifetime total for paywall tracking (never resets)
     studyTimeMinutes: number;
     streakDays: number;
     lastStudyDate: string | null;
@@ -41,6 +42,7 @@ export const INITIAL_STATS: UserStats = {
     examAttempts: 0,
     averageScore: 0,
     questionsAnswered: 0,
+    questionsAnsweredTotal: 0, // Lifetime total for paywall
     studyTimeMinutes: 0,
     streakDays: 0,
     lastStudyDate: null,
@@ -198,6 +200,7 @@ export const recordQuizResult = async (
 
     const updates: Partial<UserStats> = {
         questionsAnswered: newTotalQuestions,
+        questionsAnsweredTotal: (current.questionsAnsweredTotal || 0) + questionCount, // Lifetime total for paywall
         averageScore: newAverage,
         studyTimeMinutes: current.studyTimeMinutes + Math.ceil(questionCount * 1.0),
         currentPracticeSession: currentSession // Save the cleared session
