@@ -832,31 +832,606 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
     ]
 };
 
+// =====================================================
+// COMBINATION VEHICLES STUDY GUIDE
+// =====================================================
+export const CombinationsStudyGuide: StudyGuide = {
+    topicId: 'combinations',
+    sections: [
+        {
+            id: 'comb-intro',
+            title: '1. Introduction to Combination Vehicles',
+            content: [
+                "Combination vehicles are heavier, longer, and require more driving skill than single commercial vehicles. This includes tractor-trailers, doubles, triples, and trucks towing trailers.",
+                "Driving combinations safely requires understanding their handling differences: they're more likely to rollover, jackknife, and have longer stopping distances.",
+                "You need a Class A CDL to operate most combination vehicles. The Combination Vehicles test is required for the Class A CDL."
+            ],
+            keyPoints: [
+                "Combination vehicles are heavier and longer than singles.",
+                "Higher risk of rollover and jackknife.",
+                "Class A CDL required for most combinations."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q1',
+                    text: "Why do combination vehicles require more driving skill?",
+                    options: [
+                        "They are more comfortable",
+                        "They are heavier, longer, and have different handling characteristics",
+                        "They have better brakes",
+                        "They are easier to park"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Combination vehicles are heavier, longer, and require understanding of rollover risks, jackknifing, and longer stopping distances."
+                }
+            ]
+        },
+        {
+            id: 'comb-rollover',
+            title: '2. Rollover Risks',
+            content: [
+                "Rollovers are more common in combination vehicles due to their higher center of gravity. More than half of truck driver deaths in crashes are from rollovers.",
+                "The major factors that cause rollovers are: Speed (taking curves or turns too fast), Load (top-heavy or improperly loaded cargo), and Steering (sudden steering movements).",
+                "Keep the cargo as low as possible. Fully loaded rigs are 10 times more likely to roll over than empty rigs.",
+                "Slow down before curves. The posted speed limit may be too fast for a loaded truck. If the sign says 35 mph, you should slow down to around 30 mph or less.",
+                "Steer gently. Making quick lane changes or swerving to avoid a hazard can cause a rollover. It's often safer to hit something than to roll over."
+            ],
+            keyPoints: [
+                "Rollovers cause more than half of truck driver deaths.",
+                "Slow down before curves - posted speed may be too fast.",
+                "Full trucks are 10x more likely to roll than empty ones.",
+                "Steer gently to avoid rollover."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q2',
+                    text: "What causes most truck rollovers?",
+                    options: [
+                        "Tire blowouts",
+                        "Taking curves too fast, top-heavy loads, or sudden steering",
+                        "Engine failure",
+                        "Bad weather only"
+                    ],
+                    correctIndex: 1,
+                    explanation: "The major causes are speed (curves too fast), load (top-heavy cargo), and steering (sudden movements)."
+                }
+            ]
+        },
+        {
+            id: 'comb-steering',
+            title: '3. Steering and Off-Tracking',
+            content: [
+                "When a vehicle goes around a corner, the rear wheels follow a different path than the front wheels. This is called off-tracking or 'cheating.'",
+                "The longer the vehicle, the more it will off-track. This is why you must swing wide to make turns, especially right turns.",
+                "Trailers can hit other vehicles, pedestrians, or fixed objects during turns because of off-tracking.",
+                "The crack-the-whip effect: When changing lanes, the rear of the trailer tends to swing. Longer combinations have more swing."
+            ],
+            keyPoints: [
+                "Rear wheels follow a shorter path than front wheels (off-tracking).",
+                "Longer vehicles off-track more.",
+                "Swing wide on turns to avoid hitting objects.",
+                "Watch for 'crack-the-whip' effect on lane changes."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q3',
+                    text: "What is off-tracking?",
+                    options: [
+                        "When the truck goes off the road",
+                        "When the rear wheels follow a shorter path than the front wheels",
+                        "When the GPS loses signal",
+                        "When the trailer disconnects"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Off-tracking (cheating) is when the rear wheels follow a different, shorter path than the front wheels around curves."
+                }
+            ]
+        },
+        {
+            id: 'comb-jackknife',
+            title: '4. Preventing Jackknife',
+            content: [
+                "A jackknife is when the trailer pushes the tractor, causing it to swing out and potentially flip. This happens when the drive wheels lose traction.",
+                "Common causes: Over-braking, especially without ABS. Excessive speed on curves. Slippery roads with little traction.",
+                "To prevent jackknifing: Don't brake too hard or too suddenly. Use engine braking and controlled snub braking on downgrades. Slow down for curves.",
+                "If you start to jackknife: Release the brakes to let the drive wheels regain traction, then straighten out.",
+                "Jackknifes are more likely when the trailer is empty (light) because there's less weight on the drive wheels."
+            ],
+            keyPoints: [
+                "Jackknife = trailer pushes the tractor sideways.",
+                "Caused by over-braking or losing traction.",
+                "If jackknifing, release brakes to regain traction.",
+                "Empty trailers are more likely to jackknife."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q4',
+                    text: "What should you do if you start to jackknife?",
+                    options: [
+                        "Brake harder",
+                        "Accelerate quickly",
+                        "Release the brakes to regain traction",
+                        "Turn the steering wheel sharply"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Release the brakes to let the drive wheels regain traction and straighten out."
+                }
+            ]
+        },
+        {
+            id: 'comb-braking',
+            title: '5. Braking and Stopping Distance',
+            content: [
+                "Combination vehicles take longer to stop than single vehicles because of their greater weight. Stopping distance increases significantly with speed.",
+                "Empty trucks can be harder to stop than loaded trucks because less weight presses the tires to the road, reducing traction.",
+                "Brake early and gradually. Avoid sudden braking which can cause jackknifing or loss of control.",
+                "On wet or icy roads, stopping distance can double or triple. Slow down and increase following distance.",
+                "Use snub braking on long downgrades: Apply brakes firmly to reduce speed by 5 mph, then release. Repeat as needed."
+            ],
+            keyPoints: [
+                "Heavier vehicles need more distance to stop.",
+                "Empty trucks can be harder to stop (less traction).",
+                "Brake early and gradually to avoid jackknife.",
+                "Wet/icy roads dramatically increase stopping distance."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q5',
+                    text: "Why can empty trucks be harder to stop than loaded trucks?",
+                    options: [
+                        "They have weaker brakes",
+                        "Less weight means less traction on the tires",
+                        "The engine is less powerful",
+                        "The driver is less experienced"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Empty trucks have less weight pressing the tires to the road, which reduces traction and makes stopping harder."
+                }
+            ]
+        },
+        {
+            id: 'comb-coupling',
+            title: '6. Coupling Tractor-Trailers',
+            content: [
+                "Coupling is connecting the tractor to the trailer. Proper coupling is critical for safety.",
+                "Step 1: Inspect the Fifth Wheel. Check that it tilts toward the trailer, the jaws are open, the release handle is in the automatic lock position, and it's properly greased.",
+                "Step 2: Inspect the Trailer. Check the kingpin, the apron (plate under the front of the trailer), and the air/electrical lines.",
+                "Step 3: Position the Tractor. Back slowly under the trailer, keeping the trailer kingpin aligned with the fifth wheel.",
+                "Step 4: Connect. Back until the fifth wheel locks around the kingpin. You should hear a click or snap. Test by pulling forward gently.",
+                "Step 5: Secure. Connect air lines (emergency first, then service). Connect electrical cord. Raise landing gear fully. Do a visual check that the kingpin is locked in the jaws."
+            ],
+            keyPoints: [
+                "Inspect fifth wheel and kingpin before coupling.",
+                "Back slowly and align kingpin with fifth wheel.",
+                "Connect emergency air line FIRST.",
+                "Test coupling by pulling forward gently."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q6',
+                    text: "When coupling, which air line should you connect first?",
+                    options: [
+                        "Service line",
+                        "Emergency line",
+                        "Either one is fine",
+                        "Neither, connect them together"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Always connect the emergency air line first. This charges the trailer air tanks and allows you to test the brakes."
+                }
+            ]
+        },
+        {
+            id: 'comb-uncoupling',
+            title: '7. Uncoupling Tractor-Trailers',
+            content: [
+                "Uncoupling is disconnecting the tractor from the trailer. Improper uncoupling can cause injuries and damage.",
+                "Step 1: Position the rig. Park on firm, level ground. Chock the trailer wheels or use spring brakes.",
+                "Step 2: Lower landing gear. Lower it until it firmly contacts the ground and supports the trailer. If on soft ground, use boards under the legs.",
+                "Step 3: Disconnect air and electrical lines. Store them properly to avoid damage.",
+                "Step 4: Unlock the fifth wheel. Pull the release handle to unlock the jaws.",
+                "Step 5: Pull tractor forward. Pull the tractor partly out from under the trailer. Stop with the tractor frame still under the trailer to prevent it from falling.",
+                "Step 6: Secure the tractor. When the tractor clears, pull away completely and secure for parking."
+            ],
+            keyPoints: [
+                "Park on firm, level ground.",
+                "Lower landing gear fully before disconnecting.",
+                "Store air/electrical lines safely.",
+                "Pull tractor forward slowly to clear the trailer."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q7',
+                    text: "When uncoupling, why should you lower the landing gear before disconnecting?",
+                    options: [
+                        "To make the trailer lighter",
+                        "To support the trailer so it doesn't fall when the tractor pulls away",
+                        "To check the tires",
+                        "To save time"
+                    ],
+                    correctIndex: 1,
+                    explanation: "The landing gear must support the trailer weight when the tractor is removed, preventing the trailer from falling."
+                }
+            ]
+        },
+        {
+            id: 'comb-inspect',
+            title: '8. Inspecting Combination Vehicles',
+            content: [
+                "In addition to regular pre-trip inspection items, combination vehicles require inspecting the coupling system.",
+                "Fifth Wheel Check: Look for damage or missing parts. Check mounting bolts. The locking jaws should be around the shank of the kingpin, not the head. The release arm should be in the locked position.",
+                "Air Line Check: Check for leaks, cuts, or other damage. Couplings (gladhands) should be clean and connected properly. Air lines should have enough slack for turns.",
+                "Electrical Cord Check: Check for damage. Make sure it's properly connected and secured.",
+                "Sliding Fifth Wheel Check: If equipped, check that the slide is locked in position. Check for missing pins, cracked welds, or damaged components."
+            ],
+            keyPoints: [
+                "Inspect the coupling system carefully.",
+                "Locking jaws must be around the kingpin shank, not head.",
+                "Check air lines for leaks and proper connection.",
+                "Verify sliding fifth wheel is locked."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q8',
+                    text: "Where should the fifth wheel locking jaws be positioned on the kingpin?",
+                    options: [
+                        "Around the head of the kingpin",
+                        "Around the shank (narrow part) of the kingpin",
+                        "Above the kingpin",
+                        "Below the kingpin"
+                    ],
+                    correctIndex: 1,
+                    explanation: "The jaws should be around the shank (narrow part) of the kingpin, not the head. If around the head, the trailer can come loose."
+                }
+            ]
+        },
+        {
+            id: 'comb-trailerbrakes',
+            title: '9. Trailer Air Brakes',
+            content: [
+                "Combination vehicles use air brakes. The trailer brakes work through air lines connecting to the tractor.",
+                "Emergency Line (Supply Line): The emergency line supplies air to the trailer air tanks. It also controls the emergency brakes on the trailer. Loss of air pressure will cause the trailer brakes to come on.",
+                "Service Line (Control Line): The service line carries air controlled by the foot brake or trailer hand valve. This line tells the trailer brakes how hard to apply.",
+                "Trailer Hand Valve: Used to apply the trailer brakes only. Should only be used to test trailer brakes. Never use it for parking (the brakes can release and the vehicle will roll).",
+                "Breakaway: If the trailer separates from the tractor, the emergency line loses pressure and the trailer brakes lock up automatically. This is a safety feature."
+            ],
+            keyPoints: [
+                "Emergency line charges trailer tanks and controls emergency brakes.",
+                "Service line controls how hard trailer brakes apply.",
+                "Trailer hand valve is for testing, NOT for parking.",
+                "If trailer breaks away, emergency brakes activate automatically."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q9',
+                    text: "What happens if the trailer's emergency air line breaks or disconnects?",
+                    options: [
+                        "The trailer will speed up",
+                        "Nothing happens",
+                        "The trailer brakes will lock up automatically",
+                        "The tractor brakes will fail"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Loss of air pressure in the emergency line causes the trailer's spring brakes to come on automatically, stopping the trailer."
+                }
+            ]
+        },
+        {
+            id: 'comb-doubles',
+            title: '10. Doubles and Triples',
+            content: [
+                "Doubles and triples require extra caution. They have more articulation points, making them more prone to rollover and instability.",
+                "Crack-the-whip effect: The last trailer in a set of doubles or triples is the most likely to overturn. Quick lane changes or sudden movements at the front amplify at the rear.",
+                "Coupling doubles/triples: The heaviest trailer should be closest to the tractor. The lightest trailer should be at the rear.",
+                "Inspection: Check all coupling devices, including pintle hooks, drawbars, and safety chains. Inspect all air and electrical connections between units.",
+                "Following distance: Allow even more following distance for doubles and triples. They take longer to stop and are less stable."
+            ],
+            keyPoints: [
+                "Last trailer is most likely to roll ('crack-the-whip').",
+                "Heaviest trailer goes closest to the tractor.",
+                "Inspect all coupling points and connections.",
+                "Allow extra following distance."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q10',
+                    text: "When coupling doubles, which trailer should be closest to the tractor?",
+                    options: [
+                        "The lightest trailer",
+                        "The heaviest trailer",
+                        "The shortest trailer",
+                        "It doesn't matter"
+                    ],
+                    correctIndex: 1,
+                    explanation: "The heaviest trailer should be closest to the tractor for better stability. The lightest goes at the rear."
+                }
+            ]
+        }
+    ]
+};
+
+// =====================================================
+// AIR BRAKES STUDY GUIDE
+// =====================================================
+export const AirBrakesStudyGuide: StudyGuide = {
+    topicId: 'air_brakes',
+    sections: [
+        {
+            id: 'air-intro',
+            title: '1. Parts of an Air Brake System',
+            content: [
+                "Air brakes use compressed air to make the brakes work. They are a safe way to stop heavy vehicles, but they have more parts and are harder to maintain than hydraulic brakes.",
+                "Air Compressor: Pumps air into the air storage tanks. It connects to the engine through gears or a V-belt.",
+                "Air Compressor Governor: Controls when the compressor pumps air. It cuts in (starts pumping) at around 100 psi and cuts out (stops pumping) at around 125 psi.",
+                "Air Storage Tanks: Hold compressed air. They have drain valves to remove water and oil (sludge) that collects in the bottom.",
+                "Safety Valve: Protects the tank from too much pressure. It usually opens at 150 psi. If it opens, something is wrong."
+            ],
+            keyPoints: [
+                "Governor cuts in at 100 psi and out at 125 psi.",
+                "Drain valves remove water and oil from tanks.",
+                "Safety valve opens at 150 psi (warning sign)."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'air-q1',
+                    text: "When does the air compressor governor 'cut out'?",
+                    options: [
+                        "At 100 psi",
+                        "At 125 psi",
+                        "At 150 psi",
+                        "At 60 psi"
+                    ],
+                    correctIndex: 1,
+                    explanation: "The governor stops pumping air (cuts out) when the tank pressure reaches around 125 psi."
+                }
+            ]
+        },
+        {
+            id: 'air-parts',
+            title: '2. Brake System Components',
+            content: [
+                "Brake Pedal: Pressing it pushes air into the brake chambers. Releasing it lets air out.",
+                "S-Cam Brakes: The most common type. Air pushes a push rod, which moves a slack adjuster, which turns the S-cam. The S-cam pushes brake shoes against the drum.",
+                "Brake Drums/Shoes: Drums are the outer part that turns. Shoes are the inner part with linings that press against the drum to stop it.",
+                "Slack Adjusters: Used to adjust the brakes. If they are manual, they must be checked and adjusted frequently."
+            ],
+            keyPoints: [
+                "S-Cam is the most common foundation brake.",
+                "Push rod -> Slack Adjuster -> S-Cam -> Brake Shoes.",
+                "Slack adjusters fix the gap between shoes and drum."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'air-q2',
+                    text: "What part of the brake system pushes the brake shoes against the drum?",
+                    options: [
+                        "The S-Cam",
+                        "The air compressor",
+                        "The governor",
+                        "The safety valve"
+                    ],
+                    correctIndex: 0,
+                    explanation: "The S-cam turns and forces the brake shoes against the inside of the brake drum."
+                }
+            ]
+        },
+        {
+            id: 'air-dual',
+            title: '3. Dual Air Brake Systems',
+            content: [
+                "Most modern heavy vehicles use dual air brake systems for safety. It has two separate air systems which use a single set of controls.",
+                "Primary System: Usually operates the rear axle brakes.",
+                "Secondary System: Usually operates the front axle brakes.",
+                "Before driving, allow time for the air compressor to build up a minimum of 100 psi pressure in BOTH the primary and secondary systems."
+            ],
+            keyPoints: [
+                "Two systems (Primary/Secondary) for safety.",
+                "Must build 100 psi in BOTH systems before driving."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'air-q3',
+                    text: "How much pressure must be in the air tanks before driving?",
+                    options: [
+                        "60 psi",
+                        "100 psi",
+                        "125 psi",
+                        "150 psi"
+                    ],
+                    correctIndex: 1,
+                    explanation: "You must build up a minimum of 100 psi in both the primary and secondary systems before driving."
+                }
+            ]
+        },
+        {
+            id: 'air-inspection-1',
+            title: '4. Inspecting Air Brakes (Step 1-2)',
+            content: [
+                "Step 1: Engine compartment check. Check the air compressor drive belt (if equipped). Condition: snug, not frayed/cracked. Deflection: press in center, should deflect 1/2 to 3/4 inch.",
+                "Step 2: Walk-around inspection. Check manual slack adjusters on S-cam brakes. Park on level ground, chock wheels, release parking brakes. Pull hard on each slack adjuster. It should not move more than 1 inch.",
+                "Check brake drums (no cracks longer than 1/2 the width of friction area) and linings (not too thin, no grease/oil)."
+            ],
+            keyPoints: [
+                "Slack adjusters shouldn't move more than 1 inch when pulled.",
+                "Check belt deflection (1/2 - 3/4 inch).",
+                "No oil/grease on brake linings."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'air-q4',
+                    text: "How much can a slack adjuster move when pulled by hand?",
+                    options: [
+                        "More than 2 inches",
+                        "No more than 1 inch",
+                        "It shouldn't move at all",
+                        "Up to 3 inches"
+                    ],
+                    correctIndex: 1,
+                    explanation: "If a slack adjuster moves more than about one inch where the push rod attaches to it, it needs adjustment."
+                }
+            ]
+        },
+        {
+            id: 'air-inspection-2',
+            title: '5. The 3-Step Air Leakage Test',
+            content: [
+                "This is CRITICAL for the CDL test.",
+                "1. Test Low Pressure Warning: Turn engine off, key ON. Pump the brake pedal to release air. The warning signal (light/buzzer) MUST come on before pressure drops to 60 psi.",
+                "2. Test Spring Brakes: Continue fanning (pumping) the brakes. The spring brake protection valve should pop out (brakes apply) when pressure drops to 20-45 psi.",
+                "3. Static & Applied Leakage Test: Build pressure back to max. Turn engine off. Release parking brake. Fully apply foot brake and hold for 1 minute. Clean truck shouldn't lose more than 3 psi (Combination: 4 psi)."
+            ],
+            keyPoints: [
+                "Low air warning MUST come on by 60 psi.",
+                "Spring brakes MUST pop out between 20-45 psi.",
+                "Leakage rate (applied): max 3 psi/min (single), 4 psi/min (combo)."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'air-q5',
+                    text: "At what pressure must the low air pressure warning signal come on?",
+                    options: [
+                        "Before it drops to 60 psi",
+                        "Before it drops to 30 psi",
+                        "At 100 psi",
+                        "At 125 psi"
+                    ],
+                    correctIndex: 0,
+                    explanation: "The low air pressure warning signal must come on before the pressure drops to less than 60 psi."
+                }
+            ]
+        },
+        {
+            id: 'air-using-1',
+            title: '6. Using Air Brakes',
+            content: [
+                "Normal Stops: Push the brake pedal down. Control the pressure so the vehicle comes to a smooth, safe stop.",
+                "Emergency Stops: If you must stop quickly, brake so you can steer and keep the vehicle in a straight line. Use 'Controlled Braking' (squeeze hard but don't lock) or 'Stab Braking' (brake all the way, release when wheels lock, repeat).",
+                "Braking Lag: Air brakes take longer to work than hydraulic brakes because air takes time to flow. At 55 mph, this adds about 32 feet to your stopping distance."
+            ],
+            keyPoints: [
+                "Brake lag adds distance (32 ft at 55 mph).",
+                "Controlled braking: Apply brakes hard without locking.",
+                "Stab braking: Lock wheels, release, repeat."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'air-q6',
+                    text: "What is brake lag?",
+                    options: [
+                        "The time required for the driver to see a hazard",
+                        "The time it takes for the air to flow through the lines to the brakes",
+                        "The time it takes to move your foot to the pedal",
+                        "The distance the truck slides"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Brake lag is the time required for the air to flow through the lines to the brakes after you press the pedal."
+                }
+            ]
+        },
+        {
+            id: 'air-using-2',
+            title: '7. Braking on Downgrades',
+            content: [
+                "Brake Fading: Brakes can fade or fail from excessive heat caused by using them too much. DO NOT ride the brakes down a hill.",
+                "Proper Technique: 1. Select a safe low gear (engine braking). 2. Brake firmly to slow to 5 mph below your safe speed. 3. Release brakes. 4. Wait for speed to increase to safe speed. 5. Repeat.",
+                "This is called 'Snub Braking'."
+            ],
+            keyPoints: [
+                "Heat causes brake fade.",
+                "Use engine braking and snub braking.",
+                "Apply brakes to reduce speed 5 mph, then release."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'air-q7',
+                    text: "Why should you avoid using the brakes continuously on a long downhill?",
+                    options: [
+                        "It wastes fuel",
+                        "It wears out the tires",
+                        "The brakes can overheat and fail (fade)",
+                        "It is illegal"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Excessive use of service brakes results in overheating and leads to brake fade."
+                }
+            ]
+        },
+        {
+            id: 'air-parking',
+            title: '8. Parking Brakes',
+            content: [
+                "Any time you park, use the parking brakes, with two exceptions: 1. The brakes are very hot (they can warp the drums). 2. The brakes are wet in freezing temperatures (they can freeze).",
+                "Spring Brakes: A mechanical spring applies the brakes when air pressure is removed. Used for parking and emergency braking.",
+                "Never push the brake pedal down when the spring brakes are on. The combined force could damage the brakes."
+            ],
+            keyPoints: [
+                "Use parking brakes every time you park.",
+                "Exceptions: Very hot or wet/freezing.",
+                "Don't use foot brake when parking brake is on."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'air-q8',
+                    text: "When should you NOT use the parking brakes?",
+                    options: [
+                        "When checking the oil",
+                        "When the brakes are very hot or wet in freezing weather",
+                        "When parking on a hill",
+                        "When parking for less than 5 minutes"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Do not use parking brakes if brakes are very hot (can warp drums) or wet in freezing temps (can freeze)."
+                }
+            ]
+        }
+    ]
+};
+
 // Map of topic IDs to their study guides
 export const STUDY_GUIDES: Record<string, StudyGuide> = {
     'general_knowledge': GeneralKnowledgeStudyGuide,
-    // Future topics will be added here
+    'combinations': CombinationsStudyGuide,
+    'air_brakes': AirBrakesStudyGuide,
 };
 
 // Localized study guide accessor
 export const getStudyGuide = (topicId: string, locale: string = 'en'): StudyGuide | undefined => {
-    if (topicId !== 'general_knowledge') return undefined;
+    const englishGuide = STUDY_GUIDES[topicId];
+    if (!englishGuide) return undefined;
 
-    // These will be enabled once translation script finishes
+    // Try to load localized version
     if (locale === 'es') {
         try {
-            return require('./study_content_es').GeneralKnowledgeStudyGuide_ES;
+            const module = require('./study_content_es');
+            if (topicId === 'general_knowledge' && module.GeneralKnowledgeStudyGuide_ES) {
+                return module.GeneralKnowledgeStudyGuide_ES;
+            }
+            if (topicId === 'combinations' && module.CombinationsStudyGuide_ES) {
+                return module.CombinationsStudyGuide_ES;
+            }
+            if (topicId === 'air_brakes' && module.AirBrakesStudyGuide_ES) {
+                return module.AirBrakesStudyGuide_ES;
+            }
         } catch (e) {
-            console.warn('Spanish study guide not found, falling back to English');
+            console.warn(`Spanish study guide for ${topicId} not found, falling back to English`);
         }
     }
     if (locale === 'ru') {
         try {
-            return require('./study_content_ru').GeneralKnowledgeStudyGuide_RU;
+            const module = require('./study_content_ru');
+            if (topicId === 'general_knowledge' && module.GeneralKnowledgeStudyGuide_RU) {
+                return module.GeneralKnowledgeStudyGuide_RU;
+            }
+            if (topicId === 'combinations' && module.CombinationsStudyGuide_RU) {
+                return module.CombinationsStudyGuide_RU;
+            }
+            if (topicId === 'air_brakes' && module.AirBrakesStudyGuide_RU) {
+                return module.AirBrakesStudyGuide_RU;
+            }
         } catch (e) {
-            console.warn('Russian study guide not found, falling back to English');
+            console.warn(`Russian study guide for ${topicId} not found, falling back to English`);
         }
     }
 
-    return GeneralKnowledgeStudyGuide;
+    return englishGuide;
 };

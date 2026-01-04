@@ -161,7 +161,22 @@ export type TranslationKey =
     | 'errorLoadingProducts'
     | 'productNotFound'
     | 'mo'
-    | 'yr';
+    | 'yr'
+    // Email Opt-In
+    | 'stayUpdated'
+    | 'emailOptInSubtitle'
+    | 'emailPlaceholder'
+    | 'subscribe'
+    | 'subscribing'
+    | 'notNow'
+    | 'emailRequired'
+    | 'enterEmailToSubscribe'
+    | 'invalidEmail'
+    | 'enterValidEmail'
+    | 'subscribed'
+    | 'thanksForSubscribing'
+    | 'subscriptionFailed'
+    | 'couldntSaveEmail';
 
 export const translations: Record<Locale, Record<TranslationKey, string>> = {
     en: {
@@ -338,6 +353,21 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         yr: "yr",
         errorLoadingProducts: 'Unable to load products. Please check your configuration.',
         productNotFound: 'Product not found. Please try again later.',
+        // Email Opt-In
+        stayUpdated: 'Stay Updated',
+        emailOptInSubtitle: 'Get notified about new features, study tips, and updates.',
+        emailPlaceholder: 'you@email.com',
+        subscribe: 'Subscribe',
+        subscribing: 'Subscribing...',
+        notNow: 'Not now',
+        emailRequired: 'Email Required',
+        enterEmailToSubscribe: 'Please enter an email to subscribe.',
+        invalidEmail: 'Invalid Email',
+        enterValidEmail: 'Please enter a valid email address.',
+        subscribed: 'Subscribed!',
+        thanksForSubscribing: "Thanks! We'll keep you updated.",
+        subscriptionFailed: 'Subscription Failed',
+        couldntSaveEmail: "Couldn't save your email. Please try again.",
     },
     es: {
         appTitle: 'CENTRO DE ESTUDIO',
@@ -513,6 +543,21 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         yr: "año",
         errorLoadingProducts: 'No se pudieron cargar los productos. Por favor verifique su configuración.',
         productNotFound: 'Producto no encontrado. Por favor intente más tarde.',
+        // Email Opt-In
+        stayUpdated: 'Mantente Actualizado',
+        emailOptInSubtitle: 'Recibe notificaciones sobre nuevas funciones, consejos de estudio y actualizaciones.',
+        emailPlaceholder: 'tu@email.com',
+        subscribe: 'Suscribirse',
+        subscribing: 'Suscribiendo...',
+        notNow: 'Ahora no',
+        emailRequired: 'Email Requerido',
+        enterEmailToSubscribe: 'Por favor ingresa un email para suscribirte.',
+        invalidEmail: 'Email Inválido',
+        enterValidEmail: 'Por favor ingresa un email válido.',
+        subscribed: '¡Suscrito!',
+        thanksForSubscribing: '¡Gracias! Te mantendremos actualizado.',
+        subscriptionFailed: 'Suscripción Fallida',
+        couldntSaveEmail: 'No se pudo guardar tu email. Por favor intenta de nuevo.',
     },
     ru: {
         appTitle: 'УЧЕБНЫЙ ЦЕНТР',
@@ -688,5 +733,20 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         yr: "год",
         errorLoadingProducts: 'Не удалось загрузить продукты. Пожалуйста, проверьте конфигурацию.',
         productNotFound: 'Продукт не найден. Пожалуйста, попробуйте позже.',
+        // Email Opt-In
+        stayUpdated: 'Оставайтесь в курсе',
+        emailOptInSubtitle: 'Получайте уведомления о новых функциях, советах по учёбе и обновлениях.',
+        emailPlaceholder: 'вы@email.com',
+        subscribe: 'Подписаться',
+        subscribing: 'Подписка...',
+        notNow: 'Не сейчас',
+        emailRequired: 'Email обязателен',
+        enterEmailToSubscribe: 'Пожалуйста, введите email для подписки.',
+        invalidEmail: 'Неверный Email',
+        enterValidEmail: 'Пожалуйста, введите действительный email.',
+        subscribed: 'Подписано!',
+        thanksForSubscribing: 'Спасибо! Мы будем держать вас в курсе.',
+        subscriptionFailed: 'Ошибка подписки',
+        couldntSaveEmail: 'Не удалось сохранить ваш email. Попробуйте ещё раз.',
     }
 };

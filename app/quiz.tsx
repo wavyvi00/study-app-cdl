@@ -338,6 +338,10 @@ export default function QuizScreen() {
         const nextScore = isCorrect ? score + 1 : score;
         const nextWrong = isCorrect ? wrongAnswers : [...wrongAnswers, { question: currentQuestion, selectedIndex: selectedOption }];
 
+        // Update state so UI and results are correct
+        setScore(nextScore);
+        setWrongAnswers(nextWrong);
+
         if (isLastQuestion) {
             setIsFinished(true); // Triggers recording
         } else {

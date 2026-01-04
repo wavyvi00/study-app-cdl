@@ -17,7 +17,7 @@ import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Hoverable from '../../components/ui/Hoverable';
-import SubscriptionCard from '../../components/SubscriptionCard';
+import EmailOptInModal from '../../components/EmailOptInModal';
 import { showConfirm } from '../../utils/alerts';
 
 import { getPendingEmails, isSubscriptionDismissed, markSubscriptionDismissed } from '../../data/supabase';
@@ -47,12 +47,23 @@ export default function TopicsScreen() {
     useFocusEffect(
         useCallback(() => {
             loadStats().then(setStats);
-            // Check if we should show subscription popup
+
+            // Check if we should show email opt-in popup (with 5 second delay)
+            let timeoutId: NodeJS.Timeout | null = null;
+
             Promise.all([getPendingEmails(), isSubscriptionDismissed()]).then(([emails, dismissed]) => {
                 if (emails.length === 0 && !dismissed) {
-                    setShowSubscriptionPopup(true);
+                    // Delay popup by 5 seconds for natural timing
+                    timeoutId = setTimeout(() => {
+                        setShowSubscriptionPopup(true);
+                    }, 5000);
                 }
             });
+
+            // Cleanup timeout on blur
+            return () => {
+                if (timeoutId) clearTimeout(timeoutId);
+            };
         }, [])
     );
 
@@ -506,33 +517,15 @@ export default function TopicsScreen() {
                 </Card>
             )}
 
-            {/* Subscription Popup */}
-            {showSubscriptionPopup && (
-                <KeyboardAvoidingView
-                    behavior={Platform.OS === 'ios' ? 'position' : undefined}
-                    keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
-                    style={{
-                        position: 'absolute',
-                        bottom: 0,
-                        left: 0,
-                        right: 0,
-                        zIndex: 900,
-                    }}
-                    contentContainerStyle={{
-                        paddingHorizontal: spacing.lg,
-                        paddingBottom: 100
-                    }}
-                >
-                    <SubscriptionCard
-                        showCloseButton
-                        onClose={() => {
-                            markSubscriptionDismissed();
-                            setShowSubscriptionPopup(false);
-                        }}
-                        onSuccess={() => setShowSubscriptionPopup(false)}
-                    />
-                </KeyboardAvoidingView>
-            )}
+            {/* Email Opt-In Modal */}
+            <EmailOptInModal
+                visible={showSubscriptionPopup}
+                onClose={() => {
+                    markSubscriptionDismissed();
+                    setShowSubscriptionPopup(false);
+                }}
+                onSuccess={() => setShowSubscriptionPopup(false)}
+            />
         </View>
     );
 }
