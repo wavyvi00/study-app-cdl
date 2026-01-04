@@ -5,7 +5,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
     sections: [
         {
             id: 'gk-intro',
-            title: '1. Introduction',
+            title: 'Introduction',
+            cdlReference: 'CDL Manual §1.0',
             content: [
                 "There is a federal requirement that each state have minimum standards for the licensing of commercial drivers. This manual provides driver license testing information for drivers who wish to have a commercial driver’s license (CDL).",
                 "You must have a CDL to operate: Any single vehicle with a gross vehicle weight rating (GVWR) of 26,001 pounds or more; A combination vehicle with a gross combination weight rating of 26,001 or more pounds, provided the GVWR of the vehicle(s) being towed is in excess of 10,000 pounds; A vehicle designed to transport 16 or more passengers (including the driver); Any size vehicle which requires hazardous material placards.",
@@ -33,7 +34,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-inspection',
-            title: '2.1 Vehicle Inspection',
+            title: 'Vehicle Inspection',
+            cdlReference: 'CDL Manual §2.1',
             content: [
                 "Safety is the most important reason you inspect your vehicle, safety for yourself and for other road users.",
                 "A vehicle defect found during an inspection could save you problems later. You could have a breakdown on the road that will cost time and dollars, or even worse, a crash caused by the defect.",
@@ -61,7 +63,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-control',
-            title: '2.2 Basic Control of Your Vehicle',
+            title: 'Basic Control of Your Vehicle',
+            cdlReference: 'CDL Manual §2.2',
             content: [
                 "To drive a vehicle safely, you must be able to control its speed and direction. Safe operation of a commercial vehicle requires skill in: Accelerating, Steering, Stopping, and Backing safely.",
                 "Fasten your seatbelt when on the road. Apply the parking brake when you leave your vehicle.",
@@ -103,7 +106,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-shifting',
-            title: '2.3 Shifting Gears',
+            title: 'Shifting Gears',
+            cdlReference: 'CDL Manual §2.3',
             content: [
                 "Correct shifting of gears is important. If you can't get your vehicle into the right gear while driving, you will have less control.",
                 "Special conditions where you should downshift are: Before starting down a hill; Before entering a curve.",
@@ -132,7 +136,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-seeing',
-            title: '2.4 Seeing',
+            title: 'Seeing',
+            cdlReference: 'CDL Manual §2.4',
             content: [
                 "To be a safe driver you need to know what's going on all around your vehicle. Not looking properly is a major cause of accidents.",
                 "All drivers look ahead; but many don't look far enough ahead. Importance of Looking Far Enough Ahead: Because stopping or changing lanes can take a lot of distance, knowing what the traffic is doing on all sides of you is very important. You need to look well ahead to make sure you have room to make these moves safely.",
@@ -160,7 +165,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-communicating',
-            title: '2.5 Communicating',
+            title: 'Communicating',
+            cdlReference: 'CDL Manual §2.5',
             content: [
                 "Other drivers can't know what you are going to do until you tell them. Signaling what you intend to do is important for safety.",
                 "Turn Signals: There are three good rules for using turn signals: 1. Signal early. Signal well before you turn. 2. Signal continuously. You need both hands on the wheel to turn safely. 3. Cancel your signal. Don't forget to turn off your turn signal after you've turned (if you don't have self-canceling signals).",
@@ -190,7 +196,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-space',
-            title: '2.6 Controlling Speed',
+            title: 'Controlling Speed',
+            cdlReference: 'CDL Manual §2.6',
             content: [
                 "Driving too fast is a major cause of fatal crashes. You must adjust your speed depending on driving conditions. These include traction, curves, visibility, traffic and hills.",
                 "Stopping Distance: Perception Distance + Reaction Distance + Braking Distance = Total Stopping Distance.",
@@ -220,7 +227,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-space-management',
-            title: '2.7 Managing Space',
+            title: 'Managing Space',
+            cdlReference: 'CDL Manual §2.7',
             content: [
                 "To be a safe driver, you need space all around your vehicle. When things go wrong, space gives you time to think and to take action.",
                 "To have space available when something goes wrong, you need to manage space. While this is true for all drivers, it is very important for large vehicles. They take up more space and they require more space for stopping and turning.",
@@ -250,7 +258,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-hazards',
-            title: '2.8 Seeing Hazards',
+            title: 'Seeing Hazards',
+            cdlReference: 'CDL Manual §2.8',
             content: [
                 "What Is a Hazard? A hazard is any road condition or other road user (driver, bicyclist, pedestrian) that is a possible danger. For example, a car in front of you is headed toward the freeway exit, but his brake lights come on and he begins braking hard. This could mean that the driver is uncertain about taking the off ramp. He might suddenly return to the highway. This car is a hazard. If the driver of the car cuts in front of you, it is no longer just a hazard; it is an emergency.",
                 "Seeing Hazards Lets You Be Prepared. You will have more time to act if you see hazards before they become emergencies. In the example above, you might make a lane change or slow down to prevent a crash if the car suddenly cuts in front of you. Seeing this hazard gives you time to check your mirrors and signal a lane change. Being prepared reduces the danger. A driver who did not see the hazard until the slow car pulled back on the highway in front of him would have to do something very suddenly. Sudden braking or a quick lane change is much more likely to cause a crash.",
@@ -278,7 +287,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-distracted',
-            title: '2.9 Distracted Driving',
+            title: 'Distracted Driving',
+            cdlReference: 'CDL Manual §2.9',
             content: [
                 "Distracted driving is a major cause of crashes. A driver manual should discuss: The effects of distracted driving; Types of distractions; Cell phone usage.",
                 "Types of Distractions: Physical distractions (reaching for an object, eating, drinking) and Mental distractions (talking with a passenger, thinking about something else).",
@@ -307,7 +317,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-aggressive',
-            title: '2.10 Aggressive Drivers/Road Rage',
+            title: 'Aggressive Drivers/Road Rage',
+            cdlReference: 'CDL Manual §2.10',
             content: [
                 "Aggressive Driving: The act of operating a motor vehicle in a selfish, bold, or pushy manner, without regard for the rights or safety of others (e.g., tailgating, changing lanes frequently).",
                 "Road Rage: Operating a motor vehicle with the intent of doing physical harm to others or physically assaulting a driver or their vehicle.",
@@ -335,7 +346,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-night',
-            title: '2.11 Night Driving',
+            title: 'Night Driving',
+            cdlReference: 'CDL Manual §2.11',
             content: [
                 "You are at greater risk when you drive at night. Drivers can't see hazards as quickly as in daylight, so they have less time to respond. Drivers caught by surprise are less able to avoid a crash.",
                 "Factors: Vision (people can't see as well at night), Glare (from oncoming lights), Fatigue (more likely to be tired).",
@@ -364,7 +376,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-fog',
-            title: '2.12 Driving in Fog',
+            title: 'Driving in Fog',
+            cdlReference: 'CDL Manual §2.12',
             content: [
                 "Fog completely can obscure visibility. The best advice for driving in fog is: Don't. Pull off the road into a rest area or truck stop until visibility is better.",
                 "If You Must Drive in Fog: Obey all fog-related warning signs. Slow down before you enter the fog. Use low-beam headlights and fog lights for best visibility even in daytime, and be alert for other drivers who may have forgotten to turn on their lights. Turn on your 4-way flashers. This gives vehicles approaching you from behind a better chance to see your vehicle.",
@@ -392,7 +405,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-winter',
-            title: '2.13 Winter Driving',
+            title: 'Winter Driving',
+            cdlReference: 'CDL Manual §2.13',
             content: [
                 "Vehicle Checks: Make sure your vehicle is ready before driving in winter weather. You should check the coolant level and antifreeze amount. Make sure the defrosting and heating equipment work. Wipers and washers need to be in good working order and have enough fluid.",
                 "Slippery Surfaces: Drive slowly and smoothly on slippery roads. If it is very slippery, you shouldn't drive at all. Stop at the first safe place.",
@@ -422,7 +436,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-hot-weather',
-            title: '2.14 Driving in Very Hot Weather',
+            title: 'Driving in Very Hot Weather',
+            cdlReference: 'CDL Manual §2.14',
             content: [
                 "Do not let air out or the pressure will be too low when the tires cool off. If a tire is too hot to touch, remain stopped until the tire cools off. Otherwise the tire may blow out or catch fire.",
                 "Tires: Check the tire mounting and air pressure. Inspect the tires every two hours or every 100 miles when driving in very hot weather. Air pressure increases with temperature.",
@@ -452,7 +467,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-railroad',
-            title: '2.15 Railroad-Highway Crossings',
+            title: 'Railroad-Highway Crossings',
+            cdlReference: 'CDL Manual §2.15',
             content: [
                 "Railroad-highway grade crossings are a special kind of intersection where the roadway crosses train tracks. These crossings are always dangerous.",
                 "Passive Crossings: This type of crossing does not have any type of traffic control device. The decision to stop or proceed rests entirely in your hands.",
@@ -484,7 +500,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-mountain',
-            title: '2.16 Mountain Driving',
+            title: 'Mountain Driving',
+            cdlReference: 'CDL Manual §2.16',
             content: [
                 "In mountain driving, gravity plays a major role. On any upgrade, gravity slows you down. On downgrades, gravity speeds you up. You must select an appropriate safe speed, then a low gear, and use proper braking techniques.",
                 "Select a Safe Speed: Your most important consideration is to select a speed that is not too fast for the: Total weight of the vehicle and cargo; Length of the grade; Steepness of the grade; Road conditions; Weather.",
@@ -514,7 +531,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-emergencies',
-            title: '2.17 Driving Emergencies',
+            title: 'Driving Emergencies',
+            cdlReference: 'CDL Manual §2.17',
             content: [
                 "Traffic emergencies occur when two vehicles are about to collide. Vehicle emergencies occur when tires, brakes, or other critical parts fail. Following the safety practices in this manual can help prevent emergencies. But if an emergency does happen, your chances of avoiding a crash depend upon how well you take action. Actions you can take are Steering to Avoid a Crash, Stopping Quickly and handling Brake Failure.",
                 "Steering to Avoid a Crash: Stopping is not always the safest thing to do in an emergency. When you don't have enough room to stop, you may have to steer away from what's ahead. Remember, you can almost always turn to miss an obstacle more quickly than you can stop. (However, top-heavy vehicles and tractors with multiple trailers may flip over).",
@@ -542,7 +560,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-abs',
-            title: '2.18 Antilock Braking Systems (ABS)',
+            title: 'Antilock Braking Systems (ABS)',
+            cdlReference: 'CDL Manual §2.18',
             content: [
                 "ABS is a computerized system that keeps your wheels from locking up during hard brake applications. ABS is an addition to your normal brakes. It does not decrease or increase your normal braking capability. ABS only activates when wheels are about to lock up.",
                 "How to Know if Your Vehicle is Equipped with ABS: Tractors, trucks, and buses will have yellow ABS malfunction lamps on the instrument panel. Trailers will have yellow ABS malfunction lamps on the left side, either on the front or rear corner.",
@@ -570,7 +589,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-skid',
-            title: '2.19 Skid Control and Recovery',
+            title: 'Skid Control and Recovery',
+            cdlReference: 'CDL Manual §2.19',
             content: [
                 "A skid happens whenever the tires lose their grip on the road. This is caused in one of four ways: Over-braking, Over-steering, Over-acceleration, or Driving Too Fast.",
                 "Drive-Wheel Skids: The most common skid is one where the rear wheels lose traction through excessive braking or acceleration. Skids caused by acceleration usually happen on ice or snow.",
@@ -599,7 +619,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-accident',
-            title: '2.20 Accident Procedures',
+            title: 'Accident Procedures',
+            cdlReference: 'CDL Manual §2.20',
             content: [
                 "When you're in an accident and not seriously hurt, you need to act to prevent further damage or injury. The basic steps to be taken at any accident are to: Protect the area, Notify authorities, and Care for the injured.",
                 "Protect the Area: The first thing to do at an accident scene is to keep another accident from happening in the same spot. To protect the accident area: If your vehicle is involved in the accident, try to get it to the side of the road. This will help prevent another accident and allow traffic to move. If you're stopping to help, park away from the accident. The area immediately around the accident will be needed for emergency vehicles. Put on your flashers. Set out reflective triangles to warn other traffic. Make sure key other drivers can see them in time to avoid the accident.",
@@ -628,7 +649,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-fires',
-            title: '2.21 Fires',
+            title: 'Fires',
+            cdlReference: 'CDL Manual §2.21',
             content: [
                 "Causes of Fire: The most common causes are: After Accidents (spilled fuel), Tires (under-inflated and duals touching), Electrical System (short circuits due to damaged insulation), Fuel (driver smoking, loose fuel connections), and Cargo (flammable cargo, poor ventilation).",
                 "Fire Fighting: Knowing how to fight fires is important. Divers who have caused fires and know how to use an extinguisher can prevent small fires from becoming major disasters.",
@@ -658,7 +680,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-alcohol',
-            title: '2.22 Alcohol and Other Drugs',
+            title: 'Alcohol and Other Drugs',
+            cdlReference: 'CDL Manual §2.22',
             content: [
                 "Drinking alcohol and then driving is a very dangerous problem. People who drink alcohol are involved in traffic accidents resulting in over 20,000 deaths every year. Alcohol impairs muscle coordination, reaction time, depth perception, and night vision. It also affects the parts of the brain that control judgment and inhibition.",
                 "BAC Limits: The legal limit for commercial drivers is usually lower than for car drivers. In most places, you will be put out of service for 24 hours if you have ANY detectable amount of alcohol. The BAC limit for a DUI in a CMV is 0.04%.",
@@ -686,7 +709,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-fatigue',
-            title: '2.23 Staying Alert and Fit to Drive',
+            title: 'Staying Alert and Fit to Drive',
+            cdlReference: 'CDL Manual §2.23',
             content: [
                 "Driving a vehicle for long hours is tiring. Even the best of drivers will become less alert. However, there are things that good drivers do to help keep alert and safe.",
                 "Fatigue: Fatigue (being tired) and lack of alertness are major causes of accidents. The only cure for fatigue is sleep. If you are tired, get off the road and sleep.",
@@ -715,7 +739,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-hazmat',
-            title: '2.24 Hazardous Materials Rules',
+            title: 'Hazardous Materials Rules',
+            cdlReference: 'CDL Manual §2.24',
             content: [
                 "Hazardous materials are products that pose a risk to health, safety, and property during transportation. The term includes explosives, various types of gas, solids, flammable and combustible liquid, and other materials.",
                 "Intent of the Rules: The rules are intended to Provide Safe Drivers and Equipment, Communicate the Risk, and Contain the Product.",
@@ -744,7 +769,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-cargo',
-            title: '3.0 Cargo Securement',
+            title: 'Cargo Securement',
+            cdlReference: 'CDL Manual §3.0',
             content: [
                 "Whether or not you load and secure the cargo yourself, you are responsible for: Inspecting your cargo, Recognizing overloads and poorly balanced weight, Knowing your cargo is properly secured, and knowing it does not restrict your view or access to emergency equipment.",
                 "Inspecting Cargo: Inspect cargo within the first 50 miles of a trip and every 150 miles or every 3 hours (whichever comes first) after.",
@@ -774,7 +800,8 @@ export const GeneralKnowledgeStudyGuide: StudyGuide = {
         },
         {
             id: 'gk-weight-balance',
-            title: '3.2 Weight and Balance',
+            title: 'Weight and Balance',
+            cdlReference: 'CDL Manual §3.2',
             content: [
                 "Definitions: Gross Vehicle Weight (GVW) is the total weight of a single vehicle plus its load. Gross Combination Weight (GCW) is the total weight of a powered unit, plus trailer(s), plus the cargo. Gross Vehicle Weight Rating (GVWR) is the maximum GVW specified by the manufacturer.",
                 "Center of Gravity: The center of gravity is the point where the vehicle's weight is balanced. A high center of gravity means you are more likely to tip over. It is most dangerous in curves or if you swerve to avoid a hazard. Keep the cargo as close to the ground as possible and centered.",
@@ -840,7 +867,8 @@ export const CombinationsStudyGuide: StudyGuide = {
     sections: [
         {
             id: 'comb-intro',
-            title: '1. Introduction to Combination Vehicles',
+            title: 'Introduction to Combination Vehicles',
+            cdlReference: 'CDL Manual §6.1',
             content: [
                 "Combination vehicles are heavier, longer, and require more driving skill than single commercial vehicles. This includes tractor-trailers, doubles, triples, and trucks towing trailers.",
                 "Driving combinations safely requires understanding their handling differences: they're more likely to rollover, jackknife, and have longer stopping distances.",
@@ -868,7 +896,8 @@ export const CombinationsStudyGuide: StudyGuide = {
         },
         {
             id: 'comb-rollover',
-            title: '2. Rollover Risks',
+            title: 'Rollover Risks',
+            cdlReference: 'CDL Manual §6.1.1',
             content: [
                 "Rollovers are more common in combination vehicles due to their higher center of gravity. More than half of truck driver deaths in crashes are from rollovers.",
                 "The major factors that cause rollovers are: Speed (taking curves or turns too fast), Load (top-heavy or improperly loaded cargo), and Steering (sudden steering movements).",
@@ -899,7 +928,8 @@ export const CombinationsStudyGuide: StudyGuide = {
         },
         {
             id: 'comb-steering',
-            title: '3. Steering and Off-Tracking',
+            title: 'Steering and Off-Tracking',
+            cdlReference: 'CDL Manual §6.1.2',
             content: [
                 "When a vehicle goes around a corner, the rear wheels follow a different path than the front wheels. This is called off-tracking or 'cheating.'",
                 "The longer the vehicle, the more it will off-track. This is why you must swing wide to make turns, especially right turns.",
@@ -929,7 +959,8 @@ export const CombinationsStudyGuide: StudyGuide = {
         },
         {
             id: 'comb-jackknife',
-            title: '4. Preventing Jackknife',
+            title: 'Preventing Jackknife',
+            cdlReference: 'CDL Manual §6.1.6',
             content: [
                 "A jackknife is when the trailer pushes the tractor, causing it to swing out and potentially flip. This happens when the drive wheels lose traction.",
                 "Common causes: Over-braking, especially without ABS. Excessive speed on curves. Slippery roads with little traction.",
@@ -960,7 +991,8 @@ export const CombinationsStudyGuide: StudyGuide = {
         },
         {
             id: 'comb-braking',
-            title: '5. Braking and Stopping Distance',
+            title: 'Braking and Stopping Distance',
+            cdlReference: 'CDL Manual §6.1.3',
             content: [
                 "Combination vehicles take longer to stop than single vehicles because of their greater weight. Stopping distance increases significantly with speed.",
                 "Empty trucks can be harder to stop than loaded trucks because less weight presses the tires to the road, reducing traction.",
@@ -991,7 +1023,8 @@ export const CombinationsStudyGuide: StudyGuide = {
         },
         {
             id: 'comb-coupling',
-            title: '6. Coupling Tractor-Trailers',
+            title: 'Coupling Tractor-Trailers',
+            cdlReference: 'CDL Manual §6.4',
             content: [
                 "Coupling is connecting the tractor to the trailer. Proper coupling is critical for safety.",
                 "Step 1: Inspect the Fifth Wheel. Check that it tilts toward the trailer, the jaws are open, the release handle is in the automatic lock position, and it's properly greased.",
@@ -1023,7 +1056,8 @@ export const CombinationsStudyGuide: StudyGuide = {
         },
         {
             id: 'comb-uncoupling',
-            title: '7. Uncoupling Tractor-Trailers',
+            title: 'Uncoupling Tractor-Trailers',
+            cdlReference: 'CDL Manual §6.4',
             content: [
                 "Uncoupling is disconnecting the tractor from the trailer. Improper uncoupling can cause injuries and damage.",
                 "Step 1: Position the rig. Park on firm, level ground. Chock the trailer wheels or use spring brakes.",
@@ -1056,7 +1090,8 @@ export const CombinationsStudyGuide: StudyGuide = {
         },
         {
             id: 'comb-inspect',
-            title: '8. Inspecting Combination Vehicles',
+            title: 'Inspecting Combination Vehicles',
+            cdlReference: 'CDL Manual §6.5',
             content: [
                 "In addition to regular pre-trip inspection items, combination vehicles require inspecting the coupling system.",
                 "Fifth Wheel Check: Look for damage or missing parts. Check mounting bolts. The locking jaws should be around the shank of the kingpin, not the head. The release arm should be in the locked position.",
@@ -1087,7 +1122,8 @@ export const CombinationsStudyGuide: StudyGuide = {
         },
         {
             id: 'comb-trailerbrakes',
-            title: '9. Trailer Air Brakes',
+            title: 'Trailer Air Brakes',
+            cdlReference: 'CDL Manual §6.2',
             content: [
                 "Combination vehicles use air brakes. The trailer brakes work through air lines connecting to the tractor.",
                 "Emergency Line (Supply Line): The emergency line supplies air to the trailer air tanks. It also controls the emergency brakes on the trailer. Loss of air pressure will cause the trailer brakes to come on.",
@@ -1118,7 +1154,8 @@ export const CombinationsStudyGuide: StudyGuide = {
         },
         {
             id: 'comb-doubles',
-            title: '10. Doubles and Triples',
+            title: 'Doubles and Triples',
+            cdlReference: 'CDL Manual §7',
             content: [
                 "Doubles and triples require extra caution. They have more articulation points, making them more prone to rollover and instability.",
                 "Crack-the-whip effect: The last trailer in a set of doubles or triples is the most likely to overturn. Quick lane changes or sudden movements at the front amplify at the rear.",
@@ -1158,7 +1195,8 @@ export const AirBrakesStudyGuide: StudyGuide = {
     sections: [
         {
             id: 'air-intro',
-            title: '1. Parts of an Air Brake System',
+            title: 'Parts of an Air Brake System',
+            cdlReference: 'CDL Manual §5.1',
             content: [
                 "Air brakes use compressed air to make the brakes work. They are a safe way to stop heavy vehicles, but they have more parts and are harder to maintain than hydraulic brakes.",
                 "Air Compressor: Pumps air into the air storage tanks. It connects to the engine through gears or a V-belt.",
@@ -1188,7 +1226,8 @@ export const AirBrakesStudyGuide: StudyGuide = {
         },
         {
             id: 'air-parts',
-            title: '2. Brake System Components',
+            title: 'Brake System Components',
+            cdlReference: 'CDL Manual §5.1',
             content: [
                 "Brake Pedal: Pressing it pushes air into the brake chambers. Releasing it lets air out.",
                 "S-Cam Brakes: The most common type. Air pushes a push rod, which moves a slack adjuster, which turns the S-cam. The S-cam pushes brake shoes against the drum.",
@@ -1217,7 +1256,8 @@ export const AirBrakesStudyGuide: StudyGuide = {
         },
         {
             id: 'air-dual',
-            title: '3. Dual Air Brake Systems',
+            title: 'Dual Air Brake Systems',
+            cdlReference: 'CDL Manual §5.2',
             content: [
                 "Most modern heavy vehicles use dual air brake systems for safety. It has two separate air systems which use a single set of controls.",
                 "Primary System: Usually operates the rear axle brakes.",
@@ -1245,7 +1285,8 @@ export const AirBrakesStudyGuide: StudyGuide = {
         },
         {
             id: 'air-inspection-1',
-            title: '4. Inspecting Air Brakes (Step 1-2)',
+            title: 'Inspecting Air Brakes (Step 1-2)',
+            cdlReference: 'CDL Manual §5.3',
             content: [
                 "Step 1: Engine compartment check. Check the air compressor drive belt (if equipped). Condition: snug, not frayed/cracked. Deflection: press in center, should deflect 1/2 to 3/4 inch.",
                 "Step 2: Walk-around inspection. Check manual slack adjusters on S-cam brakes. Park on level ground, chock wheels, release parking brakes. Pull hard on each slack adjuster. It should not move more than 1 inch.",
@@ -1273,7 +1314,8 @@ export const AirBrakesStudyGuide: StudyGuide = {
         },
         {
             id: 'air-inspection-2',
-            title: '5. The 3-Step Air Leakage Test',
+            title: 'The 3-Step Air Leakage Test',
+            cdlReference: 'CDL Manual §5.3.3',
             content: [
                 "This is CRITICAL for the CDL test.",
                 "1. Test Low Pressure Warning: Turn engine off, key ON. Pump the brake pedal to release air. The warning signal (light/buzzer) MUST come on before pressure drops to 60 psi.",
@@ -1302,7 +1344,8 @@ export const AirBrakesStudyGuide: StudyGuide = {
         },
         {
             id: 'air-using-1',
-            title: '6. Using Air Brakes',
+            title: 'Using Air Brakes',
+            cdlReference: 'CDL Manual §5.4',
             content: [
                 "Normal Stops: Push the brake pedal down. Control the pressure so the vehicle comes to a smooth, safe stop.",
                 "Emergency Stops: If you must stop quickly, brake so you can steer and keep the vehicle in a straight line. Use 'Controlled Braking' (squeeze hard but don't lock) or 'Stab Braking' (brake all the way, release when wheels lock, repeat).",
@@ -1330,7 +1373,8 @@ export const AirBrakesStudyGuide: StudyGuide = {
         },
         {
             id: 'air-using-2',
-            title: '7. Braking on Downgrades',
+            title: 'Braking on Downgrades',
+            cdlReference: 'CDL Manual §5.4.3',
             content: [
                 "Brake Fading: Brakes can fade or fail from excessive heat caused by using them too much. DO NOT ride the brakes down a hill.",
                 "Proper Technique: 1. Select a safe low gear (engine braking). 2. Brake firmly to slow to 5 mph below your safe speed. 3. Release brakes. 4. Wait for speed to increase to safe speed. 5. Repeat.",
@@ -1358,7 +1402,8 @@ export const AirBrakesStudyGuide: StudyGuide = {
         },
         {
             id: 'air-parking',
-            title: '8. Parking Brakes',
+            title: 'Parking Brakes',
+            cdlReference: 'CDL Manual §5.4.5',
             content: [
                 "Any time you park, use the parking brakes, with two exceptions: 1. The brakes are very hot (they can warp the drums). 2. The brakes are wet in freezing temperatures (they can freeze).",
                 "Spring Brakes: A mechanical spring applies the brakes when air pressure is removed. Used for parking and emergency braking.",
@@ -1387,11 +1432,841 @@ export const AirBrakesStudyGuide: StudyGuide = {
     ]
 };
 
+// =====================================================
+// HAZMAT STUDY GUIDE
+// =====================================================
+export const HazmatStudyGuide: StudyGuide = {
+    topicId: 'hazmat',
+    sections: [
+        {
+            id: 'hazmat-intent',
+            title: 'The Intent of the Regulations',
+            cdlReference: 'CDL Manual §9.1',
+            content: [
+                "Hazardous materials are products that pose a risk to health, safety, and property during transportation.",
+                "Containment: Many hazardous materials can injure or kill on contact. The rules tell shippers how to package safely and drivers how to load, transport, and unload the product.",
+                "Communication: The rules tell shippers how to mark, label, and document the shipment. They tell drivers how to placard their vehicle.",
+                "To ensure safe drivers and equipment, you must pass a knowledge test and background check."
+            ],
+            keyPoints: [
+                "Intent: Containment and Communication.",
+                "Shippers package and label.",
+                "Drivers placard and transport safely."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'haz-q1',
+                    text: "What are the two main reasons for hazardous materials regulations?",
+                    options: [
+                        "To tax shippers and carriers",
+                        "To contain the product and communicate the risk",
+                        "To slow down truck traffic",
+                        "To create jobs for inspectors"
+                    ],
+                    correctIndex: 1,
+                    explanation: "The regulations are intended to contain the product (keep it safe) and communicate the risk (let others know what it is)."
+                }
+            ]
+        },
+        {
+            id: 'hazmat-comms',
+            title: 'Communication Rules',
+            cdlReference: 'CDL Manual §9.2',
+            content: [
+                "Shipping Papers: Describe the hazardous materials. They must be kept in the pouch on the driver's door OR in clear view within immediate reach while the seat belt is fastened using the driver's armrest.",
+                "Placards: Diamond-shaped warning signs placed on the outside of the vehicle. You must have at least 4 placards (front, rear, and both sides).",
+                "Labels: Diamond-shaped warnings on the packages themselves.",
+                "Identification Numbers: A 4-digit code used by first responders to identify the material (e.g., 1203 for Gasoline)."
+            ],
+            keyPoints: [
+                "Shipping papers: In door pouch or within reach.",
+                "Placards: 4 sides of the vehicle.",
+                "ID Numbers: 4-digit code for emergency response."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'haz-q2',
+                    text: "Where must you keep shipping papers when driving?",
+                    options: [
+                        "In the glove box",
+                        "In your pocket",
+                        "In a pouch on the driver's door or in clear view within reach",
+                        "In the bunk"
+                    ],
+                    correctIndex: 2,
+                    explanation: "They must be easily accessible to you or emergency personnel."
+                }
+            ]
+        },
+        {
+            id: 'hazmat-loading',
+            title: 'Loading and Unloading',
+            cdlReference: 'CDL Manual §9.3',
+            content: [
+                "General Rule: Do not smoke within 25 feet of any hazmat vehicle (Class 1, 3, 4, 4.2).",
+                "Cargo Heater Rules: Turn off cargo heaters when loading explosives or flammable liquids.",
+                "Prohibited Loading Combinations: Some materials cannot be loaded together. For example, do not load Division 1.1 or 1.2 (Explosives) with Class 3 (Flammable Liquids).",
+                "Load Segregation Table: Use the table in the manual to check what can replace what.",
+                "Brakes: Set the parking brake. Use wheel chocks."
+            ],
+            keyPoints: [
+                "No smoking within 25 feet.",
+                "Check segregation table for prohibited combinations.",
+                "Always chock wheels."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'haz-q3',
+                    text: "How close can you smoke to a vehicle loaded with Flammable Liquids?",
+                    options: [
+                        "10 feet",
+                        "25 feet",
+                        "50 feet",
+                        "100 feet"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Do not smoke within 25 feet of a placarded cargo tank used for Class 3 (flammable liquids) or Division 2.1 (flammable gas)."
+                }
+            ]
+        },
+        {
+            id: 'hazmat-bulk',
+            title: 'Bulk Packaging (Tanks)',
+            cdlReference: 'CDL Manual §9.4',
+            content: [
+                "Markings: Portable tanks must show the owner or lessee's name on both sides.",
+                "Tank Vehicles: Have a high center of gravity. Drive smoothly. Be careful in curves.",
+                "Outage (Ullage): Never load a tank 100% full. Liquids expand with heat. Leave space (outage) for expansion.",
+                "Baffles: Bulkheads with holes that slow down liquid surge (but don't stop side-to-side surge)."
+            ],
+            keyPoints: [
+                "Leave outage for expansion.",
+                "Portable tanks need owner name.",
+                "Beware of high center of gravity."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'haz-q4',
+                    text: "Why must you leave space (outage) in a tank?",
+                    options: [
+                        "To save weight",
+                        "To allow for liquid expansion",
+                        "To save money on product",
+                        "To reduce sloshing"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Liquids expand as they warm. If the tank is full, it could burst or leak."
+                }
+            ]
+        },
+        {
+            id: 'hazmat-driving',
+            title: 'Driving and Parking Rules',
+            cdlReference: 'CDL Manual §9.5',
+            content: [
+                "Parking with Explosives (1.1, 1.2, 1.3): Never park within 5 feet of the traveled part of the road. Never park within 300 feet of a bridge, tunnel, or building provided for gathering places.",
+                "Railroad Crossings: You must stop 15-50 feet before the nearest rail. Look and listen.",
+                "Route Restrictions: Some roads prohibit hazmat. Know your route.",
+                "Tires: Check tires every 2 hours or 100 miles. If a tire is overheated, you must remove it to a safe place to repair."
+            ],
+            keyPoints: [
+                "Explosives parking: 300 ft from buildings/bridges.",
+                "Stop at ALL railroad crossings (15-50 ft).",
+                "Check tires every 2 hrs/100 miles."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'haz-q5',
+                    text: "How far must you stay from a bridge or tunnel if parking with Division 1.1 explosives?",
+                    options: [
+                        "100 feet",
+                        "200 feet",
+                        "300 feet",
+                        "500 feet"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Do not park within 300 feet of bridges, tunnels, or buildings."
+                }
+            ]
+        },
+        {
+            id: 'hazmat-emergencies',
+            title: 'Emergencies',
+            cdlReference: 'CDL Manual §9.6',
+            content: [
+                "Emergency Response Guidebook (ERG): Used by firefighters and police. It tells them what to do. Keep it in your truck.",
+                "Accidents: Keep people away from the scene. Limit the spread of material if safe.",
+                "Fires: Do not pull into a service station. Use your extinguisher (B:C for hazmat). Do NOT use water on chemical fires unless you know it is safe.",
+                "Reporting: Call authorities or CHEMTREC."
+            ],
+            keyPoints: [
+                "Carry the ERG.",
+                "Keep people away (upwind).",
+                "Use B:C extinguisher."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'haz-q6',
+                    text: "Who is the Emergency Response Guidebook (ERG) primarily designed for?",
+                    options: [
+                        "Truck drivers",
+                        "Shippers",
+                        "Emergency first responders",
+                        "DOT inspectors"
+                    ],
+                    correctIndex: 2,
+                    explanation: "The ERG is a guidebook for first responders during the initial phase of a dangerous goods/hazardous materials transportation incident."
+                }
+            ]
+        }
+    ]
+};
+
+// =====================================================
+// PASSENGER STUDY GUIDE
+// =====================================================
+export const PassengerStudyGuide: StudyGuide = {
+    topicId: 'passenger',
+    sections: [
+        {
+            id: 'pass-inspection',
+            title: 'Vehicle Inspection',
+            cdlReference: 'CDL Manual §4.1',
+            content: [
+                "Passenger vehicle safety requires inspecting the interior and exterior. Inside, check: Handholds and railings, floor covering, signaling devices, and emergency exits.",
+                "Emergency Exits: Must be clearly marked and operate properly. Windows should handle easily. Roof hatches (if equipped) must secure tightly.",
+                "Seats: Must be safe for riders. Fastened securely to the floor.",
+                "Access Doors: Check that entry doors operate smoothly and close securely."
+            ],
+            keyPoints: [
+                "Check handholds, railings, and floor covering.",
+                "Emergency exits must represent a clear path and work properly.",
+                "Seats must be securely fastened."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'pass-q1',
+                    text: "What interior items must be checked during a vehicle inspection?",
+                    options: [
+                        "Radio and air conditioning",
+                        "Handholds, railings, floor covering, signaling devices, and emergency exits",
+                        "Cup holders and reclining seats",
+                        "GPS and cameras"
+                    ],
+                    correctIndex: 1,
+                    explanation: "You must check handholds, railings, floor covering, signaling devices, and emergency exits for safety."
+                }
+            ]
+        },
+        {
+            id: 'pass-loading',
+            title: 'Loading and Unloading',
+            cdlReference: 'CDL Manual §4.2',
+            content: [
+                "Do not allow riders to leave baggage in the aisle or near the driver. Baggage and freight must be secured so it cannot fall or shift.",
+                "Hazardous Materials: Most hazmat cannot be carried on a bus. Exceptions include small-arms ammunition (labeled ORM-D), emergency hospital supplies, and small amounts of drugs.",
+                "Prohibited Hazmat: Division 2.3 (Poison Gas), liquid Class 6 (Poisons), tear gas, explosives (Class 1), and more than 100 lbs of Class 6 solids.",
+                "Standee Line: No rider may stand forward of the rear of the driver's seat. Buses designed to allow standing must have a 2-inch line on the floor. Riders must stay behind it."
+            ],
+            keyPoints: [
+                "Aisles must be kept clear of baggage.",
+                "Most hazardous materials are prohibited.",
+                "Riders must stand behind the standee line (2-inch line)."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'pass-q2',
+                    text: "Where must passengers stand while the bus is in motion?",
+                    options: [
+                        "Anywhere they want",
+                        "Behind the standee line",
+                        "Next to the driver",
+                        "On the steps"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Riders must stand behind the standee line (a 2-inch line on the floor) for safety/visibility."
+                }
+            ]
+        },
+        {
+            id: 'pass-road',
+            title: 'On the Road',
+            cdlReference: 'CDL Manual §4.3',
+            content: [
+                "Passenger Supervision: You are responsible for passenger safety. Do not let passengers distract you. If a passenger is drunk or disruptive, discharge them at the next safe, well-lit place.",
+                "Railroad Crossings: Stop your bus between 15 and 50 feet before railroad crossings. Listen and look in both directions. You normally do not have to stop at streetcar crossings or where a policeman/flagman directs traffic.",
+                "Drawbridges: Stop at drawbridges that do not have a signal light or traffic control attendant. Stop at least 50 feet before the draw of the bridge.",
+                "Curves: Crashes on curves happen from excessive speed. Slow down before the curve."
+            ],
+            keyPoints: [
+                "Stop 15-50 feet before railroad crossings.",
+                "Stop at least 50 feet before drawbridges (unless signaled).",
+                "Discharge disruptive passengers at a SAFE place.",
+                "Slow down before curves."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'pass-q3',
+                    text: "How far must you stop before a railroad crossing?",
+                    options: [
+                        "5 to 10 feet",
+                        "15 to 50 feet",
+                        "100 feet",
+                        "You don't need to stop if empty"
+                    ],
+                    correctIndex: 1,
+                    explanation: "You must stop between 15 and 50 feet before the nearest rail at railroad crossings."
+                }
+            ]
+        },
+        {
+            id: 'pass-after-trip',
+            title: 'After-Trip Vehicle Inspection',
+            cdlReference: 'CDL Manual §4.4',
+            content: [
+                "Inspect your bus at the end of each shift. Report any damage or defects.",
+                "Check the interior for: Left-behind articles (baggage, books), open windows/doors, and left-behind passengers (sleepers/hiders).",
+                "Lock the bus when you leave it to prevent unauthorized entry."
+            ],
+            keyPoints: [
+                "Inspect bus at the end of every shift.",
+                "Look for sleepers or hiding passengers.",
+                "Check for left-behind items."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'pass-q4',
+                    text: "What should you check for during the after-trip inspection?",
+                    options: [
+                        "Engine oil only",
+                        "Tire pressure only",
+                        "Left-behind passengers or articles",
+                        "Radio stations"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Check for articles left behind and for any passengers who may be sleeping or hiding."
+                }
+            ]
+        },
+        {
+            id: 'pass-prohibited',
+            title: 'Prohibited Practices',
+            cdlReference: 'CDL Manual §4.5',
+            content: [
+                "Fueling: Never refuel with passengers on board unless absolutely necessary. Never refuel in a closed building with passengers on board.",
+                "Talking: Do not talk with riders, or permit them to talk to you, while driving. It is a distraction.",
+                "Towing: Do not tow or push a disabled bus with riders aboard the vehicle, unless getting off would be unsafe. Only tow to the nearest safe spot to discharge passengers."
+            ],
+            keyPoints: [
+                "Avoid fueling with passengers on board.",
+                "Do not talk to passengers while driving.",
+                "Do not tow a bus with passengers (unless unsafe to discharge)."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'pass-q5',
+                    text: "When is it acceptable to refuel with passengers on board?",
+                    options: [
+                        "Always",
+                        "Only if absolutely necessary",
+                        "Whenever you are low on fuel",
+                        "Never"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Avoid fueling with passengers. Only do it if absolutely necessary, and never in a closed building."
+                }
+            ]
+        },
+        {
+            id: 'pass-interlocks',
+            title: 'Use of Brake-Door Interlocks',
+            cdlReference: 'CDL Manual §4.6',
+            content: [
+                "Brake-door interlocks apply the brakes and hold the throttle in idle position when the rear door is open.",
+                "Safety Rule: The interlock releases when you close the door. Do not use this safety feature in place of the parking brake."
+            ],
+            keyPoints: [
+                "Brake-door interlocks apply brakes when the door is open.",
+                "Do NOT use interlocks as a parking brake."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'pass-q6',
+                    text: "Can you use the brake-door interlock as a parking brake?",
+                    options: [
+                        "Yes, always",
+                        "Yes, but only for short stops",
+                        "No, never",
+                        "Only on hills"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Do not use the brake-door interlock in place of the parking brake."
+                }
+            ]
+        }
+    ]
+};
+
+// Map of topic IDs to their study guides
+
+
+// =====================================================
+// DOUBLES/TRIPLES STUDY GUIDE
+// =====================================================
+export const DoublesTriplesStudyGuide: StudyGuide = {
+    topicId: 'doubles_triples',
+    sections: [
+        {
+            id: 'dt-pulling',
+            title: 'Pulling Double/Triple Trailers',
+            cdlReference: 'CDL Manual §7.1',
+            content: [
+                "Pulling doubles and triples requires more skill than pulling a single trailer. They are less stable and more likely to flip over.",
+                "Prevent Rollovers: Keep cargo as close to the ground as possible. Drive smoothly around curves. Doubles/triples flip easily.",
+                "Inspect Completely: There are more critical parts to check. Safety depends on all of them working correctly.",
+                "Look Far Ahead: You must look further ahead than when driving a single combo. Allow more following distance."
+            ],
+            keyPoints: [
+                "Less stable than singles: higher rollover risk.",
+                "Keep cargo low and drive smoothly.",
+                "Allow more following distance."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'dt-q1',
+                    text: "Why are doubles and triples more dangerous than singles?",
+                    options: [
+                        "They are slower",
+                        "They are less stable and more likely to rollover",
+                        "They use more fuel",
+                        "They are harder to park only"
+                    ],
+                    correctIndex: 1,
+                    explanation: "They have more articulation points and are less stable, making them more prone to rollovers and jackknifes."
+                }
+            ]
+        },
+        {
+            id: 'dt-coupling',
+            title: 'Coupling and Uncoupling',
+            cdlReference: 'CDL Manual §7.2',
+            content: [
+                "Coupling Twin Trailers: Secure the second (rear) trailer. Couple the converter dolly to the front trailer. Then couple the converter dolly to the rear trailer.",
+                "Converter Dolly: A coupling device of one or two axles and a fifth wheel used to couple a rear trailer to a front trailer.",
+                "Uncoupling: Uncouple the rear trailer first. Then uncouple the converter dolly from the front trailer.",
+                "Safety Chains: ALWAYS use safety chains when coupling a converter dolly. They prevent the dolly from separating if the hitch fails."
+            ],
+            keyPoints: [
+                "Secure rear trailer before coupling.",
+                "Couple dolly to front trailer, then rear trailer to dolly.",
+                "ALWAYS use safety chains on converter dollies."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'dt-q2',
+                    text: "What device is used to couple a rear trailer to a front trailer?",
+                    options: [
+                        "Pingel hitch",
+                        "Converter dolly",
+                        "Safety hook",
+                        "Landing gear"
+                    ],
+                    correctIndex: 1,
+                    explanation: "A converter dolly (with a fifth wheel) is used to connect the rear trailer to the front one."
+                }
+            ]
+        },
+        {
+            id: 'dt-inspect',
+            title: 'Inspecting Doubles and Triples',
+            cdlReference: 'CDL Manual §7.3',
+            content: [
+                "Do a normal pre-trip inspection, plus these checks for doubles/triples.",
+                "Coupling System: Check the lower and upper fifth wheel, sliding fifth wheel locking pins, and ensure the release arm is locked. Check the pintle hook and eye/drawbar for cracks or wear.",
+                "Air Lines: Check that air hoses to the rear trailer are connected and secured. Listen for leaks.",
+                "Safety Chains: Check that chains are securely attached and have no cracks/damage.",
+                "Landing Gear: Start with the landing gear down on the rear trailer to prevent tipping."
+            ],
+            keyPoints: [
+                "Check pintle hook, drawbar, and safety chains.",
+                "Verify air lines to rear trailer are secure.",
+                "Ensure release arm is in locked position."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'dt-q3',
+                    text: "Which of these is a critical check for doubles/triples?",
+                    options: [
+                        "Radio volume",
+                        "Pintle hook, drawbar, and safety chains",
+                        "Cup holder stability",
+                        "Seat upholstery"
+                    ],
+                    correctIndex: 1,
+                    explanation: "The connection points (pintle hook, drawbar, chains) are critical for preventing trailer separation."
+                }
+            ]
+        },
+        {
+            id: 'dt-aircheck',
+            title: 'Doubles/Triples Air Brake Check',
+            cdlReference: 'CDL Manual §7.4',
+            content: [
+                "Check that air flows to all trailers. Open the emergency line shut-off valve at the rear of the last trailer. You should hear air escaping.",
+                "Close the emergency line valve. Now open the service line valve to check for service air pressure (have someone apply the brakes).",
+                "Air Flow Test: If air doesn't flow to the rear trailer, the brakes won't work. This is a mandatory check."
+            ],
+            keyPoints: [
+                "Verify air flows to the REAR of the LAST trailer.",
+                "Open valves to hear air escaping.",
+                "If no air flow, brakes won't work."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'dt-q4',
+                    text: "How do you check if air is flowing to the rear trailer?",
+                    options: [
+                        "Look at the gauge",
+                        "Open the emergency line shut-off valve at the rear of the last trailer",
+                        "Listen to the engine",
+                        "Kick the tires"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Opening the valve at the rear ensures air is traveling through the entire system to the last trailer."
+                }
+            ]
+        }
+    ]
+};
+
+
+
+// =====================================================
+// TANK VEHICLES STUDY GUIDE
+// =====================================================
+export const TankVehiclesStudyGuide: StudyGuide = {
+    topicId: 'tank_vehicles',
+    sections: [
+        {
+            id: 'tank-inspect',
+            title: 'Inspecting Tank Vehicles',
+            cdlReference: 'CDL Manual §8.1',
+            content: [
+                "Tank vehicles have special items to check. Leaks are a major concern.",
+                "Check the Tank: Look for cracks, dents, and leaks. Check pipes, connections, and hoses for leaks.",
+                "Manhole Covers: Must be closed and secured before moving. Leaks around the dome cover are dangerous.",
+                "Vents: Check that intake and discharge valves are in correct position. Check pressure relief valves."
+            ],
+            keyPoints: [
+                "Check tank body, pipes, and hoses for leaks.",
+                "Ensure manhole covers are SECURED.",
+                "Verify vents and valves are working."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'tank-q1',
+                    text: "What is a critical check for manhole covers on tank vehicles?",
+                    options: [
+                        "They are painted red",
+                        "They are closed and secured",
+                        "They are open for ventilation",
+                        "They have a lock"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Manhole covers must be closed and secured to prevent leaks and spills, especially in a rollover."
+                }
+            ]
+        },
+        {
+            id: 'tank-driving',
+            title: 'Driving Tank Vehicles',
+            cdlReference: 'CDL Manual §8.2',
+            content: [
+                "High Center of Gravity: Tankers are top-heavy. They roll over easily. Drive slowly on curves.",
+                "Liquid Surge: Liquid movement inside the tank (surge) can push the truck in the direction of the wave. It can shove a stopped truck into an intersection.",
+                "Bulkheads: Some tanks have bulkheads (dividers) with holes. They control forward/backward surge but not side-to-side surge.",
+                "Baffles: Baffled tanks have bulkheads with holes. Unbaffled (smooth bore) tanks have nothing to slow down the liquid surge. They are harder to drive."
+            ],
+            keyPoints: [
+                "Tankers have a high center of gravity (rollover risk).",
+                "Liquid surge affects handling and stopping.",
+                "Smooth bore (unbaffled) tanks have strong surge."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'tank-q2',
+                    text: "Which type of tank vehicle has the strongest liquid surge?",
+                    options: [
+                        "Baffled tanks",
+                        "Tanks with bulkheads",
+                        "Smooth bore (unbaffled) tanks",
+                        "Small tanks"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Smooth bore tanks have no internal structure to slow down the liquid, causing strong forward-backward surge."
+                }
+            ]
+        },
+        {
+            id: 'tank-safe',
+            title: 'Safe Driving Rules',
+            cdlReference: 'CDL Manual §8.3',
+            content: [
+                "Speeding: If you drive too fast, the liquid surge combined with a high center of gravity can cause a rollover. Slow down before curves.",
+                "Stopping Distance: Wet roads double your stopping distance. Empty tanks may take longer to stop than loaded ones due to less traction (though loaded ones have surge to deal with).",
+                "Skids: Don't over-steer, over-accelerate, or over-brake. If you do, the liquid surge can push the tank sideways, causing a jackknife."
+            ],
+            keyPoints: [
+                "Drive slow (especially on curves).",
+                "Wet roads increase stopping distance significantly.",
+                "Avoid over-steering to prevent surge-induced jackknifes."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'tank-q3',
+                    text: "Why should you slow down before curves in a tank vehicle?",
+                    options: [
+                        "To save fuel",
+                        "To admire the view",
+                        "To prevent a rollover due to high center of gravity and surge",
+                        "To shift gears"
+                    ],
+                    correctIndex: 2,
+                    explanation: "The combination of high center of gravity and liquid surge makes tankers very prone to rollovers on curves."
+                }
+            ]
+        }
+    ]
+};
+
+
+
+// =====================================================
+// SCHOOL BUS STUDY GUIDE
+// =====================================================
+export const SchoolBusStudyGuide: StudyGuide = {
+    topicId: 'school_bus',
+    sections: [
+        {
+            id: 'sb-danger',
+            title: 'Danger Zones and Use of Mirrors',
+            cdlReference: 'CDL Manual §10.1',
+            content: [
+                "Danger Zones: The area on all sides of the bus where children are in the most danger of being hit. It extends as much as 30 feet from the front bumper and 10 feet from the left and right sides.",
+                "Mirrors: Use convex mirrors to see danger zones. Flat mirrors detect traffic. Cross-view mirrors let you see the front bumper area.",
+                "Blind Spots: The area directly behind the bus is a major blind spot. You cannot see it with any mirror."
+            ],
+            keyPoints: [
+                "Danger zone extends 30 feet front, 10 feet sides.",
+                "Cross-view mirrors show the front bumper area.",
+                "Directly behind the bus is a blind spot."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q1',
+                    text: "How far does the danger zone extend from the front bumper?",
+                    options: [
+                        "5 feet",
+                        "10 feet",
+                        "30 feet",
+                        "50 feet"
+                    ],
+                    correctIndex: 2,
+                    explanation: "The danger zone extends up to 30 feet from the front bumper."
+                }
+            ]
+        },
+        {
+            id: 'sb-loading',
+            title: 'Loading and Unloading',
+            cdlReference: 'CDL Manual §10.2',
+            content: [
+                "This is the most dangerous part of the job. Turn on flashing amber lights 200-300 feet (or as required by state law) before the stop.",
+                "Stop: Stop at least 10 feet away from students. Engage parking brake.",
+                "Signal: Signal students when it is safe to cross. They should cross at least 10 feet in front of the bus so you can see them.",
+                "Unloading: Count students as they exit. Ensure no one is caught in the handrail or door."
+            ],
+            keyPoints: [
+                "Activate amber lights 200-300 feet before stop.",
+                "Stop at least 10 feet from students.",
+                "Students should cross 10 feet IN FRONT of bus."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q2',
+                    text: "When unloading, where should students cross the street?",
+                    options: [
+                        "Behind the bus",
+                        "At least 10 feet in front of the bus",
+                        "Directly next to the driver's window",
+                        "Anywhere safe"
+                    ],
+                    correctIndex: 1,
+                    explanation: "They must cross at least 10 feet in front so you can see them."
+                }
+            ]
+        },
+        {
+            id: 'sb-exit',
+            title: 'Emergency Exit and Evacuation',
+            cdlReference: 'CDL Manual §10.3',
+            content: [
+                "Evacuate if: The bus is on fire, stuck on railroad tracks, or in danger of sinking/collision.",
+                "Front Door: Best for most evacuations.",
+                "Rear Door: Use if front is blocked.",
+                "Roof/Window Exits: Use if bus is on its side or in water.",
+                "Distance: Move students at least 100 feet away from the bus in the direction of oncoming traffic if on a road (to avoid being hit by debris if bus is struck)."
+            ],
+            keyPoints: [
+                "Evacuate for fire, railroad tracks, or imminent danger.",
+                "Move students 100 feet away.",
+                "Secure the bus if possible."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q3',
+                    text: "How far should you move students during an evacuation?",
+                    options: [
+                        "10 feet",
+                        "50 feet",
+                        "100 feet",
+                        "Half a mile"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Move them at least 100 feet away to ensure safety."
+                }
+            ]
+        },
+        {
+            id: 'sb-railroad',
+            title: 'Railroad-Highway Crossings',
+            cdlReference: 'CDL Manual §10.4',
+            content: [
+                "Procedures: Activate hazard lights about 200 feet before. Stop between 15 and 50 feet from the nearest rail.",
+                "Look and Listen: Open the door and driver's window to listen for trains. Silence passengers/radio.",
+                "Cross: Close door. Cross only when safe. Do not shift gears while crossing.",
+                "Containment: If a signal activates or gate lowers while you are on the tracks, drive through the gate. Do not stop."
+            ],
+            keyPoints: [
+                "Stop 15-50 feet from rail.",
+                "Open door/window to listen.",
+                "NEVER shift gears on tracks."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q4',
+                    text: "What should you do if the gate comes down while you are crossing the tracks?",
+                    options: [
+                        "Stop immediately",
+                        "Back up",
+                        "Drive through the gate",
+                        "Honk the horn"
+                    ],
+                    correctIndex: 2,
+                    explanation: "If you are trapped, drive through the gate. Saving lives is more important than the gate."
+                }
+            ]
+        },
+        {
+            id: 'sb-mgmt',
+            title: 'Student Management',
+            cdlReference: 'CDL Manual §10.5',
+            content: [
+                "Do not deal with discipline while driving.",
+                "If behavior is uncontrollable, stop safely. Secure the bus. Stand up and speak respectfully but firmly.",
+                "Drop Off: Never put a student off the bus at a customized stop for disciplinary reasons. Only at their designated stop or school."
+            ],
+            keyPoints: [
+                "Don't discipline while driving.",
+                "Stop safely if control is lost.",
+                "Only drop off at designated stops."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q5',
+                    text: "When should you deal with severe discipline problems?",
+                    options: [
+                        "While driving, looking in the mirror",
+                        "Stop safely, secure bus, then handle it",
+                        "Yell while driving",
+                        "Call parents immediately"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Stop the bus safely first. Distracted driving is dangerous."
+                }
+            ]
+        },
+        {
+            id: 'sb-abs',
+            title: 'Antilock Braking Systems',
+            cdlReference: 'CDL Manual §10.6',
+            content: [
+                "ABS helps you keep steering control during hard braking.",
+                "Brake normally. Do not pump the brakes if you have ABS.",
+                "The ABS lamp comes on at startup and should go off. If it stays on, ABS is not working (but normal brakes still work)."
+            ],
+            keyPoints: [
+                "ABS prevents wheel lockup.",
+                "Do not pump brakes.",
+                "Maintain steering control."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q6',
+                    text: "How should you brake with ABS?",
+                    options: [
+                        "Pump the brakes repeatedly",
+                        "Brake normally and hold pressure",
+                        "Slam the brakes",
+                        "Use the parking brake"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Brake normally. ABS will automatically pulse the brakes to prevent lockup."
+                }
+            ]
+        },
+        {
+            id: 'sb-special',
+            title: 'Special Safety Considerations',
+            cdlReference: 'CDL Manual §10.7',
+            content: [
+                "Strobe Lights: Use when visibility is limited (fog, rain, snow).",
+                "Strong Winds: School buses are high and vulnerable to winds.",
+                "Backing: Strong discouragement. Only back up if absolutely necessary. Use a lookout/helper."
+            ],
+            keyPoints: [
+                "Avoid backing whenever possible.",
+                "Use strobe lights in low visibility.",
+                "Watch out for strong winds."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q7',
+                    text: "When should you back a school bus?",
+                    options: [
+                        "Whenever it saves time",
+                        "Only when absolutely necessary",
+                        "At every stop",
+                        "To turn around"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Backing is dangerous. Avoid it unless there is no other safe way."
+                }
+            ]
+        }
+    ]
+};
+
 // Map of topic IDs to their study guides
 export const STUDY_GUIDES: Record<string, StudyGuide> = {
     'general_knowledge': GeneralKnowledgeStudyGuide,
     'combinations': CombinationsStudyGuide,
     'air_brakes': AirBrakesStudyGuide,
+    'hazmat': HazmatStudyGuide,
+    'passenger': PassengerStudyGuide,
+    'school_bus': SchoolBusStudyGuide,
+    'doubles_triples': DoublesTriplesStudyGuide,
+    'tank_vehicles': TankVehiclesStudyGuide,
 };
 
 // Localized study guide accessor
@@ -1412,6 +2287,21 @@ export const getStudyGuide = (topicId: string, locale: string = 'en'): StudyGuid
             if (topicId === 'air_brakes' && module.AirBrakesStudyGuide_ES) {
                 return module.AirBrakesStudyGuide_ES;
             }
+            if (topicId === 'hazmat' && module.HazmatStudyGuide_ES) {
+                return module.HazmatStudyGuide_ES;
+            }
+            if (topicId === 'passenger' && module.PassengerStudyGuide_ES) {
+                return module.PassengerStudyGuide_ES;
+            }
+            if (topicId === 'school_bus' && module.SchoolBusStudyGuide_ES) {
+                return module.SchoolBusStudyGuide_ES;
+            }
+            if (topicId === 'doubles_triples' && module.DoublesTriplesStudyGuide_ES) {
+                return module.DoublesTriplesStudyGuide_ES;
+            }
+            if (topicId === 'tank_vehicles' && module.TankVehiclesStudyGuide_ES) {
+                return module.TankVehiclesStudyGuide_ES;
+            }
         } catch (e) {
             console.warn(`Spanish study guide for ${topicId} not found, falling back to English`);
         }
@@ -1427,6 +2317,21 @@ export const getStudyGuide = (topicId: string, locale: string = 'en'): StudyGuid
             }
             if (topicId === 'air_brakes' && module.AirBrakesStudyGuide_RU) {
                 return module.AirBrakesStudyGuide_RU;
+            }
+            if (topicId === 'hazmat' && module.HazmatStudyGuide_RU) {
+                return module.HazmatStudyGuide_RU;
+            }
+            if (topicId === 'passenger' && module.PassengerStudyGuide_RU) {
+                return module.PassengerStudyGuide_RU;
+            }
+            if (topicId === 'school_bus' && module.SchoolBusStudyGuide_RU) {
+                return module.SchoolBusStudyGuide_RU;
+            }
+            if (topicId === 'doubles_triples' && module.DoublesTriplesStudyGuide_RU) {
+                return module.DoublesTriplesStudyGuide_RU;
+            }
+            if (topicId === 'tank_vehicles' && module.TankVehiclesStudyGuide_RU) {
+                return module.TankVehiclesStudyGuide_RU;
             }
         } catch (e) {
             console.warn(`Russian study guide for ${topicId} not found, falling back to English`);

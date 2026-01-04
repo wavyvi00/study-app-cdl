@@ -111,7 +111,12 @@ async function main() {
     const guidesToTranslate = [
         { name: 'GeneralKnowledgeStudyGuide', data: extractGuide('GeneralKnowledgeStudyGuide') },
         { name: 'CombinationsStudyGuide', data: extractGuide('CombinationsStudyGuide') },
-        { name: 'AirBrakesStudyGuide', data: extractGuide('AirBrakesStudyGuide') }
+        { name: 'AirBrakesStudyGuide', data: extractGuide('AirBrakesStudyGuide') },
+        { name: 'HazmatStudyGuide', data: extractGuide('HazmatStudyGuide') },
+        { name: 'PassengerStudyGuide', data: extractGuide('PassengerStudyGuide') },
+        { name: 'DoublesTriplesStudyGuide', data: extractGuide('DoublesTriplesStudyGuide') },
+        { name: 'TankVehiclesStudyGuide', data: extractGuide('TankVehiclesStudyGuide') },
+        { name: 'SchoolBusStudyGuide', data: extractGuide('SchoolBusStudyGuide') }
     ];
 
     // Filter out missing guides
@@ -141,6 +146,21 @@ async function main() {
             }
             if (tempModule.AirBrakesStudyGuide) {
                 validGuides.push({ name: 'AirBrakesStudyGuide', data: tempModule.AirBrakesStudyGuide });
+            }
+            if (tempModule.HazmatStudyGuide) {
+                validGuides.push({ name: 'HazmatStudyGuide', data: tempModule.HazmatStudyGuide });
+            }
+            if (tempModule.PassengerStudyGuide) {
+                validGuides.push({ name: 'PassengerStudyGuide', data: tempModule.PassengerStudyGuide });
+            }
+            if (tempModule.DoublesTriplesStudyGuide) {
+                validGuides.push({ name: 'DoublesTriplesStudyGuide', data: tempModule.DoublesTriplesStudyGuide });
+            }
+            if (tempModule.TankVehiclesStudyGuide) {
+                validGuides.push({ name: 'TankVehiclesStudyGuide', data: tempModule.TankVehiclesStudyGuide });
+            }
+            if (tempModule.SchoolBusStudyGuide) {
+                validGuides.push({ name: 'SchoolBusStudyGuide', data: tempModule.SchoolBusStudyGuide });
             }
             fs.unlinkSync(tempFile);
         } catch (e) {
@@ -190,6 +210,7 @@ async function main() {
                 newGuide.sections.push({
                     id: section.id,
                     title: translatedTitle,
+                    cdlReference: section.cdlReference,
                     content: translatedContent,
                     keyPoints: translatedKeyPoints,
                     reviewQuestions: translatedQuestions

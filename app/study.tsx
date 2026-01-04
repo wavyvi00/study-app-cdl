@@ -203,7 +203,14 @@ export default function StudyScreen() {
 
                 {/* Content Card */}
                 <Card padding="lg" style={{ marginBottom: spacing.xl }}>
-                    <Text style={[styles.sectionTitle, { color: colors.text, fontSize: typography.xl, marginBottom: spacing.lg }]}>{currentSection.title}</Text>
+                    {currentSection.cdlReference && (
+                        <Text style={{ fontSize: typography.sm, color: colors.textSecondary, marginBottom: spacing.xs, fontWeight: '500' }}>
+                            {currentSection.cdlReference}
+                        </Text>
+                    )}
+                    <Text style={[styles.sectionTitle, { color: colors.text, fontSize: typography.xl, marginBottom: spacing.lg }]}>
+                        {sectionIndex + 1}. {currentSection.title}
+                    </Text>
 
                     {/* Main Text Content */}
                     {currentSection.content.map((paragraph, idx) => (
