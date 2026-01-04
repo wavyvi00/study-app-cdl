@@ -56,13 +56,15 @@ export default function SubscriptionCard({ onSuccess, onClose, showCloseButton =
             <Text style={[styles.title, { color: textColor }]}>Stay Updated</Text>
             <Text style={[styles.subtitle, { color: subtextColor }]}>Get notified about new features and study tips.</Text>
             <TextInput
-                style={[styles.input, { backgroundColor: inputBg, color: textColor }]}
+                style={[styles.input, { backgroundColor: inputBg, color: textColor, borderColor: colors.border, borderWidth: 1 }]}
                 placeholder="you@email.com"
                 value={email}
                 onChangeText={setEmail}
                 autoCapitalize="none"
                 keyboardType="email-address"
                 placeholderTextColor={subtextColor}
+                returnKeyType="done"
+                onSubmitEditing={handleSubscribe}
             />
             <TouchableOpacity style={[styles.button, { backgroundColor: colors.primary }]} onPress={handleSubscribe}>
                 <Text style={styles.buttonText}>Subscribe</Text>

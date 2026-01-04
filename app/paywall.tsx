@@ -97,8 +97,7 @@ export default function PaywallScreen() {
 
             <BackgroundShapes width={width} height={height} />
 
-            {/* Header content */}
-            <View style={[styles.header, { paddingTop: insets.top + 20 }]}>
+            <View style={[styles.header, { paddingTop: insets.top + 10, paddingBottom: 10 }]}>
                 <TouchableOpacity
                     onPress={() => router.back()}
                     style={styles.closeButton}
@@ -107,10 +106,10 @@ export default function PaywallScreen() {
                     <FontAwesome name="times" size={24} color="rgba(255,255,255,0.7)" />
                 </TouchableOpacity>
 
-                <View style={styles.headerContent}>
+                <View style={[styles.headerContent, { marginTop: 0 }]}>
                     <PremiumIcon />
-                    <Text style={styles.headerTitle}>{t('unlockCDLZeroPro')}</Text>
-                    <Text style={styles.headerSubtitle}>
+                    <Text style={[styles.headerTitle, { marginTop: 10, fontSize: 26 }]}>{t('unlockCDLZeroPro')}</Text>
+                    <Text style={[styles.headerSubtitle, { marginTop: 4, fontSize: 14 }]}>
                         {t('freeTrialEnded').replace('{count}', String(questionsAnsweredTotal))}
                     </Text>
                 </View>
@@ -138,7 +137,7 @@ export default function PaywallScreen() {
                 </View>
 
                 {/* Pricing options */}
-                <View style={[styles.pricingContainer, { paddingHorizontal: spacing.lg }]}>
+                <View style={[styles.pricingContainer, { paddingHorizontal: spacing.lg, marginTop: 10 }]}>
                     {/* Yearly - Best Value */}
                     <TouchableOpacity
                         style={[styles.pricingCard, styles.pricingCardBest]}
@@ -213,31 +212,31 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        paddingBottom: 30,
+        paddingBottom: 10,
         paddingHorizontal: 20,
     },
     closeButton: {
         position: 'absolute',
-        top: Platform.OS === 'ios' ? 60 : 40,
+        top: Platform.OS === 'ios' ? 50 : 30, // Adjusted for new padding
         right: 20,
         padding: 8,
         zIndex: 10,
     },
     headerContent: {
         alignItems: 'center',
-        marginTop: 30,
+        marginTop: 0,
     },
     headerTitle: {
-        fontSize: 32,
+        fontSize: 24,
         fontWeight: 'bold',
         color: 'white',
-        marginTop: 20,
+        marginTop: 5,
         textAlign: 'center',
     },
     headerSubtitle: {
-        fontSize: 16,
+        fontSize: 13,
         color: 'rgba(255,255,255,0.9)',
-        marginTop: 10,
+        marginTop: 5,
         textAlign: 'center',
     },
     scrollView: {
@@ -250,31 +249,31 @@ const styles = StyleSheet.create({
         marginTop: 10,
     },
     featuresTitle: {
-        fontSize: 22,
-        fontWeight: '800', // Extra bold like onboarding
-        marginBottom: 24,
+        fontSize: 16,
+        fontWeight: '800',
+        marginBottom: 8,
         color: '#FFFFFF',
         textAlign: 'center',
     },
     featureRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 10,
         backgroundColor: 'rgba(255,255,255,0.05)',
-        padding: 12,
+        padding: 6,
         borderRadius: 12,
     },
     featureIcon: {
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 32,
+        height: 32,
+        borderRadius: 16,
         justifyContent: 'center',
         alignItems: 'center',
-        marginRight: 16,
+        marginRight: 10,
         backgroundColor: 'rgba(56, 189, 248, 0.15)', // Light blue bg
     },
     featureText: {
-        fontSize: 16,
+        fontSize: 14,
         color: '#e2e8f0', // Slate-200
         fontWeight: '500',
         flex: 1,
@@ -282,16 +281,16 @@ const styles = StyleSheet.create({
     pricingContainer: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        gap: 12,
-        marginTop: 20,
+        gap: 8,
+        marginTop: 10,
     },
     pricingCard: {
         flex: 1,
-        borderRadius: 16,
-        padding: 16,
+        borderRadius: 12,
+        padding: 8,
         alignItems: 'center',
         justifyContent: 'center',
-        minHeight: 140,
+        minHeight: 100,
         backgroundColor: 'rgba(255,255,255,0.1)',
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,0.1)',
@@ -327,13 +326,13 @@ const styles = StyleSheet.create({
         textTransform: 'uppercase',
     },
     pricingPeriod: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: '600',
         color: '#FFFFFF',
         marginTop: 10,
     },
     pricingPrice: {
-        fontSize: 20,
+        fontSize: 18,
         fontWeight: 'bold',
         color: '#FFFFFF',
         marginTop: 4,
@@ -351,8 +350,8 @@ const styles = StyleSheet.create({
     },
     restoreButton: {
         alignItems: 'center',
-        marginTop: 40,
-        padding: 12,
+        marginTop: 20,
+        padding: 10,
         borderRadius: 20,
         backgroundColor: 'rgba(255,255,255,0.05)',
         alignSelf: 'center',
@@ -364,10 +363,10 @@ const styles = StyleSheet.create({
         color: 'rgba(255,255,255,0.8)',
     },
     termsText: {
-        fontSize: 11,
+        fontSize: 10,
         textAlign: 'center',
-        lineHeight: 16,
-        marginTop: 24,
+        lineHeight: 14,
+        marginTop: 12,
         color: 'rgba(255,255,255,0.4)',
     },
 });

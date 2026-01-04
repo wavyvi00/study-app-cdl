@@ -1,8 +1,10 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Switch, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Switch, ActivityIndicator, KeyboardAvoidingView } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Topic } from '../../data/mock';
 import { useQuestions } from '../../context/QuestionsContext';
+import { useSubscription } from '../../context/SubscriptionContext';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import StatsOverview from '../../components/StatsOverview';
 
@@ -26,9 +28,11 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 
 export default function TopicsScreen() {
     const router = useRouter();
+    const insets = useSafeAreaInsets();
     const { theme, toggleTheme, isDark, colors, spacing, typography, radius } = useTheme();
     const { t, locale, setLocale } = useLocalization();
     const { topics, isLoading } = useQuestions();
+    const { checkCanAccessQuiz } = useSubscription();
     const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -95,6 +99,10 @@ export default function TopicsScreen() {
     }, [topics, selectedTopic]);
 
     const startQuiz = (topicId: string, mode: 'practice' | 'exam') => {
+        if (!checkCanAccessQuiz()) {
+            router.push('/paywall');
+            return;
+        }
         router.push({ pathname: '/quiz', params: { topicId, mode } });
     };
 
@@ -167,9 +175,9 @@ export default function TopicsScreen() {
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <LinearGradient
                 colors={colors.headerGradient}
-                style={[styles.headerBackground, { paddingTop: 40, paddingBottom: 30, paddingHorizontal: spacing.lg, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
+                style={[styles.headerBackground, { paddingTop: insets.top + 10, paddingBottom: 20, paddingHorizontal: spacing.lg, borderBottomLeftRadius: 30, borderBottomRightRadius: 30, zIndex: 100 }]}
             >
-                <View style={styles.headerRow}>
+                <View style={[styles.headerRow, { zIndex: 101 }]}>
                     <View style={{ flex: 1, marginRight: 12 }}>
                         <Text style={styles.headerLabel}>{t('officialCDLPreparation')}</Text>
                         <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>{t('appTitle')}</Text>
@@ -195,116 +203,7 @@ export default function TopicsScreen() {
                     </View>
                 </View>
 
-                {isMenuOpen && (
-                    <Card style={styles.menuDropdown} padding="sm">
-                        <TouchableOpacity
-                            style={[styles.menuItem, { borderBottomColor: colors.border }]}
-                            onPress={() => {
-                                setIsMenuOpen(false);
-                                router.push('/privacy');
-                            }}
-                            accessibilityRole="button"
-                            accessibilityLabel="Privacy Policy"
-                            accessibilityHint="Double tap to view privacy policy"
-                        >
-                            <FontAwesome name="shield" size={16} color={colors.textSecondary} style={styles.menuIcon} />
-                            <Text style={[styles.menuText, { color: colors.text }]}>{t('privacyPolicy')}</Text>
-                        </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={[styles.menuItem, { borderBottomColor: colors.border }]}
-                            onPress={() => {
-                                setIsMenuOpen(false);
-                                router.push('/terms');
-                            }}
-                            accessibilityRole="button"
-                            accessibilityLabel="Terms of Service"
-                            accessibilityHint="Double tap to view terms of service"
-                        >
-                            <FontAwesome name="file-text-o" size={16} color={colors.textSecondary} style={styles.menuIcon} />
-                            <Text style={[styles.menuText, { color: colors.text }]}>{t('termsOfService')}</Text>
-                        </TouchableOpacity>
-
-                        <View
-                            accessible={true}
-                            accessibilityRole="switch"
-                            accessibilityLabel="Theme mode"
-                            accessibilityValue={{ text: isDark ? 'Dark mode enabled' : 'Light mode enabled' }}
-                            accessibilityHint="Double tap to toggle between light and dark mode"
-                        >
-                            <TouchableOpacity
-                                style={[styles.menuItem, { borderBottomColor: colors.border }]}
-                                onPress={toggleTheme}
-                            >
-                                <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={colors.textSecondary} style={styles.menuIcon} />
-                                <Text style={[styles.menuText, { color: colors.text }]}>{t(isDark ? 'darkMode' : 'lightMode')}</Text>
-                                <View pointerEvents="none">
-                                    <Switch
-                                        value={isDark}
-                                        onValueChange={toggleTheme}
-                                        trackColor={{ false: "#767577", true: colors.secondary }}
-                                        thumbColor={isDark ? colors.highlight : "#f4f3f4"}
-                                        style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
-                                    />
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-
-
-
-                        <TouchableOpacity
-                            style={[styles.menuItem, { borderBottomWidth: 0 }]}
-                            onPress={handleResetProgress}
-                            accessibilityRole="button"
-                            accessibilityLabel="Reset Progress"
-                            accessibilityHint="Double tap to reset all your progress data"
-                        >
-                            <FontAwesome name="refresh" size={16} color={colors.error} style={styles.menuIcon} />
-                            <Text style={[styles.menuText, { color: colors.error }]}>{t('resetProgress')}</Text>
-                        </TouchableOpacity>
-                    </Card>
-                )}
-
-                {isLangDropdownOpen && (
-                    <Card style={[styles.menuDropdown, { right: 68 }]} padding="sm">
-                        <TouchableOpacity
-                            style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
-                            onPress={() => {
-                                setLocale('en');
-                                setIsLangDropdownOpen(false);
-                            }}
-                            accessibilityRole="button"
-                        >
-                            <Text style={{ fontSize: 20, marginRight: 10 }}>🇺🇸</Text>
-                            <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>English</Text>
-                            {locale === 'en' && <FontAwesome name="check" size={14} color={colors.primary} />}
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
-                            onPress={() => {
-                                setLocale('es');
-                                setIsLangDropdownOpen(false);
-                            }}
-                            accessibilityRole="button"
-                        >
-                            <Text style={{ fontSize: 20, marginRight: 10 }}>🇪🇸</Text>
-                            <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Español</Text>
-                            {locale === 'es' && <FontAwesome name="check" size={14} color={colors.primary} />}
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.langMenuItem, { borderBottomWidth: 0 }]}
-                            onPress={() => {
-                                setLocale('ru');
-                                setIsLangDropdownOpen(false);
-                            }}
-                            accessibilityRole="button"
-                        >
-                            <Text style={{ fontSize: 20, marginRight: 10 }}>🇷🇺</Text>
-                            <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Русский</Text>
-                            {locale === 'ru' && <FontAwesome name="check" size={14} color={colors.primary} />}
-                        </TouchableOpacity>
-                    </Card>
-                )}
             </LinearGradient>
 
             <ScrollView contentContainerStyle={[styles.scrollContent, { padding: spacing.lg }]}>
@@ -501,15 +400,129 @@ export default function TopicsScreen() {
                 </View>
             )}
 
+            {/* Menus (Moved to Root) */}
+            {isMenuOpen && (
+                <Card style={[styles.menuDropdown, { top: insets.top + 70, zIndex: 1000, elevation: 5 }]} padding="sm">
+                    <TouchableOpacity
+                        style={[styles.menuItem, { borderBottomColor: colors.border }]}
+                        onPress={() => {
+                            setIsMenuOpen(false);
+                            router.push('/privacy');
+                        }}
+                        accessibilityRole="button"
+                        accessibilityLabel="Privacy Policy"
+                    >
+                        <FontAwesome name="shield" size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                        <Text style={[styles.menuText, { color: colors.text }]}>{t('privacyPolicy')}</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={[styles.menuItem, { borderBottomColor: colors.border }]}
+                        onPress={() => {
+                            setIsMenuOpen(false);
+                            router.push('/terms');
+                        }}
+                        accessibilityRole="button"
+                        accessibilityLabel="Terms of Service"
+                    >
+                        <FontAwesome name="file-text-o" size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                        <Text style={[styles.menuText, { color: colors.text }]}>{t('termsOfService')}</Text>
+                    </TouchableOpacity>
+
+                    <View
+                        accessible={true}
+                        accessibilityRole="switch"
+                        accessibilityLabel="Theme mode"
+                        accessibilityValue={{ text: isDark ? 'Dark mode enabled' : 'Light mode enabled' }}
+                    >
+                        <TouchableOpacity
+                            style={[styles.menuItem, { borderBottomColor: colors.border }]}
+                            onPress={toggleTheme}
+                        >
+                            <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                            <Text style={[styles.menuText, { color: colors.text }]}>{t(isDark ? 'darkMode' : 'lightMode')}</Text>
+                            <View pointerEvents="none">
+                                <Switch
+                                    value={isDark}
+                                    onValueChange={toggleTheme}
+                                    trackColor={{ false: "#767577", true: colors.secondary }}
+                                    thumbColor={isDark ? colors.highlight : "#f4f3f4"}
+                                    style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+                                />
+                            </View>
+                        </TouchableOpacity>
+                    </View>
+
+                    <TouchableOpacity
+                        style={[styles.menuItem, { borderBottomWidth: 0 }]}
+                        onPress={handleResetProgress}
+                        accessibilityRole="button"
+                        accessibilityLabel="Reset Progress"
+                    >
+                        <FontAwesome name="refresh" size={16} color={colors.error} style={styles.menuIcon} />
+                        <Text style={[styles.menuText, { color: colors.error }]}>{t('resetProgress')}</Text>
+                    </TouchableOpacity>
+                </Card>
+            )}
+
+            {isLangDropdownOpen && (
+                <Card style={[styles.menuDropdown, { top: insets.top + 70, right: 68, zIndex: 1000, elevation: 5 }]} padding="sm">
+                    <TouchableOpacity
+                        style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
+                        onPress={() => {
+                            setLocale('en');
+                            setIsLangDropdownOpen(false);
+                        }}
+                        accessibilityRole="button"
+                    >
+                        <Text style={{ fontSize: 20, marginRight: 10 }}>🇺🇸</Text>
+                        <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>English</Text>
+                        {locale === 'en' && <FontAwesome name="check" size={14} color={colors.primary} />}
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
+                        onPress={() => {
+                            setLocale('es');
+                            setIsLangDropdownOpen(false);
+                        }}
+                        accessibilityRole="button"
+                    >
+                        <Text style={{ fontSize: 20, marginRight: 10 }}>🇪🇸</Text>
+                        <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Español</Text>
+                        {locale === 'es' && <FontAwesome name="check" size={14} color={colors.primary} />}
+                    </TouchableOpacity>
+                    <TouchableOpacity
+                        style={[styles.langMenuItem, { borderBottomWidth: 0 }]}
+                        onPress={() => {
+                            setLocale('ru');
+                            setIsLangDropdownOpen(false);
+                        }}
+                        accessibilityRole="button"
+                    >
+                        <Text style={{ fontSize: 20, marginRight: 10 }}>🇷🇺</Text>
+                        <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Русский</Text>
+                        {locale === 'ru' && <FontAwesome name="check" size={14} color={colors.primary} />}
+                    </TouchableOpacity>
+                </Card>
+            )}
+
             {/* Subscription Popup */}
             {showSubscriptionPopup && (
-                <View style={{
-                    position: 'absolute',
-                    bottom: 100,
-                    left: spacing.lg,
-                    right: spacing.lg,
-                    zIndex: 900,
-                }}>
+                <KeyboardAvoidingView
+                    behavior={Platform.OS === 'ios' ? 'position' : undefined}
+                    keyboardVerticalOffset={Platform.OS === 'ios' ? 20 : 0}
+                    style={{
+                        position: 'absolute',
+                        bottom: 0,
+                        left: 0,
+                        right: 0,
+                        zIndex: 900,
+                    }}
+                    contentContainerStyle={{
+                        paddingHorizontal: spacing.lg,
+                        paddingBottom: 100
+                    }}
+                >
                     <SubscriptionCard
                         showCloseButton
                         onClose={() => {
@@ -518,7 +531,7 @@ export default function TopicsScreen() {
                         }}
                         onSuccess={() => setShowSubscriptionPopup(false)}
                     />
-                </View>
+                </KeyboardAvoidingView>
             )}
         </View>
     );

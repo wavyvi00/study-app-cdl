@@ -33,7 +33,8 @@ export default function QuizScreen() {
     const { t } = useLocalization();
     const { getQuestions, topics } = useQuestions();
     const insets = useSafeAreaInsets();
-    const { checkCanAccessQuiz, refreshSubscriptionStatus } = useSubscription();
+    const { checkCanAccessQuiz, refreshSubscriptionStatus, isPro, questionsAnsweredTotal, incrementQuestionsAnswered } = useSubscription();
+    const { FREE_TRIAL_QUESTION_LIMIT } = APP_CONFIG;
 
     // Check subscription status on mount - redirect to paywall if limit reached
     useEffect(() => {
@@ -325,29 +326,27 @@ export default function QuizScreen() {
         setSelectedOption(index);
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
         Haptics.selectionAsync();
+        if (selectedOption === null) return;
 
+        // Increment global counter immediately
+        await incrementQuestionsAnswered();
+
+        const isLastQuestion = currentIndex === questions.length - 1;
         const isCorrect = selectedOption === currentQuestion.correctIndex;
-        let nextScore = score;
-        let nextWrong = wrongAnswers;
-
-        if (isCorrect) {
-            setScore(s => { nextScore = s + 1; return s + 1; });
-        } else if (selectedOption !== null) {
-            setWrongAnswers(prev => {
-                const updated = [...prev, {
-                    question: currentQuestion,
-                    selectedIndex: selectedOption
-                }];
-                nextWrong = updated;
-                return updated;
-            });
-        }
+        const nextScore = isCorrect ? score + 1 : score;
+        const nextWrong = isCorrect ? wrongAnswers : [...wrongAnswers, { question: currentQuestion, selectedIndex: selectedOption }];
 
         if (isLastQuestion) {
             setIsFinished(true); // Triggers recording
         } else {
+            // Check Lockout immediately after incrementing
+            if (!isPro && (questionsAnsweredTotal + 1) >= FREE_TRIAL_QUESTION_LIMIT) {
+                router.replace('/paywall');
+                return;
+            }
+
             const nextIndex = currentIndex + 1;
             setCurrentIndex(nextIndex);
             setSelectedOption(null);

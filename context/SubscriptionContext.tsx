@@ -3,7 +3,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import { Platform } from 'react-native';
 import { PurchasesOffering, PurchasesPackage } from 'react-native-purchases';
 import { APP_CONFIG } from '../constants/appConfig';
-import { loadStats } from '../data/stats';
+import { loadStats, updateStats } from '../data/stats';
 import {
     initRevenueCat,
     getSubscriptionStatus,
@@ -207,22 +207,27 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
     }, [state.isPro, state.questionsRemaining]);
 
     const incrementQuestionsAnswered = useCallback(async (count: number = 1): Promise<void> => {
-        // This is called after each question is answered
-        // The actual stats update happens in recordQuizResult, so we just refresh our state
-        const stats = await loadStats();
-        const totalAnswered = stats.questionsAnsweredTotal || 0;
-        const questionsRemaining = Math.max(0, APP_CONFIG.FREE_TRIAL_QUESTION_LIMIT - totalAnswered);
+        // Persist immediately to enforce global limit even if app is killed
+        const currentStats = await loadStats();
+        const newTotal = (currentStats.questionsAnsweredTotal || 0) + count;
+
+        await updateStats({
+            questionsAnsweredTotal: newTotal
+        });
+
+        // Update local state
+        const questionsRemaining = Math.max(0, APP_CONFIG.FREE_TRIAL_QUESTION_LIMIT - newTotal);
         const isTrialActive = !state.isPro && questionsRemaining > 0;
 
         setState(prev => ({
             ...prev,
-            questionsAnsweredTotal: totalAnswered,
+            questionsAnsweredTotal: newTotal,
             questionsRemaining,
             isTrialActive,
         }));
 
         if (__DEV__) {
-            console.log('[Subscription] Questions updated:', { totalAnswered, questionsRemaining });
+            console.log('[Subscription] Questions incremented & saved:', { newTotal, questionsRemaining });
         }
     }, [state.isPro]);
 
