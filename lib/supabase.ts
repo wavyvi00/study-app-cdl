@@ -1,17 +1,17 @@
 import { createClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL;
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY;
 
 if (!supabaseUrl || !supabaseAnonKey) {
     console.warn("Supabase credentials missing from environment variables");
 }
 
 // Validating config to prevent crashes if env vars are missing
-const isValidConfig = supabaseUrl.length > 0 && supabaseAnonKey.length > 0;
+const isValidConfig = (supabaseUrl && supabaseUrl.length > 0) && (supabaseAnonKey && supabaseAnonKey.length > 0);
 
 export const supabase = isValidConfig
-    ? createClient(supabaseUrl, supabaseAnonKey)
+    ? createClient(supabaseUrl!, supabaseAnonKey!)
     : null;
 
 // Database types for questions
