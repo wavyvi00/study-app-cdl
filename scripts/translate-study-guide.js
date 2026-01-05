@@ -9,14 +9,7 @@ const fs = require('fs');
 const path = require('path');
 
 // Translation library
-let googleTranslate;
-try {
-    const api = require('@vitalets/google-translate-api');
-    googleTranslate = api.translate;
-} catch (e) {
-    console.error('Please install @vitalets/google-translate-api: npm install @vitalets/google-translate-api');
-    process.exit(1);
-}
+const translatte = require('translatte');
 
 const DELAY_MS = 6000; // Rate limit increased to 6s per user suggestion
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
@@ -27,14 +20,20 @@ const DATA_FILE = path.join(__dirname, '..', 'data', 'study_content.ts');
 async function translate(text, targetLang) {
     if (!text || text.trim() === '') return text;
     try {
-        const result = await googleTranslate(text, { to: targetLang });
+        const result = await translatte(text, { to: targetLang });
         return result.text;
     } catch (error) {
-        console.error(`Translation error for "${text.substring(0, 20)}...": ${error.message}`);
-        if (error.statusCode === 429) {
-            console.log('Rate limited. Waiting 10s...');
-            await sleep(10000);
-            return translate(text, targetLang); // Retry once
+        console.error(`Translation error for "${text.substring(0, 20)}...":`, error);
+        if (error && (error.statusCode === 429 || error.code === 'ETIMEDOUT')) {
+            console.log('Rate limited. Waiting 5s...');
+            await sleep(5000);
+            try {
+                const retry = await translatte(text, { to: targetLang });
+                return retry.text;
+            } catch (e) {
+                console.error('Retry failed:', e.message);
+                return text;
+            }
         }
         await sleep(1000);
         return text; // Fallback to original
@@ -44,8 +43,10 @@ async function translate(text, targetLang) {
 // Helper to translate an array of strings (content, keyPoints)
 async function translateArray(arr, targetLang) {
     const result = [];
-    for (const item of arr) {
+    for (let i = 0; i < arr.length; i++) {
+        const item = arr[i];
         if (typeof item === 'string') {
+            process.stdout.write(`\r    Item ${i + 1}/${arr.length}`);
             const translated = await translate(item, targetLang);
             result.push(translated);
             await sleep(DELAY_MS);
@@ -53,6 +54,7 @@ async function translateArray(arr, targetLang) {
             result.push(item);
         }
     }
+    console.log(''); // New line after progress
     return result;
 }
 
@@ -109,14 +111,14 @@ async function main() {
     }
 
     const guidesToTranslate = [
-        { name: 'GeneralKnowledgeStudyGuide', data: extractGuide('GeneralKnowledgeStudyGuide') },
-        { name: 'CombinationsStudyGuide', data: extractGuide('CombinationsStudyGuide') },
+        // { name: 'GeneralKnowledgeStudyGuide', data: extractGuide('GeneralKnowledgeStudyGuide') },
+        // { name: 'CombinationsStudyGuide', data: extractGuide('CombinationsStudyGuide') },
         { name: 'AirBrakesStudyGuide', data: extractGuide('AirBrakesStudyGuide') },
-        { name: 'HazmatStudyGuide', data: extractGuide('HazmatStudyGuide') },
-        { name: 'PassengerStudyGuide', data: extractGuide('PassengerStudyGuide') },
-        { name: 'DoublesTriplesStudyGuide', data: extractGuide('DoublesTriplesStudyGuide') },
-        { name: 'TankVehiclesStudyGuide', data: extractGuide('TankVehiclesStudyGuide') },
-        { name: 'SchoolBusStudyGuide', data: extractGuide('SchoolBusStudyGuide') }
+        // { name: 'HazmatStudyGuide', data: extractGuide('HazmatStudyGuide') },
+        // { name: 'PassengerStudyGuide', data: extractGuide('PassengerStudyGuide') },
+        // { name: 'DoublesTriplesStudyGuide', data: extractGuide('DoublesTriplesStudyGuide') },
+        // { name: 'TankVehiclesStudyGuide', data: extractGuide('TankVehiclesStudyGuide') },
+        // { name: 'SchoolBusStudyGuide', data: extractGuide('SchoolBusStudyGuide') }
     ];
 
     // Filter out missing guides
@@ -138,30 +140,30 @@ async function main() {
 
         try {
             const tempModule = require(tempFile);
-            if (tempModule.GeneralKnowledgeStudyGuide) {
-                validGuides.push({ name: 'GeneralKnowledgeStudyGuide', data: tempModule.GeneralKnowledgeStudyGuide });
-            }
-            if (tempModule.CombinationsStudyGuide) {
-                validGuides.push({ name: 'CombinationsStudyGuide', data: tempModule.CombinationsStudyGuide });
-            }
+            // if (tempModule.GeneralKnowledgeStudyGuide) {
+            //     validGuides.push({ name: 'GeneralKnowledgeStudyGuide', data: tempModule.GeneralKnowledgeStudyGuide });
+            // }
+            // if (tempModule.CombinationsStudyGuide) {
+            //     validGuides.push({ name: 'CombinationsStudyGuide', data: tempModule.CombinationsStudyGuide });
+            // }
             if (tempModule.AirBrakesStudyGuide) {
                 validGuides.push({ name: 'AirBrakesStudyGuide', data: tempModule.AirBrakesStudyGuide });
             }
-            if (tempModule.HazmatStudyGuide) {
-                validGuides.push({ name: 'HazmatStudyGuide', data: tempModule.HazmatStudyGuide });
-            }
-            if (tempModule.PassengerStudyGuide) {
-                validGuides.push({ name: 'PassengerStudyGuide', data: tempModule.PassengerStudyGuide });
-            }
-            if (tempModule.DoublesTriplesStudyGuide) {
-                validGuides.push({ name: 'DoublesTriplesStudyGuide', data: tempModule.DoublesTriplesStudyGuide });
-            }
-            if (tempModule.TankVehiclesStudyGuide) {
-                validGuides.push({ name: 'TankVehiclesStudyGuide', data: tempModule.TankVehiclesStudyGuide });
-            }
-            if (tempModule.SchoolBusStudyGuide) {
-                validGuides.push({ name: 'SchoolBusStudyGuide', data: tempModule.SchoolBusStudyGuide });
-            }
+            // if (tempModule.HazmatStudyGuide) {
+            //     validGuides.push({ name: 'HazmatStudyGuide', data: tempModule.HazmatStudyGuide });
+            // }
+            // if (tempModule.PassengerStudyGuide) {
+            //     validGuides.push({ name: 'PassengerStudyGuide', data: tempModule.PassengerStudyGuide });
+            // }
+            // if (tempModule.DoublesTriplesStudyGuide) {
+            //     validGuides.push({ name: 'DoublesTriplesStudyGuide', data: tempModule.DoublesTriplesStudyGuide });
+            // }
+            // if (tempModule.TankVehiclesStudyGuide) {
+            //     validGuides.push({ name: 'TankVehiclesStudyGuide', data: tempModule.TankVehiclesStudyGuide });
+            // }
+            // if (tempModule.SchoolBusStudyGuide) {
+            //     validGuides.push({ name: 'SchoolBusStudyGuide', data: tempModule.SchoolBusStudyGuide });
+            // }
             fs.unlinkSync(tempFile);
         } catch (e) {
             console.error("Failed to require temp file:", e);
@@ -182,7 +184,15 @@ async function main() {
     for (const lang of targets) {
         console.log(`\n=== Translating to ${lang.toUpperCase()} ===`);
 
-        let outputContent = `import { StudyGuide } from './study_types';\n\n`;
+        // Read existing file content if it exists
+        const outFile = path.join(__dirname, '..', 'data', `study_content_${lang}.ts`);
+        let outputContent = '';
+
+        if (fs.existsSync(outFile)) {
+            outputContent = fs.readFileSync(outFile, 'utf8');
+        } else {
+            outputContent = `import { StudyGuide } from './study_types';\n\n`;
+        }
 
         for (const guideObj of validGuides) {
             const { name, data } = guideObj;
@@ -217,11 +227,14 @@ async function main() {
                 });
             }
 
-            // Append to output content
-            outputContent += `export const ${name}_${lang.toUpperCase()}: StudyGuide = ${JSON.stringify(newGuide, null, 4)};\n\n`;
+            // Append to output content if not already present (simple check)
+            if (!outputContent.includes(`export const ${name}_${lang.toUpperCase()}`)) {
+                outputContent += `export const ${name}_${lang.toUpperCase()}: StudyGuide = ${JSON.stringify(newGuide, null, 4)};\n\n`;
+            } else {
+                console.log(`Skipping ${name} as it already exists in output file.`);
+            }
         }
 
-        const outFile = path.join(__dirname, '..', 'data', `study_content_${lang}.ts`);
         fs.writeFileSync(outFile, outputContent);
         console.log(`Saved to ${outFile}`);
     }

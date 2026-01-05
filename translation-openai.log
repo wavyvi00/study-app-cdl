@@ -1,0 +1,15 @@
+[23:28:19] ╔════════════════════════════════════════════════════════════╗
+[23:28:19] ║  OpenAI Translation Tool (gpt-4o-mini)                     ║
+[23:28:19] ║  Fast • Reliable • Cost-Efficient                         ║
+[23:28:19] ╚════════════════════════════════════════════════════════════╝
+[23:28:19] 
+[23:28:19] ✅ OpenAI client initialized
+[23:28:19] 📦 Loaded cache with 2967 translations
+[23:28:19] 📚 Loading questions from questions_school_bus.ts...
+[23:28:19]    Found 42 questions (Variable: SCHOOL_BUS_QUESTIONS)
+[23:28:19] 🌐 Target: Russian (ru)
+[23:28:19] 
+[23:31:05] 
+[23:31:05] ═══════════════════════════════════════════════════════════════
+[23:31:05] ✨ Done! 42 questions in 166.4s
+[23:31:05] 📄 Output: /Users/victorrodriguez/REPO/study-app-cdl/data/questions/ru/questions_school_bus.ts

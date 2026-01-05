@@ -48,6 +48,7 @@
     "@types/react": "~19.1.0",
     "@vitalets/google-translate-api": "^9.2.1",
     "babel-preset-expo": "^54.0.8",
+    "openai": "^6.15.0",
     "translatte": "^3.0.1",
     "typescript": "~5.9.2"
   },
