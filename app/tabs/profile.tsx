@@ -1,5 +1,5 @@
 
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platform, UIManager, LayoutAnimation, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platform, UIManager, LayoutAnimation, Image, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useCallback, useEffect } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -8,7 +8,8 @@ import { ACHIEVEMENTS, Achievement } from '../../data/achievements';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { restartApp } from '../../utils/restartApp';
 import { showAlert, showConfirm } from '../../utils/alerts';
-import { useLocalization } from '../../context/LocalizationContext'; // Added
+import { useLocalization } from '../../context/LocalizationContext';
+import { useSubscription } from '../../context/SubscriptionContext'; // Added
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -24,7 +25,8 @@ const AVATARS = [
 export default function ProfileScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    const { t } = useLocalization(); // Added
+    const { t } = useLocalization();
+    const { restore } = useSubscription(); // Added
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -63,7 +65,7 @@ export default function ProfileScreen() {
 
     const handleSaveProfile = async () => {
         if (!username.trim()) {
-            showAlert(t('usernameRequired'), t('enterUsername')); // Translated
+            showAlert(t('usernameRequired'), t('enterUsername'));
             setUsernameError(true);
             return;
         }
@@ -81,8 +83,17 @@ export default function ProfileScreen() {
         setIsEditing(false);
     };
 
-    const handleLogout = async () => {
-        const performLogout = async () => {
+    const handleRestore = async () => {
+        try {
+            await restore();
+            Alert.alert('Success', 'Purchases restored successfully!');
+        } catch (error: any) {
+            Alert.alert('Error', error.message || 'Restore failed');
+        }
+    };
+
+    const handleResetProfile = async () => {
+        const performReset = async () => {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
             const cleared = await resetAllAppData();
             setStats(cleared);
@@ -92,17 +103,17 @@ export default function ProfileScreen() {
             setIsEditing(false);
             const restarted = await restartApp();
             if (!restarted && Platform.OS !== 'web') {
-                showAlert(t('logout'), "Local data cleared. Please restart the app if anything looks stale."); // Partial translate
+                showAlert(t('resetProfileTitle'), "Local data cleared. Please restart the app if anything looks stale.");
             }
         };
 
         showConfirm({
-            title: t('logoutTitle'),
-            message: t('logoutMessage'),
-            confirmText: t('logout'),
+            title: t('resetProfileTitle'),
+            message: t('resetProfileMessage'),
+            confirmText: t('resetProfile'),
             cancelText: t('cancel'),
             isDestructive: true,
-            onConfirm: performLogout,
+            onConfirm: performReset,
         });
     };
 
@@ -120,12 +131,7 @@ export default function ProfileScreen() {
             <Text style={styles.label}>{t('chooseAvatar')}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.avatarList}>
                 {AVATARS.map((avatar) => {
-                    const avatarNames: Record<string, string> = {
-                        'truck': 'Semi truck',
-                        'bus': 'Bus',
-                        'road': 'Steering wheel',
-                        'user': 'Driver'
-                    };
+                    const label = t(`avatar_${avatar.id}` as any);
                     return (
                         <TouchableOpacity
                             key={avatar.id}
@@ -135,7 +141,7 @@ export default function ProfileScreen() {
                             ]}
                             onPress={() => setSelectedAvatar(avatar.id)}
                             accessibilityRole="radio"
-                            accessibilityLabel={avatarNames[avatar.id] || avatar.id}
+                            accessibilityLabel={label}
                             accessibilityState={{ checked: selectedAvatar === avatar.id }}
                             accessibilityHint="Double tap to select this avatar"
                         >
@@ -347,9 +353,15 @@ export default function ProfileScreen() {
 
 
             <View style={styles.footer}>
+                <Text style={styles.localStorageNoteText}>{t('localStorageNote')}</Text>
                 <Text style={styles.versionText}>v1.0.0</Text>
-                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                    <Text style={styles.logoutText}>{t('logout')}</Text>
+
+                <TouchableOpacity style={styles.restoreButtonFooter} onPress={handleRestore}>
+                    <Text style={styles.restoreTextFooter}>{t('restorePurchases')}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.resetProfileButton} onPress={handleResetProfile}>
+                    <Text style={styles.resetProfileText}>{t('resetProfile')}</Text>
                 </TouchableOpacity>
 
 
@@ -726,18 +738,35 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginBottom: 16,
     },
-    logoutButton: {
+    resetProfileButton: {
         paddingVertical: 8,
         paddingHorizontal: 16,
     },
-    logoutText: {
+    resetProfileText: {
         color: '#C62828',
         fontSize: 16,
         fontWeight: '600',
+    },
+    localStorageNoteText: {
+        color: '#999',
+        fontSize: 11,
+        textAlign: 'center',
+        marginBottom: 8,
+        fontStyle: 'italic',
     },
     avatarImageLarge: {
         width: 64,
         height: 64,
         borderRadius: 32,
+    },
+    restoreButtonFooter: {
+        marginBottom: 16,
+        padding: 8,
+    },
+    restoreTextFooter: {
+        color: '#1565C0',
+        fontSize: 14,
+        fontWeight: '600',
+        textDecorationLine: 'underline',
     },
 });

@@ -42,7 +42,7 @@ export default function QuizScreen() {
             await refreshSubscriptionStatus();
             if (!checkCanAccessQuiz()) {
                 // User has hit the free trial limit, redirect to paywall
-                router.replace('/paywall');
+                router.replace({ pathname: '/paywall', params: { from: 'quiz' } });
             }
         };
         checkAccess();
@@ -347,7 +347,7 @@ export default function QuizScreen() {
         } else {
             // Check Lockout immediately after incrementing
             if (!isPro && (questionsAnsweredTotal + 1) >= FREE_TRIAL_QUESTION_LIMIT) {
-                router.replace('/paywall');
+                router.replace({ pathname: '/paywall', params: { from: 'quiz' } });
                 return;
             }
 

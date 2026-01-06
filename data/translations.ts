@@ -58,9 +58,10 @@ export type TranslationKey =
     | 'exams'
     | 'achievements'
     | 'comingSoon'
-    | 'logout'
-    | 'logoutTitle'
-    | 'logoutMessage'
+    | 'resetProfile'
+    | 'resetProfileTitle'
+    | 'resetProfileMessage'
+    | 'localStorageNote'
     | 'usernameRequired'
     | 'enterUsername'
     | 'classADesc'
@@ -176,7 +177,12 @@ export type TranslationKey =
     | 'subscribed'
     | 'thanksForSubscribing'
     | 'subscriptionFailed'
-    | 'couldntSaveEmail';
+    | 'couldntSaveEmail'
+    // Avatar Accessibility
+    | 'avatar_truck'
+    | 'avatar_bus'
+    | 'avatar_road'
+    | 'avatar_user';
 
 export const translations: Record<Locale, Record<TranslationKey, string>> = {
     en: {
@@ -237,9 +243,10 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         exams: 'Exams',
         achievements: 'Achievements',
         comingSoon: 'Coming soon',
-        logout: 'Log Out',
-        logoutTitle: 'Logout',
-        logoutMessage: 'Log out and clear all local data on this device?',
+        resetProfile: 'Reset Profile',
+        resetProfileTitle: 'Reset Profile',
+        resetProfileMessage: 'This will clear your profile, progress, and achievements from this device. This cannot be undone.',
+        localStorageNote: 'Your profile and progress are stored locally on this device.',
         usernameRequired: 'Username Required',
         enterUsername: 'Please enter a username.',
         classADesc: 'Combination vehicles (truck + trailer).',
@@ -368,6 +375,11 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         thanksForSubscribing: "Thanks! We'll keep you updated.",
         subscriptionFailed: 'Subscription Failed',
         couldntSaveEmail: "Couldn't save your email. Please try again.",
+        // Avatar Accessibility
+        avatar_truck: 'Truck',
+        avatar_bus: 'Bus',
+        avatar_road: 'Steering Wheel',
+        avatar_user: 'Driver',
     },
     es: {
         appTitle: 'CENTRO DE ESTUDIO',
@@ -427,9 +439,10 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         exams: 'Exámenes',
         achievements: 'Logros',
         comingSoon: 'Próximamente',
-        logout: 'Cerrar Sesión',
-        logoutTitle: 'Cerrar Sesión',
-        logoutMessage: '¿Cerrar sesión y borrar datos locales?',
+        resetProfile: 'Restablecer Perfil',
+        resetProfileTitle: 'Restablecer Perfil',
+        resetProfileMessage: 'Esto borrará tu perfil, progreso y logros de este dispositivo. No se puede deshacer.',
+        localStorageNote: 'Tu perfil y progreso se guardan localmente en este dispositivo.',
         usernameRequired: 'Usuario Requerido',
         enterUsername: 'Por favor ingrese un usuario.',
         classADesc: 'Vehículos combinados (camión + remolque).',
@@ -558,6 +571,11 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         thanksForSubscribing: '¡Gracias! Te mantendremos actualizado.',
         subscriptionFailed: 'Suscripción Fallida',
         couldntSaveEmail: 'No se pudo guardar tu email. Por favor intenta de nuevo.',
+        // Avatar Accessibility
+        avatar_truck: 'Camión',
+        avatar_bus: 'Autobús',
+        avatar_road: 'Volante',
+        avatar_user: 'Conductor',
     },
     ru: {
         appTitle: 'УЧЕБНЫЙ ЦЕНТР',
@@ -617,9 +635,10 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         exams: 'Экзамены',
         achievements: 'Достижения',
         comingSoon: 'Скоро',
-        logout: 'Выйти',
-        logoutTitle: 'Выход',
-        logoutMessage: 'Выйти и очистить локальные данные?',
+        resetProfile: 'Сбросить профиль',
+        resetProfileTitle: 'Сбросить профиль',
+        resetProfileMessage: 'Это удалит ваш профиль, прогресс и достижения с этого устройства. Это действие нельзя отменить.',
+        localStorageNote: 'Ваш профиль и прогресс хранятся локально на этом устройстве.',
         usernameRequired: 'Нужно имя',
         enterUsername: 'Введите имя пользователя.',
         classADesc: 'Комбинированные ТС (тягач + прицеп).',
@@ -748,5 +767,10 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         thanksForSubscribing: 'Спасибо! Мы будем держать вас в курсе.',
         subscriptionFailed: 'Ошибка подписки',
         couldntSaveEmail: 'Не удалось сохранить ваш email. Попробуйте ещё раз.',
+        // Avatar Accessibility
+        avatar_truck: 'Грузовик',
+        avatar_bus: 'Автобус',
+        avatar_road: 'Руль',
+        avatar_user: 'Водитель',
     }
 };

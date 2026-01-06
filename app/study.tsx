@@ -393,13 +393,14 @@ const styles = StyleSheet.create({
         marginBottom: 4,
     },
     progressBarBg: {
-        width: 120,
-        height: 4,
-        borderRadius: 2,
+        flex: 1,
+        marginHorizontal: 12,
+        height: 6,
+        borderRadius: 3,
     },
     progressBarFill: {
         height: '100%',
-        borderRadius: 2,
+        borderRadius: 3,
     },
     backButton: {
         flexDirection: 'row',

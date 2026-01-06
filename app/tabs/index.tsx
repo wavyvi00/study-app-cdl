@@ -1,4 +1,4 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Switch, ActivityIndicator, KeyboardAvoidingView } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Switch, ActivityIndicator, KeyboardAvoidingView, Modal } from 'react-native';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -416,111 +416,151 @@ export default function TopicsScreen() {
                 </View>
             )}
 
-            {/* Menus (Moved to Root) */}
-            {isMenuOpen && (
-                <Card style={[styles.menuDropdown, { top: insets.top + 70, zIndex: 1000, elevation: 5 }]} padding="sm">
-                    <TouchableOpacity
-                        style={[styles.menuItem, { borderBottomColor: colors.border }]}
-                        onPress={() => {
-                            setIsMenuOpen(false);
-                            router.push('/privacy');
-                        }}
-                        accessibilityRole="button"
-                        accessibilityLabel="Privacy Policy"
-                    >
-                        <FontAwesome name="shield" size={16} color={colors.textSecondary} style={styles.menuIcon} />
-                        <Text style={[styles.menuText, { color: colors.text }]}>{t('privacyPolicy')}</Text>
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={[styles.menuItem, { borderBottomColor: colors.border }]}
-                        onPress={() => {
-                            setIsMenuOpen(false);
-                            router.push('/terms');
-                        }}
-                        accessibilityRole="button"
-                        accessibilityLabel="Terms of Service"
-                    >
-                        <FontAwesome name="file-text-o" size={16} color={colors.textSecondary} style={styles.menuIcon} />
-                        <Text style={[styles.menuText, { color: colors.text }]}>{t('termsOfService')}</Text>
-                    </TouchableOpacity>
-
-                    <View
-                        accessible={true}
-                        accessibilityRole="switch"
-                        accessibilityLabel="Theme mode"
-                        accessibilityValue={{ text: isDark ? 'Dark mode enabled' : 'Light mode enabled' }}
-                    >
-                        <TouchableOpacity
-                            style={[styles.menuItem, { borderBottomColor: colors.border }]}
-                            onPress={toggleTheme}
-                        >
-                            <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={colors.textSecondary} style={styles.menuIcon} />
-                            <Text style={[styles.menuText, { color: colors.text }]}>{t(isDark ? 'darkMode' : 'lightMode')}</Text>
-                            <View pointerEvents="none">
-                                <Switch
-                                    value={isDark}
-                                    onValueChange={toggleTheme}
-                                    trackColor={{ false: "#767577", true: colors.secondary }}
-                                    thumbColor={isDark ? colors.highlight : "#f4f3f4"}
-                                    style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
-                                />
-                            </View>
-                        </TouchableOpacity>
+            {/* Menus (Moved to Modal for better z-index/positioning) */}
+            <Modal
+                transparent
+                visible={isMenuOpen}
+                animationType="fade"
+                onRequestClose={() => setIsMenuOpen(false)}
+            >
+                <TouchableOpacity
+                    style={StyleSheet.absoluteFill}
+                    activeOpacity={1}
+                    onPress={() => setIsMenuOpen(false)}
+                >
+                    <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.2)' }]}>
+                        {/* Empty view for dimmed background */}
                     </View>
 
-                    <TouchableOpacity
-                        style={[styles.menuItem, { borderBottomWidth: 0 }]}
-                        onPress={handleResetProgress}
-                        accessibilityRole="button"
-                        accessibilityLabel="Reset Progress"
+                    <View
+                        style={[styles.menuDropdown, { top: insets.top + 60, zIndex: 1000, elevation: 5 }]}
+                        onStartShouldSetResponder={() => true}
                     >
-                        <FontAwesome name="refresh" size={16} color={colors.error} style={styles.menuIcon} />
-                        <Text style={[styles.menuText, { color: colors.error }]}>{t('resetProgress')}</Text>
-                    </TouchableOpacity>
-                </Card>
-            )}
+                        <Card padding="sm">
+                            <TouchableOpacity
+                                style={[styles.menuItem, { borderBottomColor: colors.border }]}
+                                onPress={() => {
+                                    setIsMenuOpen(false);
+                                    router.push('/privacy');
+                                }}
+                                accessibilityRole="button"
+                                accessibilityLabel="Privacy Policy"
+                            >
+                                <FontAwesome name="shield" size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                                <Text style={[styles.menuText, { color: colors.text }]}>{t('privacyPolicy')}</Text>
+                            </TouchableOpacity>
 
-            {isLangDropdownOpen && (
-                <Card style={[styles.menuDropdown, { top: insets.top + 70, right: 68, zIndex: 1000, elevation: 5 }]} padding="sm">
-                    <TouchableOpacity
-                        style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
-                        onPress={() => {
-                            setLocale('en');
-                            setIsLangDropdownOpen(false);
-                        }}
-                        accessibilityRole="button"
+                            <TouchableOpacity
+                                style={[styles.menuItem, { borderBottomColor: colors.border }]}
+                                onPress={() => {
+                                    setIsMenuOpen(false);
+                                    router.push('/terms');
+                                }}
+                                accessibilityRole="button"
+                                accessibilityLabel="Terms of Service"
+                            >
+                                <FontAwesome name="file-text-o" size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                                <Text style={[styles.menuText, { color: colors.text }]}>{t('termsOfService')}</Text>
+                            </TouchableOpacity>
+
+                            <View
+                                accessible={true}
+                                accessibilityRole="switch"
+                                accessibilityLabel="Theme mode"
+                                accessibilityValue={{ text: isDark ? 'Dark mode enabled' : 'Light mode enabled' }}
+                            >
+                                <TouchableOpacity
+                                    style={[styles.menuItem, { borderBottomColor: colors.border }]}
+                                    onPress={toggleTheme}
+                                >
+                                    <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                                    <Text style={[styles.menuText, { color: colors.text }]}>{t(isDark ? 'darkMode' : 'lightMode')}</Text>
+                                    <View pointerEvents="none">
+                                        <Switch
+                                            value={isDark}
+                                            onValueChange={toggleTheme}
+                                            trackColor={{ false: "#767577", true: colors.secondary }}
+                                            thumbColor={isDark ? colors.highlight : "#f4f3f4"}
+                                            style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+                                        />
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+
+                            <TouchableOpacity
+                                style={[styles.menuItem, { borderBottomWidth: 0 }]}
+                                onPress={handleResetProgress}
+                                accessibilityRole="button"
+                                accessibilityLabel="Reset Progress"
+                            >
+                                <FontAwesome name="refresh" size={16} color={colors.error} style={styles.menuIcon} />
+                                <Text style={[styles.menuText, { color: colors.error }]}>{t('resetProgress')}</Text>
+                            </TouchableOpacity>
+                        </Card>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
+
+            <Modal
+                transparent
+                visible={isLangDropdownOpen}
+                animationType="fade"
+                onRequestClose={() => setIsLangDropdownOpen(false)}
+            >
+                <TouchableOpacity
+                    style={StyleSheet.absoluteFill}
+                    activeOpacity={1}
+                    onPress={() => setIsLangDropdownOpen(false)}
+                >
+                    <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.2)' }]}>
+                        {/* Empty view for dimmed background */}
+                    </View>
+
+                    <View
+                        style={[styles.menuDropdown, { top: insets.top + 60, right: 68, width: 180, zIndex: 1000, elevation: 5 }]}
+                        onStartShouldSetResponder={() => true}
                     >
-                        <Text style={{ fontSize: 20, marginRight: 10 }}>🇺🇸</Text>
-                        <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>English</Text>
-                        {locale === 'en' && <FontAwesome name="check" size={14} color={colors.primary} />}
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
-                        onPress={() => {
-                            setLocale('es');
-                            setIsLangDropdownOpen(false);
-                        }}
-                        accessibilityRole="button"
-                    >
-                        <Text style={{ fontSize: 20, marginRight: 10 }}>🇪🇸</Text>
-                        <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Español</Text>
-                        {locale === 'es' && <FontAwesome name="check" size={14} color={colors.primary} />}
-                    </TouchableOpacity>
-                    <TouchableOpacity
-                        style={[styles.langMenuItem, { borderBottomWidth: 0 }]}
-                        onPress={() => {
-                            setLocale('ru');
-                            setIsLangDropdownOpen(false);
-                        }}
-                        accessibilityRole="button"
-                    >
-                        <Text style={{ fontSize: 20, marginRight: 10 }}>🇷🇺</Text>
-                        <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Русский</Text>
-                        {locale === 'ru' && <FontAwesome name="check" size={14} color={colors.primary} />}
-                    </TouchableOpacity>
-                </Card>
-            )}
+                        <Card padding="sm">
+                            <TouchableOpacity
+                                style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
+                                onPress={() => {
+                                    setLocale('en');
+                                    setIsLangDropdownOpen(false);
+                                }}
+                                accessibilityRole="button"
+                            >
+                                <Text style={{ fontSize: 20, marginRight: 10 }}>🇺🇸</Text>
+                                <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>English</Text>
+                                {locale === 'en' && <FontAwesome name="check" size={14} color={colors.primary} />}
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
+                                onPress={() => {
+                                    setLocale('es');
+                                    setIsLangDropdownOpen(false);
+                                }}
+                                accessibilityRole="button"
+                            >
+                                <Text style={{ fontSize: 20, marginRight: 10 }}>🇪🇸</Text>
+                                <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Español</Text>
+                                {locale === 'es' && <FontAwesome name="check" size={14} color={colors.primary} />}
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.langMenuItem, { borderBottomWidth: 0 }]}
+                                onPress={() => {
+                                    setLocale('ru');
+                                    setIsLangDropdownOpen(false);
+                                }}
+                                accessibilityRole="button"
+                            >
+                                <Text style={{ fontSize: 20, marginRight: 10 }}>🇷🇺</Text>
+                                <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Русский</Text>
+                                {locale === 'ru' && <FontAwesome name="check" size={14} color={colors.primary} />}
+                            </TouchableOpacity>
+                        </Card>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
 
             {/* Email Opt-In Modal */}
             <EmailOptInModal

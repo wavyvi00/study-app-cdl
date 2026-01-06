@@ -8,9 +8,10 @@ import {
     Platform,
     Alert,
     StatusBar, // Added StatusBar
+    Linking, // Added Linking
 } from 'react-native';
 import { PurchasesPackage } from 'react-native-purchases'; // Added import
-import { useRouter } from 'expo-router';
+import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -83,6 +84,19 @@ export default function PaywallScreen() {
         { icon: 'language' as const, text: t('allLanguages') },
     ];
 
+    const { from } = useLocalSearchParams();
+
+    // ...
+
+    const handleClose = () => {
+        if (from === 'quiz') {
+            // Prevent loop if coming from a forced redirect in Quiz
+            router.navigate('/(tabs)');
+        } else {
+            router.back();
+        }
+    };
+
     return (
         <View style={[styles.container, { backgroundColor: '#0f172a' }]}>
             <StatusBar barStyle="light-content" />
@@ -99,7 +113,7 @@ export default function PaywallScreen() {
 
             <View style={[styles.header, { paddingTop: insets.top + 10, paddingBottom: 10 }]}>
                 <TouchableOpacity
-                    onPress={() => router.back()}
+                    onPress={handleClose}
                     style={styles.closeButton}
                     accessibilityLabel={t('close')}
                 >
@@ -197,6 +211,23 @@ export default function PaywallScreen() {
                         {t('restorePurchases')}
                     </Text>
                 </TouchableOpacity>
+
+                {/* Legal Links */}
+                <View style={[styles.legalContainer, { paddingHorizontal: spacing.lg }]}>
+                    <TouchableOpacity
+                        onPress={() => Linking.openURL('https://sites.google.com/view/cdlzeropermittest2026/home')}
+                        style={{ padding: 8 }}
+                    >
+                        <Text style={styles.legalLink}>{t('privacyPolicy')}</Text>
+                    </TouchableOpacity>
+                    <Text style={styles.legalDivider}>|</Text>
+                    <TouchableOpacity
+                        onPress={() => Linking.openURL('https://sites.google.com/view/cdlzerotos/home')}
+                        style={{ padding: 8 }}
+                    >
+                        <Text style={styles.legalLink}>{t('termsOfService')}</Text>
+                    </TouchableOpacity>
+                </View>
 
                 {/* Terms */}
                 <Text style={[styles.termsText, { color: colors.textSecondary, paddingHorizontal: spacing.lg }]}>
@@ -362,11 +393,27 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: 'rgba(255,255,255,0.8)',
     },
+    legalContainer: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+    legalLink: {
+        fontSize: 11,
+        color: 'rgba(255,255,255,0.6)',
+        textDecorationLine: 'underline',
+    },
+    legalDivider: {
+        fontSize: 12,
+        color: 'rgba(255,255,255,0.4)',
+        marginHorizontal: 4,
+    },
     termsText: {
         fontSize: 10,
         textAlign: 'center',
         lineHeight: 14,
-        marginTop: 12,
+        marginTop: 8,
         color: 'rgba(255,255,255,0.4)',
     },
 });
