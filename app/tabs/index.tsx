@@ -78,16 +78,16 @@ export default function TopicsScreen() {
             let timeoutId: NodeJS.Timeout | null = null;
 
             Promise.all([getPendingEmails(), isSubscriptionDismissed()]).then(([emails, dismissed]) => {
-                console.log('[EmailPopup] Check:', { pendingEmails: emails.length, dismissed });
+                if (__DEV__) console.log('[EmailPopup] Check:', { pendingEmails: emails.length, dismissed });
                 if (emails.length === 0 && !dismissed) {
-                    console.log('[EmailPopup] Scheduling popup in 3s...');
+                    if (__DEV__) console.log('[EmailPopup] Scheduling popup in 3s...');
                     // Delay popup by 3 seconds for natural timing
                     timeoutId = setTimeout(() => {
-                        console.log('[EmailPopup] Showing popup now');
+                        if (__DEV__) console.log('[EmailPopup] Showing popup now');
                         setShowSubscriptionPopup(true);
                     }, 3000);
                 } else {
-                    console.log('[EmailPopup] Popup skipped (already dismissed or email exists)');
+                    if (__DEV__) console.log('[EmailPopup] Popup skipped (already dismissed or email exists)');
                 }
             });
 

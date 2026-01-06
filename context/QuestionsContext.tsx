@@ -57,7 +57,7 @@ export function QuestionsProvider({ children }: { children: ReactNode }) {
             const questions = getQuestionsByLocale(locale);
             if (__DEV__) {
                 const count = Object.values(questions).flat().length;
-                console.log(`Loaded ${count} pre-translated questions for locale: ${locale}`);
+                if (__DEV__) console.log(`Loaded ${count} pre-translated questions for locale: ${locale}`);
             }
             return questions;
         } catch (error) {

@@ -253,7 +253,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
             const { saveStats } = await import('../data/stats');
             await saveStats({ ...stats, questionsAnsweredTotal: 0 });
             await loadSubscriptionState();
-            console.log('[Subscription] Trial count reset');
+            if (__DEV__) console.log('[Subscription] Trial count reset');
         } catch (error) {
             console.error('[Subscription] Failed to reset trial:', error);
         }

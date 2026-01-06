@@ -264,7 +264,7 @@ export default function QuizScreen() {
                 topicId
             ).then(result => {
                 if (__DEV__) {
-                    console.log('Stats updated:', result.stats);
+
                 }
                 if (result.newAchievements.length > 0) {
                     setRecentAchievements(result.newAchievements);
