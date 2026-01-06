@@ -1,4 +1,5 @@
 import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Switch, ActivityIndicator, KeyboardAvoidingView, Modal } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
@@ -40,6 +41,31 @@ export default function TopicsScreen() {
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
     const [infoTopic, setInfoTopic] = useState<Topic | null>(null);
     const [showSubscriptionPopup, setShowSubscriptionPopup] = useState(false);
+    const [isBannerDismissed, setIsBannerDismissed] = useState(false);
+
+    const BANNER_STORAGE_KEY = 'study_path_banner_dismissed_v1';
+
+    useEffect(() => {
+        AsyncStorage.getItem(BANNER_STORAGE_KEY).then(val => {
+            if (val === 'true') setIsBannerDismissed(true);
+        });
+    }, []);
+
+    const dismissBanner = async () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setIsBannerDismissed(true);
+        await AsyncStorage.setItem(BANNER_STORAGE_KEY, 'true');
+    };
+
+    const isTopicRecommended = (topicId: string, currentClass?: 'Class A' | 'Class B') => {
+        const cls = currentClass || 'Class A';
+        if (cls === 'Class A') {
+            return ['general_knowledge', 'combinations', 'air_brakes'].includes(topicId);
+        } else {
+            // Class B
+            return ['general_knowledge', 'air_brakes'].includes(topicId);
+        }
+    };
 
     // ... (rest of component logic remains same until return)
 
@@ -223,6 +249,56 @@ export default function TopicsScreen() {
             </LinearGradient>
 
             <ScrollView contentContainerStyle={[styles.scrollContent, { padding: spacing.lg }]}>
+                {/* Setup / Recommendation Banner */}
+                {!stats.username ? (
+                    <TouchableOpacity
+                        style={[styles.studyPathBanner, { backgroundColor: isDark ? 'rgba(255, 193, 7, 0.15)' : '#FFF8E1', borderColor: isDark ? 'rgba(255, 193, 7, 0.3)' : '#FFECB3' }]}
+                        onPress={() => router.push('/tabs/profile')}
+                        activeOpacity={0.8}
+                        accessibilityRole="button"
+                        accessibilityLabel={t('setupProfile')}
+                    >
+                        <View style={{ flexDirection: 'row', alignItems: 'flex-start', flex: 1 }}>
+                            <View style={[styles.bannerIconBox, { backgroundColor: isDark ? 'rgba(255, 193, 7, 0.2)' : '#FFECB3' }]}>
+                                <FontAwesome name="user-plus" size={16} color="#F9A825" />
+                            </View>
+                            <View style={{ marginLeft: 12, flex: 1 }}>
+                                <Text style={[styles.bannerTitle, { color: colors.text }]}>
+                                    {t('setupProfileBannerTitle')}
+                                </Text>
+                                <Text style={[styles.bannerDesc, { color: colors.textSecondary }]}>
+                                    {t('setupProfileBannerDesc')}
+                                </Text>
+                            </View>
+                        </View>
+                        <FontAwesome name="chevron-right" size={14} color={colors.textSecondary} />
+                    </TouchableOpacity>
+                ) : !isBannerDismissed && (
+                    <View style={[styles.studyPathBanner, { backgroundColor: isDark ? 'rgba(33, 150, 243, 0.15)' : '#E3F2FD', borderColor: isDark ? 'rgba(33, 150, 243, 0.3)' : '#BBDEFB' }]}>
+                        <View style={{ flexDirection: 'row', alignItems: 'flex-start', flex: 1 }}>
+                            <View style={[styles.bannerIconBox, { backgroundColor: isDark ? 'rgba(33, 150, 243, 0.2)' : '#BBDEFB' }]}>
+                                <FontAwesome name="map-signs" size={16} color={colors.primary} />
+                            </View>
+                            <View style={{ marginLeft: 12, flex: 1 }}>
+                                <Text style={[styles.bannerTitle, { color: colors.text }]}>
+                                    {t('studyPathBannerTitle').replace('{class}', stats.cdlClass || 'Class A')}
+                                </Text>
+                                <Text style={[styles.bannerDesc, { color: colors.textSecondary }]}>
+                                    {t(stats.cdlClass === 'Class B' ? 'studyPathBannerDesc_ClassB' : 'studyPathBannerDesc_ClassA')}
+                                </Text>
+                            </View>
+                        </View>
+                        <TouchableOpacity
+                            onPress={dismissBanner}
+                            style={{ padding: 4, marginLeft: 8 }}
+                            accessibilityRole="button"
+                            accessibilityLabel={t('dismiss')}
+                        >
+                            <FontAwesome name="times" size={14} color={colors.textSecondary} />
+                        </TouchableOpacity>
+                    </View>
+                )}
+
                 <StatsOverview
                     stats={selectedTopic ? (stats.topicStats[selectedTopic.id] || INITIAL_TOPIC_STATS) : stats}
                     title={selectedTopic ? `${selectedTopic.title} - ${t('yourProgress')}` : t('yourProgress')}
@@ -302,7 +378,15 @@ export default function TopicsScreen() {
                                     </View>
                                     <View style={{ marginLeft: spacing.md, flex: 1 }}>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <Text style={[styles.topicCardTitle, { color: colors.text, fontSize: typography.lg }]}>{selectedTopic.title}</Text>
+                                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                                                <Text style={[styles.topicCardTitle, { color: colors.text, fontSize: typography.lg }]}>{selectedTopic.title}</Text>
+                                                {isTopicRecommended(selectedTopic.id, stats.cdlClass) && (
+                                                    <View style={[styles.recommendedBadge, { backgroundColor: isDark ? 'rgba(76, 175, 80, 0.15)' : '#E8F5E9' }]}>
+                                                        <FontAwesome name="star" size={10} color="#4CAF50" style={{ marginRight: 4 }} />
+                                                        <Text style={{ fontSize: 10, fontWeight: '700', color: '#2E7D32' }}>{t('recommendedBadge')}</Text>
+                                                    </View>
+                                                )}
+                                            </View>
                                             <TouchableOpacity
                                                 onPress={() => setInfoTopic(selectedTopic)}
                                                 style={{ padding: 12, minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}
@@ -646,7 +730,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     scrollContent: {
-        paddingTop: 30,
+        paddingTop: 16,
     },
     sectionTitle: {
         fontWeight: '700',
@@ -721,5 +805,36 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 12,
         borderBottomWidth: 1,
+    },
+    studyPathBanner: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 16,
+        borderRadius: 16,
+        marginBottom: 16,
+        borderWidth: 1,
+    },
+    bannerIconBox: {
+        width: 32,
+        height: 32,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    bannerTitle: {
+        fontSize: 14,
+        fontWeight: '700',
+        marginBottom: 2,
+    },
+    bannerDesc: {
+        fontSize: 12,
+        lineHeight: 16,
+    },
+    recommendedBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
     },
 });

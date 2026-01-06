@@ -69,7 +69,16 @@ export type TranslationKey =
     | 'yourMilestones'
     | 'roadToSuccess'
     | 'milestonesReached'
+    | 'milestonesReached'
     | 'of'
+    | 'studyPathBannerTitle'
+    | 'studyPathBannerDesc_ClassA'
+    | 'studyPathBannerDesc_ClassB'
+    | 'recommendedBadge'
+    | 'dismiss'
+    | 'setupProfileBannerTitle'
+    | 'setupProfileBannerDesc'
+    | 'setupProfile'
     // Achievement Keys
     | 'achievement_first_steps_title' | 'achievement_first_steps_desc'
     | 'achievement_dedicated_learner_title' | 'achievement_dedicated_learner_desc'
@@ -250,11 +259,19 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         usernameRequired: 'Username Required',
         enterUsername: 'Please enter a username.',
         classADesc: 'Combination vehicles (truck + trailer).',
-        classBDesc: 'Single heavy vehicles (straight trucks, buses).',
-        yourMilestones: 'YOUR MILESTONES',
-        roadToSuccess: 'ROAD TO SUCCESS',
-        milestonesReached: 'MILESTONES REACHED',
-        of: 'OF',
+        classBDesc: 'Heavy straight vehicles (large buses, dump trucks).',
+        yourMilestones: 'Your Milestones',
+        roadToSuccess: 'Road to Success',
+        milestonesReached: 'Milestones Reached',
+        of: 'of',
+        studyPathBannerTitle: 'Recommended for {class}',
+        studyPathBannerDesc_ClassA: 'Focus on General Knowledge, Air Brakes, and Combinations.',
+        studyPathBannerDesc_ClassB: 'Focus on General Knowledge and Air Brakes.',
+        recommendedBadge: 'Recommended',
+        dismiss: 'Dismiss',
+        setupProfileBannerTitle: 'Customize Your Study Path',
+        setupProfileBannerDesc: 'Select your CDL Class to get personalized recommendations.',
+        setupProfile: 'Setup Profile',
         // Achievement Translations
         achievement_first_steps_title: 'First Steps',
         achievement_first_steps_desc: 'Answer 10 questions',
@@ -446,11 +463,19 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         usernameRequired: 'Usuario Requerido',
         enterUsername: 'Por favor ingrese un usuario.',
         classADesc: 'Vehículos combinados (camión + remolque).',
-        classBDesc: 'Vehículos pesados simples (rectos/autobús).',
-        yourMilestones: 'TUS HITOS',
-        roadToSuccess: 'CAMINO AL ÉXITO',
-        milestonesReached: 'HITOS ALCANZADOS',
-        of: 'DE',
+        classBDesc: 'Vehículos pesados rectos (autobuses grandes, camiones de volteo).',
+        yourMilestones: 'Tus Hitos',
+        roadToSuccess: 'Camino al Éxito',
+        milestonesReached: 'Hitos Alcanzados',
+        of: 'de',
+        studyPathBannerTitle: 'Recomendado para {class}',
+        studyPathBannerDesc_ClassA: 'Enfócate en Conocimiento General, Frenos de Aire y Combinados.',
+        studyPathBannerDesc_ClassB: 'Enfócate en Conocimiento General y Frenos de Aire.',
+        recommendedBadge: 'Recomendado',
+        dismiss: 'Omitir',
+        setupProfileBannerTitle: 'Personaliza tu Ruta de Estudio',
+        setupProfileBannerDesc: 'Selecciona tu Clase CDL para obtener recomendaciones personalizadas.',
+        setupProfile: 'Crear Perfil',
         // Achievement Translations
         achievement_first_steps_title: 'Primeros Pasos',
         achievement_first_steps_desc: 'Responde 10 preguntas',
@@ -642,11 +667,19 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         usernameRequired: 'Нужно имя',
         enterUsername: 'Введите имя пользователя.',
         classADesc: 'Комбинированные ТС (тягач + прицеп).',
-        classBDesc: 'Одиночные тяжелые ТС (грузовик/автобус).',
-        yourMilestones: 'ВАШИ ЭТАПЫ',
-        roadToSuccess: 'ПУТЬ К УСПЕХУ',
-        milestonesReached: 'ДОСТИГНУТО',
-        of: 'ИЗ',
+        classBDesc: 'Тяжелые прямые ТС (большие автобусы, самосвалы).',
+        yourMilestones: 'Ваши этапы',
+        roadToSuccess: 'Путь к успеху',
+        milestonesReached: 'Этапов достигнуто',
+        of: 'из',
+        studyPathBannerTitle: 'Рекомендуется для {class}',
+        studyPathBannerDesc_ClassA: 'Важно: Общие знания, Пневмотормоза, Комбинации.',
+        studyPathBannerDesc_ClassB: 'Важно: Общие знания, Пневмотормоза.',
+        recommendedBadge: 'Рекомендуется',
+        dismiss: 'Скрыть',
+        setupProfileBannerTitle: 'Настройте свой план обучения',
+        setupProfileBannerDesc: 'Выберите класс CDL для персональных рекомендаций.',
+        setupProfile: 'Создать профиль',
         // Achievement Translations
         achievement_first_steps_title: 'Первые шаги',
         achievement_first_steps_desc: 'Ответьте на 10 вопросов',
