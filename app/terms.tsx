@@ -5,7 +5,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
 import { useLocalization } from '../context/LocalizationContext';
 
-const TERMS_URL = 'https://sites.google.com/view/cdlzeropermittest2026/terms';
+const TERMS_URL = 'https://sites.google.com/view/cdlzerotos/home';
 
 export default function TermsScreen() {
     const router = useRouter();
