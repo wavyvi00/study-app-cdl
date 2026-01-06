@@ -9,7 +9,7 @@ const KEYS = {
     android: process.env.EXPO_PUBLIC_REVENUECAT_API_KEY,
 };
 
-const ENTITLEMENT_ID = 'pro'; // The entitlement identifier in RevenueCat dashboard
+const ENTITLEMENT_ID = 'CDL ZERO Pro'; // The entitlement identifier in RevenueCat dashboard
 
 export interface SubscriptionStatus {
     isPro: boolean;
@@ -91,13 +91,20 @@ export const purchasePackage = async (pack: PurchasesPackage): Promise<Subscript
             expirationDate: entitlement?.expirationDate || null,
         };
     } catch (error: any) {
-        if (!error.userCancelled) {
+        // RevenueCat uses different ways to indicate cancellation
+        const isCancelled =
+            error.userCancelled === true ||
+            error.code === 'PURCHASE_CANCELLED' ||
+            error.code === 1 || // PurchaseCancelledError code
+            error.message?.includes('cancelled') ||
+            error.message?.includes('canceled');
+
+        if (!isCancelled) {
             console.error('Purchase error:', error);
             throw error; // Re-throw to handle in UI
-        } else {
-            // User cancelled, just re-fetch current status
-            return getSubscriptionStatus();
         }
+        // User cancelled, silently return current status
+        return getSubscriptionStatus();
     }
 };
 

@@ -34,6 +34,15 @@ export default function PaywallScreen() {
 
     const { PRICING } = APP_CONFIG;
 
+    // Safe navigation helper to prevent GO_BACK warnings
+    const safeGoBack = () => {
+        if (router.canGoBack()) {
+            router.back();
+        } else {
+            router.replace('/(tabs)');
+        }
+    };
+
     const handlePurchase = async (productId: string) => {
         try {
             if (!offerings && !__DEV__) {
@@ -58,7 +67,7 @@ export default function PaywallScreen() {
             await purchase(packageToBuy);
             // On success, the context updates state and we can close or navigate away
             // The useEffect in the context or the redirect logic elsewhere handles the rest
-            router.back();
+            safeGoBack();
 
         } catch (error: any) {
             if (!error.userCancelled) {
@@ -71,7 +80,7 @@ export default function PaywallScreen() {
         try {
             await restore();
             Alert.alert('Success', 'Purchases restored successfully!');
-            router.back();
+            safeGoBack();
         } catch (error: any) {
             Alert.alert('Error', error.message || 'Restore failed');
         }
@@ -93,7 +102,7 @@ export default function PaywallScreen() {
             // Prevent loop if coming from a forced redirect in Quiz
             router.navigate('/(tabs)');
         } else {
-            router.back();
+            safeGoBack();
         }
     };
 

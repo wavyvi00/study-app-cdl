@@ -232,8 +232,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
     }, [state.isPro]);
 
     const refreshSubscriptionStatus = useCallback(async (): Promise<void> => {
-        // TODO: When RevenueCat is integrated, check subscription status
-        // For now, just reload local state
+        // Reload local state and RevenueCat status
         await loadSubscriptionState();
     }, []);
 
