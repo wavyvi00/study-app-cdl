@@ -8,6 +8,7 @@
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
+    "jsEngine": "jsc",
     "splash": {
       "image": "./assets/splash-icon.png",
       "resizeMode": "contain",
@@ -16,11 +17,18 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.victorrodriguez.cdlzero",
-      "buildNumber": "1",
+      "buildNumber": "2",
       "config": {
         "usesNonExemptEncryption": false
       },
       "infoPlist": {
+        "NSAppTransportSecurity": {
+          "NSAllowsArbitraryLoads": true
+        },
+        "NSUserTrackingUsageDescription": "This app uses data to improve the experience and provide personalized study recommendations.",
+        "NSCameraUsageDescription": "Used for scanning documents and updating your profile picture.",
+        "NSPhotoLibraryUsageDescription": "Used to select images for your profile or study notes.",
+        "NSMicrophoneUsageDescription": "Used for voice commands and study features.",
         "CFBundleDisplayName": "CDL Zero",
         "CFBundleShortVersionString": "2.0.0",
         "ITSAppUsesNonExemptEncryption": false,

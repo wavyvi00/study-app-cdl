@@ -71,12 +71,38 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
     const [isPaywallVisible, setPaywallVisible] = useState(false);
 
     // Initial setup
+    // Initial setup with delay to prevent launch crash
     useEffect(() => {
+        let isMounted = true;
         const init = async () => {
-            await initRevenueCat();
-            await loadSubscriptionState();
+            try {
+                // Delay initialization to ensure first screen renders/settles
+                await new Promise(resolve => setTimeout(resolve, 2000));
+
+                if (!isMounted) return;
+
+                // Wrap in try/catch to ensure app never crashes on boot
+                try {
+                    await initRevenueCat();
+                } catch (e) {
+                    console.error('[Subscription] RevenueCat init failed:', e);
+                }
+
+                if (!isMounted) return;
+
+                try {
+                    await loadSubscriptionState();
+                } catch (e) {
+                    console.error('[Subscription] Load state failed:', e);
+                }
+            } catch (error) {
+                console.error('[Subscription] Fatal init error:', error);
+            }
         };
+
         init();
+
+        return () => { isMounted = false; };
     }, []);
 
     const loadSubscriptionState = async () => {

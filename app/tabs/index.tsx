@@ -79,6 +79,8 @@ export default function TopicsScreen() {
 
             Promise.all([getPendingEmails(), isSubscriptionDismissed()]).then(([emails, dismissed]) => {
                 if (__DEV__) console.log('[EmailPopup] Check:', { pendingEmails: emails.length, dismissed });
+                // Temporarily disabled auto-popup on launch to prevent crashes/bad UX
+                /*
                 if (emails.length === 0 && !dismissed) {
                     if (__DEV__) console.log('[EmailPopup] Scheduling popup in 3s...');
                     // Delay popup by 3 seconds for natural timing
@@ -89,6 +91,7 @@ export default function TopicsScreen() {
                 } else {
                     if (__DEV__) console.log('[EmailPopup] Popup skipped (already dismissed or email exists)');
                 }
+                */
             });
 
             // Cleanup timeout on blur

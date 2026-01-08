@@ -68,7 +68,15 @@ export default function RootLayout() {
         // SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     });
     useEffect(() => {
-        startEmailSync();
+        // Delay background sync to not interfere with startup
+        const timer = setTimeout(() => {
+            try {
+                startEmailSync();
+            } catch (e) {
+                console.error('Email sync init error:', e);
+            }
+        }, 5000);
+        return () => clearTimeout(timer);
     }, []);
 
     return (
