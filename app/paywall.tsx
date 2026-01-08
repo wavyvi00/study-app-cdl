@@ -9,6 +9,7 @@ import {
     Alert,
     StatusBar, // Added StatusBar
     Linking, // Added Linking
+    ActivityIndicator,
 } from 'react-native';
 import { PurchasesPackage } from 'react-native-purchases'; // Added import
 import { useRouter, useLocalSearchParams } from 'expo-router';
@@ -18,6 +19,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
 import { useLocalization } from '../context/LocalizationContext';
 import { useSubscription } from '../context/SubscriptionContext';
+import { useWebAuth } from '../context/WebAuthContext';
 import { APP_CONFIG } from '../constants/appConfig';
 import Button from '../components/ui/Button';
 import { BackgroundShapes } from '../components/ui/BackgroundShapes';
@@ -32,6 +34,9 @@ export default function PaywallScreen() {
     const { t } = useLocalization();
     const { questionsAnsweredTotal, refreshSubscriptionStatus, purchase, restore, offerings, isLoading } = useSubscription();
 
+    // Web auth - only used on web platform
+    const webAuth = useWebAuth();
+
     const { PRICING } = APP_CONFIG;
 
     // Safe navigation helper to prevent GO_BACK warnings
@@ -39,23 +44,60 @@ export default function PaywallScreen() {
         if (router.canGoBack()) {
             router.back();
         } else {
-            router.replace('/(tabs)');
+            router.replace('/tabs');
         }
     };
 
     const handlePurchase = async (productId: string) => {
         try {
+            console.log('[Paywall] handlePurchase called with productId:', productId);
+            console.log('[Paywall] Available offerings:', offerings);
+            console.log('[Paywall] Available packages:', offerings?.availablePackages?.map((pkg: any) => ({
+                identifier: pkg.identifier,
+                productIdentifier: pkg.product?.identifier,
+                rcBillingProduct: pkg.rcBillingProduct?.identifier,
+            })));
+
             if (!offerings && !__DEV__) {
                 alert(t('errorLoadingProducts'));
                 return;
             }
 
-            // Find package matching the productId (either Store ID or RC Identifier)
-            const packageToBuy = offerings?.availablePackages.find(
-                (pkg: PurchasesPackage) => pkg.product.identifier === productId || pkg.identifier === productId
+            // Helper to get product identifier from package (works for both mobile and web SDKs)
+            const getProductId = (pkg: any): string => {
+                // Web SDK uses rcBillingProduct, mobile uses product
+                return pkg.rcBillingProduct?.identifier || pkg.product?.identifier || '';
+            };
+
+            // Flexible package matching - try multiple strategies
+            let packageToBuy = offerings?.availablePackages.find(
+                (pkg: PurchasesPackage) => getProductId(pkg) === productId || pkg.identifier === productId
             );
 
+            // If exact match fails, try matching by package type
             if (!packageToBuy) {
+                const packageTypeMap: Record<string, string[]> = {
+                    '$rc_monthly': ['$rc:monthly', 'monthly', 'MONTHLY'],
+                    '$rc_annual': ['$rc:annual', 'annual', 'ANNUAL', 'yearly', 'YEARLY'],
+                    '$rc_lifetime': ['$rc:lifetime', 'lifetime', 'LIFETIME'],
+                };
+
+                const alternateIds = packageTypeMap[productId] || [];
+                console.log('[Paywall] Trying alternate IDs:', alternateIds);
+
+                packageToBuy = offerings?.availablePackages.find((pkg: PurchasesPackage) => {
+                    const pkgId = (pkg.identifier || '').toLowerCase();
+                    const productPkgId = getProductId(pkg).toLowerCase();
+                    return alternateIds.some(alt =>
+                        pkgId.includes(alt.toLowerCase()) || productPkgId.includes(alt.toLowerCase())
+                    );
+                });
+            }
+
+            console.log('[Paywall] Package found:', packageToBuy);
+
+            if (!packageToBuy) {
+                console.error('[Paywall] No package found for productId:', productId);
                 if (__DEV__) {
                     Alert.alert('Error', 'Dev Mode: Product not found in RevenueCat. Setup required.\nID: ' + productId);
                 } else {
@@ -64,12 +106,13 @@ export default function PaywallScreen() {
                 return;
             }
 
+            console.log('[Paywall] Initiating purchase for package:', packageToBuy.identifier);
             await purchase(packageToBuy);
             // On success, the context updates state and we can close or navigate away
-            // The useEffect in the context or the redirect logic elsewhere handles the rest
             safeGoBack();
 
         } catch (error: any) {
+            console.error('[Paywall] Purchase error:', error);
             if (!error.userCancelled) {
                 Alert.alert('Error', error.message || 'Purchase failed');
             }
@@ -100,11 +143,86 @@ export default function PaywallScreen() {
     const handleClose = () => {
         if (from === 'quiz') {
             // Prevent loop if coming from a forced redirect in Quiz
-            router.navigate('/(tabs)');
+            router.navigate('/tabs');
         } else {
             safeGoBack();
         }
     };
+
+    // On Web, require authentication before showing purchase options
+    if (Platform.OS === 'web' && webAuth && !webAuth.isAuthenticated) {
+        // Show login prompt for web users
+        if (webAuth.isLoading) {
+            return (
+                <View style={[styles.container, { backgroundColor: '#0f172a', justifyContent: 'center', alignItems: 'center' }]}>
+                    <LinearGradient
+                        colors={['#0a0a23', '#1a1a3a', '#0000a3']}
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 1 }}
+                        style={StyleSheet.absoluteFill}
+                    />
+                    <ActivityIndicator size="large" color="#38bdf8" />
+                </View>
+            );
+        }
+
+        return (
+            <View style={[styles.container, { backgroundColor: '#0f172a' }]}>
+                <StatusBar barStyle="light-content" />
+                <LinearGradient
+                    colors={['#0a0a23', '#1a1a3a', '#0000a3']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={StyleSheet.absoluteFill}
+                />
+                <BackgroundShapes width={width} height={height} />
+
+                <View style={[styles.header, { paddingTop: insets.top + 10, paddingBottom: 10 }]}>
+                    <TouchableOpacity
+                        onPress={handleClose}
+                        style={styles.closeButton}
+                        accessibilityLabel={t('close')}
+                    >
+                        <FontAwesome name="times" size={24} color="rgba(255,255,255,0.7)" />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 24 }}>
+                    <PremiumIcon />
+                    <Text style={[styles.headerTitle, { marginTop: 16, fontSize: 26 }]}>
+                        You've reached your free limit
+                    </Text>
+                    <Text style={[styles.headerSubtitle, { marginTop: 12, fontSize: 16, textAlign: 'center', maxWidth: 320 }]}>
+                        You've completed your 50 free questions! Create an account to save your progress and unlock unlimited access.
+                    </Text>
+
+                    <TouchableOpacity
+                        style={{
+                            backgroundColor: '#38bdf8',
+                            paddingHorizontal: 32,
+                            paddingVertical: 16,
+                            borderRadius: 12,
+                            marginTop: 32,
+                        }}
+                        onPress={() => router.push('/auth/signup')}
+                    >
+                        <Text style={{ color: '#fff', fontSize: 18, fontWeight: '600' }}>
+                            Create Account
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={{ marginTop: 16, padding: 8 }}
+                        onPress={() => router.push('/auth/login')}
+                    >
+                        <Text style={{ color: '#38bdf8', fontSize: 14 }}>
+                            Already have an account? Sign in
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        );
+    }
 
     return (
         <View style={[styles.container, { backgroundColor: '#0f172a' }]}>

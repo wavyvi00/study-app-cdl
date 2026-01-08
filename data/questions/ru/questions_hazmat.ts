@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const HAZMAT_QUESTIONS: Question[] = [
     { id: 'hm_1', text: `Транспортное средство, обозначенное для опасных материалов, должно иметь знаки на ___ сторонах.`, options: [`2`, `3`, `4`, `5`], correctIndex: 2, explanation: `Плакаты должны быть на всех 4 сторонах: спереди, сзади и по обеим сторонам.` },

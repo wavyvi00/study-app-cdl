@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const AIR_BRAKES_QUESTIONS: Question[] = [
     { id: 'ab_1', text: `¿Cuál de los siguientes es aceptable encontrar en el sistema de frenos de aire?`, options: [`El petróleo`, `Agua`, `Aire`, `Todo lo anterior`], correctIndex: 2, explanation: `El sistema de frenos por aire utiliza aire comprimido para hacer funcionar los frenos. Agua y aceite son contaminantes.` },

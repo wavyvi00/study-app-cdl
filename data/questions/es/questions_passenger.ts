@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const PASSENGER_QUESTIONS: Question[] = [
     { id: 'pass_1', text: `¿Cuándo debes revisar el interior del autobús?`, options: [`Antes de conducir`, `Antes y después de cada viaje`, `Solo al limpiar`, `Una vez a la semana`], correctIndex: 1, explanation: `Debes revisar el interior del autobús antes de cada viaje para garantizar la seguridad de los pasajeros y después de cada viaje por artículos olvidados o pasajeros dormidos.` },

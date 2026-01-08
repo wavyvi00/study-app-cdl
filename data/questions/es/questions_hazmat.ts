@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const HAZMAT_QUESTIONS: Question[] = [
     { id: 'hm_1', text: `Un vehículo etiquetado para materiales peligrosos debe tener etiquetas en ___ lados.`, options: [`2`, `3`, `4`, `5`], correctIndex: 2, explanation: `Los letreros deben estar en los 4 lados: frente, parte trasera y ambos lados.` },

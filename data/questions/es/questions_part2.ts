@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const GK_QUESTIONS_PART2: Question[] = [
     { id: 'gk51', text: `La velocidad segura en las curvas depende de?`, options: [`Solo velocidad publicada`, `Peso, altura y velocidad`, `Hora del día`, `Ninguno de estos`], correctIndex: 1, explanation: `El peso, la altura de la carga y la velocidad afectan la seguridad con la que puedes tomar las curvas.` },

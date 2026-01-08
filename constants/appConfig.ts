@@ -4,18 +4,18 @@ export const PRICING = {
     MONTHLY: {
         price: 9.99,
         period: 'month',
-        productId: 'cdl_zero_monthly',
+        productId: '$rc_monthly', // RevenueCat standard package identifier
     },
     YEARLY: {
         price: 29.99,
         period: 'year',
-        productId: 'cdl_zero_yearly',
+        productId: '$rc_annual', // RevenueCat standard package identifier
         savingsPercent: 75,
     },
     LIFETIME: {
         price: 49.99,
         period: 'lifetime',
-        productId: 'cdl_zero_lifetime',
+        productId: '$rc_lifetime', // RevenueCat standard package identifier
     },
 };
 

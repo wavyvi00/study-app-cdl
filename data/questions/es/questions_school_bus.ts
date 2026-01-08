@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const SCHOOL_BUS_QUESTIONS: Question[] = [
     { id: 'sb_1', text: `¿Cuál es la razón más importante para realizar una inspección de vehículos?`, options: [`Para ahorrar dinero`, `Para mantener el vehículo en buen estado.`, `Seguridad`, `Para pasar el tiempo`], correctIndex: 2, explanation: `La seguridad es la razón más importante por la que inspeccionas tu vehículo, asegurando la seguridad para ti y otros usuarios de la carretera.` },

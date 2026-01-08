@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const TANKS_QUESTIONS: Question[] = [
     { id: 'tank_1', text: `Un vehículo cisterna se utiliza para transportar:`, options: [`Cualquier líquido`, `Cualquier líquido o gas`, `Líquidos o gases a granel`, `Solo agua`], correctIndex: 2, explanation: `Un vehículo cisterna se utiliza para transportar cualquier material líquido o gaseoso en un tanque.` },

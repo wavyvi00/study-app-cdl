@@ -1,5 +1,13 @@
 import { Platform } from 'react-native';
 import Purchases, { CustomerInfo, PurchasesOffering, PurchasesPackage } from 'react-native-purchases';
+import {
+    initRevenueCatWeb,
+    getWebSubscriptionStatus,
+    getWebOfferings,
+    purchaseWebPackage,
+    restoreWebPurchases,
+    isWebSDKAvailable,
+} from './revenuecat-web';
 
 // Configuration
 // Using the single test key provided by the user for now
@@ -11,6 +19,7 @@ const KEYS = {
 
 const ENTITLEMENT_ID = 'CDL ZERO Pro'; // The entitlement identifier in RevenueCat dashboard
 
+
 export interface SubscriptionStatus {
     isPro: boolean;
     activeEntitlements: string[];
@@ -20,10 +29,8 @@ export interface SubscriptionStatus {
 // Initialize RevenueCat
 export const initRevenueCat = async (): Promise<void> => {
     if (Platform.OS === 'web') {
-        // RevenueCat doesn't fully support web yet in the same way, 
-        // usually requires Stripe integration or similar. 
-        // For now, we'll mock or handle gracefully.
-        console.warn('RevenueCat not fully supported on web yet');
+        // Use web SDK with Stripe
+        await initRevenueCatWeb();
         return;
     }
 
@@ -48,7 +55,7 @@ export const initRevenueCat = async (): Promise<void> => {
 // Check subscription status
 export const getSubscriptionStatus = async (): Promise<SubscriptionStatus> => {
     if (Platform.OS === 'web') {
-        return { isPro: false, activeEntitlements: [], expirationDate: null };
+        return getWebSubscriptionStatus();
     }
 
     try {
@@ -68,7 +75,11 @@ export const getSubscriptionStatus = async (): Promise<SubscriptionStatus> => {
 
 // Get current offerings (packages to show on paywall)
 export const getOfferings = async (): Promise<PurchasesOffering | null> => {
-    if (Platform.OS === 'web') return null;
+    if (Platform.OS === 'web') {
+        const webOfferings = await getWebOfferings();
+        // Return current offering in compatible format
+        return webOfferings?.current as unknown as PurchasesOffering || null;
+    }
 
     try {
         const offerings = await Purchases.getOfferings();
@@ -81,6 +92,12 @@ export const getOfferings = async (): Promise<PurchasesOffering | null> => {
 
 // Purchase a package
 export const purchasePackage = async (pack: PurchasesPackage): Promise<SubscriptionStatus> => {
+    if (Platform.OS === 'web') {
+        // Web purchases are handled by web SDK with Stripe
+        // Cast is needed because web package type differs slightly
+        return purchaseWebPackage(pack as any);
+    }
+
     try {
         const { customerInfo } = await Purchases.purchasePackage(pack);
         const entitlement = customerInfo.entitlements.active[ENTITLEMENT_ID];
@@ -110,7 +127,9 @@ export const purchasePackage = async (pack: PurchasesPackage): Promise<Subscript
 
 // Restore purchases
 export const restorePurchases = async (): Promise<SubscriptionStatus> => {
-    if (Platform.OS === 'web') return { isPro: false, activeEntitlements: [], expirationDate: null };
+    if (Platform.OS === 'web') {
+        return restoreWebPurchases();
+    }
 
     try {
         const customerInfo = await Purchases.restorePurchases();

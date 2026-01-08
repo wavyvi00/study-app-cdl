@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const GK_QUESTIONS_PART3: Question[] = [
     { id: 'gk101', text: 'Если тормоза отказывают на спуске?', options: ['Насос быстро тормозит', 'Ищите эвакуационную рампу', 'Переключиться на нейтраль', 'Выключить двигатель'], correctIndex: 1, explanation: 'Ищите аварийный пандус — они предназначены для случаев отказа тормозов.' },

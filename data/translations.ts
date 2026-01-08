@@ -144,6 +144,7 @@ export type TranslationKey =
     | 'onboardingTitle1' | 'onboardingDesc1'
     | 'onboardingTitle2' | 'onboardingDesc2'
     | 'onboardingTitle3' | 'onboardingDesc3'
+    | 'onboardingFreeTrialInfo'
     | 'getStarted'
     | 'chooseLanguage'
     | 'startEngine'
@@ -349,6 +350,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         onboardingDesc2: 'Access official study materials and practice with realistic exam simulations in multiple languages.',
         onboardingTitle3: 'Track Progress',
         onboardingDesc3: 'Monitor your improvement and know exactly when you are ready to pass the real exam.',
+        onboardingFreeTrialInfo: 'Start free with 50 questions • Upgrade anytime',
         getStarted: 'Get Started',
         chooseLanguage: 'Choose Language',
         startEngine: 'Start Engine',
@@ -553,6 +555,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         onboardingDesc2: 'Accede a materiales de estudio oficiales y practica con simulaciones de examen realistas.',
         onboardingTitle3: 'Sigue tu Progreso',
         onboardingDesc3: 'Monitorea tu mejora y sabe exactamente cuándo estás listo para aprobar el examen real.',
+        onboardingFreeTrialInfo: 'Comienza gratis con 50 preguntas • Actualiza cuando quieras',
         getStarted: 'Empezar',
         chooseLanguage: 'Elegir Idioma',
         startEngine: 'Arrancar Motor',
@@ -757,6 +760,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         onboardingDesc2: 'Доступ к официальным материалам и реалистичным симуляторам экзамена на разных языках.',
         onboardingTitle3: 'Отслеживайте прогресс',
         onboardingDesc3: 'Следите за улучшениями и знайте точно, когда вы готовы к реальному экзамену.',
+        onboardingFreeTrialInfo: 'Начните бесплатно с 50 вопросов • Обновите в любое время',
         getStarted: 'Начать',
         chooseLanguage: 'Выберите язык',
         startEngine: 'Поехали',

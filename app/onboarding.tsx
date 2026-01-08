@@ -223,8 +223,10 @@ const slides = [
         component: <StudyIcon />,
         titleKey: 'onboardingTitle2',
         descriptionKey: 'onboardingDesc2',
+        infoKey: 'onboardingFreeTrialInfo',
         defaultTitle: 'Learn & Practice',
         defaultDesc: 'Official study materials and realistic exam simulations.',
+        defaultInfo: 'Start free with 50 questions • Upgrade anytime',
     },
     {
         id: '3',
@@ -269,6 +271,11 @@ const Page = ({ item, index, x, width, t }: any) => {
     const title = t(item.titleKey) === item.titleKey ? item.defaultTitle : t(item.titleKey);
     const desc = t(item.descriptionKey) === item.descriptionKey ? item.defaultDesc : t(item.descriptionKey);
 
+    // Optional info line (e.g., trial info on slide 2)
+    const info = item.infoKey
+        ? (t(item.infoKey) === item.infoKey ? item.defaultInfo : t(item.infoKey))
+        : null;
+
     return (
         <View style={[styles.pageContainer, { width }]}>
             <Animated.View style={[styles.iconContainer, rIconStyle]}>
@@ -277,6 +284,9 @@ const Page = ({ item, index, x, width, t }: any) => {
             <Animated.View style={[styles.textContainer, rTextStyle]}>
                 <Text style={styles.title}>{title}</Text>
                 <Text style={styles.description}>{desc}</Text>
+                {info && (
+                    <Text style={styles.infoText}>{info}</Text>
+                )}
             </Animated.View>
         </View>
     );
@@ -512,6 +522,13 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         lineHeight: 28,
         maxWidth: 300,
+    },
+    infoText: {
+        fontSize: 14,
+        color: 'rgba(255,255,255,0.5)',
+        textAlign: 'center',
+        marginTop: 16,
+        fontStyle: 'italic',
     },
     footer: {
         position: 'absolute',

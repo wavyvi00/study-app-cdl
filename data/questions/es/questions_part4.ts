@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const GK_QUESTIONS_PART4: Question[] = [
     { id: 'gk151', text: `Maximum driving time before required break (property-carrying)?`, options: [`8 horas`, `11 horas`, `14 horas`, `10 horas`], correctIndex: 1, explanation: `11 hours maximum after 10 consecutive hours off duty.` },

@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const GK_QUESTIONS_PART3: Question[] = [
     { id: 'gk101', text: `¿Si tus frenos fallan al ir cuesta abajo?`, options: [`La bomba frena rápidamente`, `Busque la rampa de escape`, `Cambie a punto muerto`, `Apague el motor`], correctIndex: 1, explanation: `Busca una rampa de escape: están diseñadas para fallas de frenos.` },
