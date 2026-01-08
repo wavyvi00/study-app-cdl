@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const GK_QUESTIONS_PART5: Question[] = [
     { id: 'gk202', text: `¿La provisión de literas permite dividir el tiempo libre?`, options: [`Verdadero`, `Falso`], correctIndex: 0, explanation: `Cierto. El tiempo de atraque para dormir se puede dividir según ciertas reglas.` },

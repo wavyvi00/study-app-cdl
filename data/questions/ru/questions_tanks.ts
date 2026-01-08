@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const TANKS_QUESTIONS: Question[] = [
     { id: 'tank_1', text: `Цистерна используется для перевозки:`, options: [`Любая жидкость`, `Любая жидкость или газ`, `Сыпучие жидкости или газы`, `Только вода`], correctIndex: 2, explanation: `Цистерна используется для перевозки любых жидких или газообразных материалов в баке.` },

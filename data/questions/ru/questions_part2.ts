@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const GK_QUESTIONS_PART2: Question[] = [
     { id: 'gk51', text: 'От чего зависит безопасная скорость на поворотах?', options: ['Только заявленная скорость', 'Вес, рост и скорость', 'Время суток', 'Ничего из этого'], correctIndex: 1, explanation: 'Вес, высота груза и скорость влияют на то, насколько безопасно вы можете проходить повороты.' },

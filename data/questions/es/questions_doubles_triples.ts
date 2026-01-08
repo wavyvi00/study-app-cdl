@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const DOUBLES_TRIPLES_QUESTIONS: Question[] = [
     { id: 'dt_1', text: `¿Cuál de estas afirmaciones sobre la gestión del espacio a los lados es verdadera?`, options: [`Debes evitar viajar junto a otras personas siempre que sea posible.`, `Los vientos fuertes no son un problema para los dobles y triples.`, `No tienes que preocuparte por el espacio a tus lados.`, `Siempre conduce en el carril izquierdo.`], correctIndex: 0, explanation: `Los dobles y triples necesitan más espacio y pueden ser empujados hacia los lados por el viento. Evita conducir al lado de otros.` },

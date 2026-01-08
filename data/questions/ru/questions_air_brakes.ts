@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const AIR_BRAKES_QUESTIONS: Question[] = [
     { id: 'ab_1', text: `Какое из следующего допустимо находить в системе воздушного тормоза?`, options: [`Нефть`, `Вода`, `Воздух`, `Все вышеперечисленное`], correctIndex: 2, explanation: `Система воздушного тормоза использует сжатый воздух для работы тормозов. Вода и масло являются загрязнителями.` },

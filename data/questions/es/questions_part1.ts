@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const GK_QUESTIONS_PART1: Question[] = [
     { id: 'gk5', text: `¿Procedimiento adecuado para comenzar a moverse en una colina sin retroceder?`, options: [`Deje los frenos del remolque puestos y arrastre los neumáticos`, `Embrague parcialmente antes de soltar el freno`, `Aumente las RPM y suelte el embrague rápidamente`, `Coloque bloques detrás de los neumáticos`], correctIndex: 1, explanation: `Embragar parcialmente antes de soltar el freno evita el retroceso.` },
