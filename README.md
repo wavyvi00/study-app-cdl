@@ -90,7 +90,35 @@ This project is configured for **EAS Build**.
 *   `data/`: Static question data and stats logic.
 *   `assets/`: Images and icons.
 *   `utils/`: Helper functions (e.g., email sync, validation).
-*   `scripts/`: Utility scripts (e.g., for generating SQL seeds).
+*   `scripts/`: Utility scripts (e.g., translation tools, SQL generation).
+
+## 🌍 Localization & Translation
+
+The app supports multiple languages (English, Spanish, Russian). We use custom scripts to automate the translation of question content.
+
+### Translation Tools
+
+We provide two robust tools for translating content found in `data/`:
+
+#### 1. OpenAI Translator (Recommended)
+Fast, reliable, and cost-efficient using `gpt-4o-mini`. Requires an API key.
+
+```bash
+# Translate a specific file to Spanish
+OPENAI_API_KEY=your_key node scripts/translate-openai.js --lang=es --source=questions_hazmat.ts
+```
+
+#### 2. Local LLM Translator (Offline)
+Free and privacy-focused using [Ollama](https://ollama.com).
+
+```bash
+# Translate a specific file to Russian using a local model
+node scripts/translate-local.js --lang=ru --source=questions_hazmat.ts
+```
+
+### Supported Languages
+*   `es`: Neutral Latin American Spanish
+*   `ru`: Russian
 
 ## 📝 Changelog
 

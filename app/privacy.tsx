@@ -1,12 +1,18 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, Linking } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
 
+const PRIVACY_POLICY_URL = 'https://sites.google.com/view/cdlzeropermittest2026/home';
+
 export default function PrivacyScreen() {
     const router = useRouter();
     const { isDark } = useTheme();
+
+    const openExternalPolicy = () => {
+        Linking.openURL(PRIVACY_POLICY_URL);
+    };
 
     return (
         <View style={[styles.container, isDark && styles.darkContainer]}>
@@ -48,6 +54,19 @@ export default function PrivacyScreen() {
                         If you have any questions about this policy, please contact support.
                     </Text>
                 </View>
+
+                {/* External Privacy Policy Link */}
+                <TouchableOpacity
+                    style={[styles.externalLink, isDark && styles.darkExternalLink]}
+                    onPress={openExternalPolicy}
+                    accessibilityLabel="View full privacy policy online"
+                    accessibilityRole="link"
+                >
+                    <FontAwesome name="external-link" size={18} color={isDark ? '#6ea8fe' : '#3b5998'} />
+                    <Text style={[styles.externalLinkText, isDark && styles.darkExternalLinkText]}>
+                        View Full Privacy Policy Online
+                    </Text>
+                </TouchableOpacity>
 
                 <Text style={[styles.footer, isDark && styles.darkFooterText]}>Last updated: December 2025</Text>
             </ScrollView>
@@ -107,6 +126,22 @@ const styles = StyleSheet.create({
         marginTop: 20,
         marginBottom: 40,
     },
+    externalLink: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#e8f0fe',
+        borderRadius: 12,
+        padding: 16,
+        marginTop: 10,
+        marginBottom: 10,
+        gap: 10,
+    },
+    externalLinkText: {
+        fontSize: 16,
+        fontWeight: '600',
+        color: '#3b5998',
+    },
     // Dark mode styles
     darkContainer: {
         backgroundColor: '#1a1a2e',
@@ -122,5 +157,11 @@ const styles = StyleSheet.create({
     },
     darkFooterText: {
         color: '#666',
+    },
+    darkExternalLink: {
+        backgroundColor: '#2a3a5e',
+    },
+    darkExternalLinkText: {
+        color: '#6ea8fe',
     },
 });

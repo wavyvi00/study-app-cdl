@@ -3,8 +3,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
+import { useLocalization } from '../../context/LocalizationContext';
+
 export default function PracticeScreen() {
     const router = useRouter();
+    const { t } = useLocalization();
 
     const startRandomPractice = () => {
         router.push({ pathname: '/quiz', params: { mode: 'practice' } });
@@ -16,16 +19,16 @@ export default function PracticeScreen() {
                 colors={['#11998e', '#38ef7d']}
                 style={styles.headerBackground}
             >
-                <Text style={styles.headerTitle}>Practice Mode</Text>
-                <Text style={styles.headerSubtitle}>Test your knowledge without pressure</Text>
+                <Text style={styles.headerTitle}>{t('practiceModeTitle')}</Text>
+                <Text style={styles.headerSubtitle}>{t('practiceModeSubtitle')}</Text>
             </LinearGradient>
 
             <View style={styles.content}>
                 <FontAwesome name="book" size={80} color="#11998e" style={{ opacity: 0.2, marginBottom: 20 }} />
-                <Text style={styles.infoText}>Start a quick session with random questions from all topics. Instant feedback provided.</Text>
+                <Text style={styles.infoText}>{t('practiceModeInfo')}</Text>
 
                 <TouchableOpacity style={styles.startButton} onPress={startRandomPractice}>
-                    <Text style={styles.startText}>Start Practice</Text>
+                    <Text style={styles.startText}>{t('startPractice')}</Text>
                 </TouchableOpacity>
             </View>
         </View>

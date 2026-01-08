@@ -277,6 +277,120 @@ export const GeneralKnowledgeStudyGuide_ES: StudyGuide = {
             ]
         },
         {
+            "id": "gk-distracted",
+            "title": "2.9 Conducción Distraída",
+            "content": [
+                "La conducción distraída es una causa importante de accidentes. Un manual del conductor debe discutir: Los efectos de la conducción distraída; Tipos de distracciones; Uso de teléfonos celulares.",
+                "Tipos de Distracciones: Distracciones físicas (alcanzar un objeto, comer, beber) y distracciones mentales (hablar con un pasajero, pensar en otra cosa).",
+                "Teléfonos Móviles: Es ilegal que los conductores de CMV usen un teléfono móvil de mano mientras conducen. Las sanciones incluyen multas y descalificación. Puede usar un dispositivo manos libres si se puede iniciar con un solo toque.",
+                "No Participe en Actividades que Distraigan: Preprograme estaciones de radio. Revise los mapas antes de comenzar. Evite comer o fumar excesivamente."
+            ],
+            "keyPoints": [
+                "No use teléfonos celulares de mano mientras conduce.",
+                "Las distracciones mentales son tan peligrosas como las físicas.",
+                "Las sanciones por el uso de teléfonos de mano incluyen multas y descalificación de la CDL."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-distracted",
+                    "text": "¿Cuál es la sanción para un conductor de CMV que usa un teléfono móvil de mano mientras conduce?",
+                    "options": [
+                        "Una multa de advertencia",
+                        "Multas y posible descalificación de la CDL",
+                        "Solo puntos en la licencia",
+                        "Solo aumento de las tarifas de seguro"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "La violación puede resultar en sanciones civiles (multas) de hasta $2,750 y descalificación del conductor por múltiples ofensas."
+                }
+            ]
+        },
+        {
+            "id": "gk-aggressive",
+            "title": "2.10 Conductores Agresivos/Furia al Volante",
+            "content": [
+                "Conducción Agresiva: El acto de operar un vehículo de motor de manera egoísta, audaz o insistente, sin tener en cuenta los derechos o la seguridad de los demás (por ejemplo, seguir demasiado cerca, cambiar de carril frecuentemente).",
+                "Furia al Volante: Operar un vehículo de motor con la intención de causar daño físico a otros o agredir físicamente a un conductor o su vehículo.",
+                "Cómo Evitar Ser una Víctima: No haga contacto visual. No los desafíe. Apártese de su camino. Reporte a los conductores agresivos a las autoridades cuando sea seguro hacerlo."
+            ],
+            "keyPoints": [
+                "La conducción agresiva es un comportamiento egoísta/insistente.",
+                "La furia al volante es la intención de causar daño.",
+                "Evite el contacto visual y no interactúe con conductores agresivos."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-aggressive",
+                    "text": "¿Cuál es la principal diferencia entre la conducción agresiva y la furia al volante?",
+                    "options": [
+                        "La conducción agresiva es más rápida",
+                        "La furia al volante implica la intención de causar daño físico",
+                        "La conducción agresiva es legal",
+                        "No hay diferencia"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "La furia al volante implica la intención de causar daño físico, mientras que la conducción agresiva es una operación egoísta/audaz."
+                }
+            ]
+        },
+        {
+            "id": "gk-night",
+            "title": "2.11 Conducción Nocturna",
+            "content": [
+                "Usted corre mayor riesgo cuando conduce de noche. Los conductores no pueden ver los peligros tan rápido como a la luz del día, por lo que tienen menos tiempo para responder. Los conductores tomados por sorpresa son menos capaces de evitar un accidente.",
+                "Factores: Visión (la gente no puede ver tan bien de noche), Deslumbramiento (de las luces que vienen de frente), Fatiga (más probabilidad de estar cansado).",
+                "Faros: Use luces altas cuando sea seguro y legal hacerlo. Las luces bajas le permiten ver unos 250 pies por delante. Las luces altas le permiten ver unos 350-500 pies por delante. Debe atenuar sus luces dentro de los 500 pies de un vehículo que se aproxima o cuando sigue a otro vehículo dentro de los 500 pies.",
+                "Velocidad: No conduzca más rápido que el alcance de sus faros. Debería poder detenerse dentro de la distancia que puede ver por delante."
+            ],
+            "keyPoints": [
+                "Use luces altas cuando sea seguro/legal (ver 350-500 pies).",
+                "Atenúe las luces dentro de los 500 pies de otros vehículos.",
+                "No conduzca más rápido que sus faros (deténgase dentro de la distancia de visión)."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-night",
+                    "text": "¿Cuándo debe atenuar sus faros por la noche?",
+                    "options": [
+                        "Solo cuando se conduce en la ciudad",
+                        "Dentro de los 500 pies de un vehículo que se aproxima",
+                        "Cuando está cansado",
+                        "Dentro de los 100 pies de un vehículo que se aproxima"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "Atenúe sus luces dentro de los 500 pies de un vehículo que se aproxima o cuando siga a otro vehículo dentro de los 500 pies."
+                }
+            ]
+        },
+        {
+            "id": "gk-fog",
+            "title": "2.12 Conducción en Niebla",
+            "content": [
+                "La niebla puede oscurecer completamente la visibilidad. El mejor consejo para conducir en niebla es: No lo haga. Salga de la carretera hacia un área de descanso o parada de camiones hasta que la visibilidad sea mejor.",
+                "Si Debe Conducir en Niebla: Obedezca todas las señales de advertencia relacionadas con la niebla. Reduzca la velocidad antes de entrar en la niebla. Use luces bajas y luces antiniebla para una mejor visibilidad incluso durante el día, y esté alerta a otros conductores que pueden haber olvidado encender sus luces. Encienda sus luces intermitentes de 4 vías. Esto da a los vehículos que se acercan por detrás una mejor oportunidad de ver su vehículo.",
+                "Cuidado con los Vehículos en el Arcén: Los vehículos pueden estar estacionados en el hombro. Evite adelantar a otros vehículos."
+            ],
+            "keyPoints": [
+                "No conduzca en la niebla si es posible.",
+                "Use luces bajas (las luces altas se reflejan en la niebla).",
+                "Use luces intermitentes de 4 vías para advertir a los demás."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-fog",
+                    "text": "¿Qué luces debe usar al conducir en niebla?",
+                    "options": [
+                        "Luces altas",
+                        "Solo luces de estacionamiento",
+                        "Luces bajas y luces antiniebla",
+                        "Sin luces"
+                    ],
+                    "correctIndex": 2,
+                    "explanation": "Use luces bajas y luces antiniebla. Las luces altas se reflejan en las gotas de agua en la niebla y pueden cegarlo."
+                }
+            ]
+        },
+        {
             "id": "gk-winter",
             "title": "2.13 Conducción en invierno",
             "content": [
@@ -303,6 +417,98 @@ export const GeneralKnowledgeStudyGuide_ES: StudyGuide = {
                     ],
                     "correctIndex": 1,
                     "explanation": "No utilice el freno motor ni el retardador de velocidad en superficies resbaladizas porque pueden hacer que las ruedas motrices patinen."
+                }
+            ]
+        },
+        {
+            "id": "gk-hot-weather",
+            "title": "2.14 Conducción en Clima Muy Caluroso",
+            "content": [
+                "No deje salir el aire o la presión será demasiado baja cuando los neumáticos se enfríen. Si un neumático está demasiado caliente para tocarlo, permanezca detenido hasta que el neumático se enfríe. De lo contrario, el neumático puede reventar o incendiarse.",
+                "Neumáticos: Revise el montaje y la presión de aire de los neumáticos. Inspeccione los neumáticos cada dos horas o cada 100 millas cuando conduzca en clima muy caluroso. La presión del aire aumenta con la temperatura.",
+                "Aceite del Motor: El aceite del motor ayuda a mantener el motor fresco, además de lubricarlo. Asegúrese de que haya suficiente aceite de motor.",
+                "Refrigerante del Motor: Antes de salir, asegúrese de que el sistema de enfriamiento del motor tenga suficiente agua y anticongelante según las instrucciones del fabricante del motor.",
+                "Alquitrán Sangrante: El alquitrán en el pavimento de la carretera frecuentemente sube a la superficie en clima muy caluroso. Los puntos donde el alquitrán 'sangra' a la superficie son muy resbaladizos."
+            ],
+            "keyPoints": [
+                "Inspeccione los neumáticos cada 2 horas/100 millas en clima caluroso.",
+                "La presión del aire aumenta con el calor - NO deje salir el aire.",
+                "Cuidado con el alquitrán sangrante (resbaladizo)."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-hot-weather",
+                    "text": "¿Qué debe hacer si la presión de los neumáticos es alta debido al clima caluroso?",
+                    "options": [
+                        "Deje salir el aire hasta que alcance la presión normal",
+                        "No deje salir el aire",
+                        "Conduzca más rápido para enfriarlos",
+                        "Vierta agua sobre ellos"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "La presión del aire aumenta con la temperatura. No deje salir el aire o la presión será demasiado baja cuando se enfríen."
+                }
+            ]
+        },
+        {
+            "id": "gk-railroad",
+            "title": "2.15 Cruces de Ferrocarril-Carretera",
+            "content": [
+                "Los cruces a nivel de ferrocarril y carretera son un tipo especial de intersección donde la carretera cruza las vías del tren. Estos cruces siempre son peligrosos.",
+                "Cruces Pasivos: Este tipo de cruce no tiene ningún tipo de dispositivo de control de tráfico. La decisión de detenerse o proceder recae enteramente en sus manos.",
+                "Cruces Activos: Este tipo de cruce tiene un dispositivo de control de tráfico instalado en el cruce para regular el tráfico (luces rojas intermitentes, campanas, barreras).",
+                "Señales de Advertencia Anticipada: La señal de advertencia redonda, negra sobre amarillo, se coloca delante de un cruce público de ferrocarril y carretera.",
+                "Procedimientos de Conducción: Nunca corra contra un tren hacia un cruce. Reduzca la velocidad. Mire y escuche. Las vías dobles requieren una doble verificación.",
+                "Detención: Si debe detenerse, hágalo de 15 a 50 pies del riel más cercano.",
+                "Cruzar las Vías: No cambie de marcha mientras cruza las vías del tren. Podría quedarse atascado en las vías."
+            ],
+            "keyPoints": [
+                "Nunca corra contra un tren.",
+                "Deténgase de 15 a 50 pies del riel más cercano si es necesario.",
+                "NO cambie de marcha mientras cruza las vías."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-railroad",
+                    "text": "¿Cuándo debe cambiar de marcha al cruzar vías de tren?",
+                    "options": [
+                        "Siempre reduzca la marcha en las vías",
+                        "Suba la marcha para velocidad",
+                        "Nunca cambie de marcha en las vías",
+                        "Solo si el tren está lejos"
+                    ],
+                    "correctIndex": 2,
+                    "explanation": "No cambie de marcha mientras cruza las vías del tren. Si falla un cambio, podría quedarse atascado en las vías."
+                }
+            ]
+        },
+        {
+            "id": "gk-mountain",
+            "title": "2.16 Conducción en Montaña",
+            "content": [
+                "En la conducción en montaña, la gravedad juega un papel importante. En cualquier subida, la gravedad lo ralentiza. En las bajadas, la gravedad lo acelera. Debe seleccionar una velocidad segura adecuada, luego una marcha baja y usar técnicas de frenado adecuadas.",
+                "Seleccione una Velocidad Segura: Su consideración más importante es seleccionar una velocidad que no sea demasiado rápida para: El peso total del vehículo y la carga; La longitud de la pendiente; La inclinación de la pendiente; Las condiciones de la carretera; El clima.",
+                "Seleccione la Marcha Correcta: Cambie a una marcha baja antes de comenzar a bajar la pendiente. No intente reducir la marcha después de que su velocidad ya haya aumentado. No podrá cambiar a una marcha más baja.",
+                "Desvanecimiento o Falla de Frenos: Los frenos pueden desvanecerse o fallar por el calor excesivo causado por usarlos demasiado y no depender del efecto de frenado del motor.",
+                "Técnica de Frenado Adecuada (Frenado por Arrastre): 1. Aplique los frenos lo suficientemente fuerte como para sentir una desaceleración definida. 2. Cuando su velocidad se haya reducido a aprox. 5 mph por debajo de su velocidad segura, suelte los frenos. 3. Cuando su velocidad haya aumentado a su velocidad segura, repita el paso 1. (Ejemplo: Si la velocidad segura es 40 mph, frene a 35 mph, suelte, espere a 40 mph, repita)."
+            ],
+            "keyPoints": [
+                "La gravedad lo ralentiza en las subidas y lo acelera en las bajadas.",
+                "Cambie a marcha baja ANTES de comenzar a bajar una colina.",
+                "Use el Frenado por Arrastre (Snub Braking) para controlar la velocidad sin sobrecalentar los frenos."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q-mountain",
+                    "text": "¿Cuál es la técnica de frenado adecuada en una bajada larga?",
+                    "options": [
+                        "Use presión ligera y constante en los frenos",
+                        "Abanique los frenos (bombéelos rápidamente)",
+                        "Frenado por arrastre: Frene a 5 mph por debajo de la velocidad segura, suelte, repita",
+                        "Use solo el freno de emergencia"
+                    ],
+                    "correctIndex": 2,
+                    "explanation": "El frenado por arrastre implica aplicar los frenos dentro de un rango seguro (por ejemplo, 40 a 35 mph) para evitar el sobrecalentamiento."
                 }
             ]
         },
@@ -565,6 +771,308 @@ export const GeneralKnowledgeStudyGuide_ES: StudyGuide = {
                     "explanation": "Debe revisar su carga dentro de las primeras 50 millas y luego cada 3 horas o 150 millas a partir de entonces."
                 }
             ]
+        },
+        {
+            "id": "gk-weight-balance",
+            "title": "3.2 Peso y Equilibrio",
+            "content": [
+                "Definiciones: El Peso Bruto del Vehículo (GVW) es el peso total de un solo vehículo más su carga. El Peso Bruto Combinado (GCW) es el peso total de una unidad motorizada, más el remolque(s), más la carga. La Clasificación de Peso Bruto del Vehículo (GVWR) es el GVW máximo especificado por el fabricante.",
+                "Centro de Gravedad: El centro de gravedad es el punto donde el peso del vehículo está equilibrado. Un centro de gravedad alto significa que es más probable que se vuelque. Es más peligroso en curvas o si se desvía para evitar un peligro. Mantenga la carga lo más cerca posible del suelo y centrada.",
+                "Equilibrar el Peso: Un mal equilibrio del peso puede hacer que el manejo del vehículo sea inseguro. Demasiado peso en el eje de dirección puede causar una dirección dura. Los ejes delanteros con poca carga (causado por mover el peso rápidamente hacia atrás) pueden hacer que el peso del eje de dirección sea demasiado ligero para conducir con seguridad."
+            ],
+            "keyPoints": [
+                "Centro de gravedad alto = Alto riesgo de vuelco.",
+                "Mantenga la carga baja y centrada.",
+                "El mal equilibrio del peso afecta la dirección y el frenado."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q21",
+                    "text": "¿Cuál es el peligro de un centro de gravedad alto?",
+                    "options": [
+                        "Hace que el vehículo sea más lento",
+                        "Hace que el vehículo sea más propenso a volcarse",
+                        "Ahorra combustible",
+                        "Mejora la tracción"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "Un centro de gravedad alto hace que el vehículo sea más inestable y propenso a volcarse, especialmente en las curvas."
+                }
+            ]
+        },
+        {
+            "id": "gk-special-cargo",
+            "title": "3.4 Carga que Necesita Atención Especial",
+            "content": [
+                "Carga seca a granel: Los tanques de carga seca a granel requieren un cuidado especial porque tienen un centro de gravedad alto y la carga puede moverse. Sea extremadamente diligente al tomar curvas y hacer giros cerrados.",
+                "Carne colgada: La carne colgada (res, cerdo, etc. suspendida) en un camión refrigerado puede ser una carga muy inestable con un centro de gravedad alto. Se necesita precaución en las curvas para evitar que la carga se balancee y vuelque el camión.",
+                "Ganado: El ganado puede moverse en un remolque, causando un manejo inseguro. Con menos de una carga completa, use falsos mamparos para mantener al ganado agrupado. Incluso cuando están agrupados, espere que el centro de gravedad cambie en las curvas.",
+                "Cargas de gran tamaño: Las cargas de longitud excesiva, ancho excesivo y/o sobrepeso requieren permisos de tránsito especiales. La conducción suele estar limitada a ciertos horarios. Puede ser necesario equipo especial como letreros de \"Carga Ancha\", luces intermitentes, banderas, etc."
+            ],
+            "keyPoints": [
+                "La carga a granel seca y la carne colgada tienen centros de gravedad altos.",
+                "El ganado puede moverse y cambiar el equilibrio del vehículo.",
+                "Las cargas de gran tamaño requieren permisos y señalización especiales."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "q22",
+                    "text": "¿Cuál de estas cargas es conocida por tener un centro de gravedad alto y ser inestable?",
+                    "options": [
+                        "Madera en plataforma",
+                        "Carne colgada",
+                        "Remolque vacío",
+                        "Productos enlatados"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "La carne colgada tiene un centro de gravedad alto y puede balancearse, haciendo que el camión sea inestable en las curvas."
+                }
+            ]
         }
     ]
 };
+export const DoublesTriplesStudyGuide_ES = {};
+export const TankVehiclesStudyGuide_ES = {};
+export const SchoolBusStudyGuide_ES = {};
+export const AirBrakesStudyGuide_ES: StudyGuide = {
+    "topicId": "air_brakes",
+    "sections": [
+        {
+            "id": "air-intro",
+            "title": "Parts of an Air Brake System",
+            "cdlReference": "CDL Manual §5.1",
+            "content": [
+                "Los frenos de aire utilizan aire comprimido para que los frenos funcionen. Son una forma segura de detener vehículos pesados, pero tienen más piezas y son más difíciles de mantener que los frenos hidráulicos.",
+                "Air Compressor: Pumps air into the air storage tanks. It connects to the engine through gears or a V-belt.",
+                "Gobernador del compresor de aire: controla cuándo el compresor bombea aire. Se activa (comienza a bombear) alrededor de 100 psi y se corta (deja de bombear) alrededor de 125 psi.",
+                "Air Storage Tanks: Hold compressed air. They have drain valves to remove water and oil (sludge) that collects in the bottom.",
+                "Válvula de seguridad: Protege el tanque de demasiada presión. Generalmente se abre a 150 psi. Si se abre, algo anda mal."
+            ],
+            "keyPoints": [
+                "El gobernador entra a 100 psi y sale a 125 psi.",
+                "Las válvulas de drenaje eliminan el agua y el aceite de los tanques.",
+                "La válvula de seguridad se abre a 150 psi (señal de advertencia)."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "air-q1",
+                    "text": "¿Cuándo se \"apaga\" el regulador del compresor de aire?",
+                    "options": [
+                        "At 100 psi",
+                        "A 125 psi",
+                        "A 150 psi",
+                        "A 60 psi"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "The governor stops pumping air (cuts out) when the tank pressure reaches around 125 psi."
+                }
+            ]
+        },
+        {
+            "id": "air-parts",
+            "title": "Brake System Components",
+            "cdlReference": "CDL Manual §5.1",
+            "content": [
+                "Brake Pedal: Pressing it pushes air into the brake chambers. Releasing it lets air out.",
+                "S-Cam Brakes: The most common type. Air pushes a push rod, which moves a slack adjuster, which turns the S-cam. The S-cam pushes brake shoes against the drum.",
+                "Tambores/zapatas de freno: Los tambores son la parte exterior que gira. Los zapatos son la parte interior con forros que presionan contra el tambor para detenerlo.",
+                "Ajustadores de holgura: Se utilizan para ajustar los frenos. Si son manuales hay que revisarlos y ajustarlos frecuentemente."
+            ],
+            "keyPoints": [
+                "S-Cam es el freno de base más común.",
+                "Push rod -> Slack Adjuster -> S-Cam -> Brake Shoes.",
+                "Los ajustadores de holgura fijan el espacio entre las zapatas y el tambor."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "air-q2",
+                    "text": "What part of the brake system pushes the brake shoes against the drum?",
+                    "options": [
+                        "La cámara S",
+                        "el compresor de aire",
+                        "el gobernador",
+                        "La válvula de seguridad"
+                    ],
+                    "correctIndex": 0,
+                    "explanation": "La leva S gira y fuerza las zapatas de freno contra el interior del tambor de freno."
+                }
+            ]
+        },
+        {
+            "id": "air-dual",
+            "title": "Sistemas de frenos de aire duales",
+            "cdlReference": "CDL Manual §5.2",
+            "content": [
+                "La mayoría de los vehículos pesados ​​modernos utilizan sistemas duales de frenos de aire por motivos de seguridad. Tiene dos sistemas de aire separados que utilizan un único conjunto de controles.",
+                "Sistema Primario: Generalmente opera los frenos del eje trasero.",
+                "Secondary System: Usually operates the front axle brakes.",
+                "Before driving, allow time for the air compressor to build up a minimum of 100 psi pressure in BOTH the primary and secondary systems."
+            ],
+            "keyPoints": [
+                "Dos sistemas (Primario/Secundario) para seguridad.",
+                "Must build 100 psi in BOTH systems before driving."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "air-q3",
+                    "text": "How much pressure must be in the air tanks before driving?",
+                    "options": [
+                        "60 psi",
+                        "100 psi",
+                        "125 psi",
+                        "150 psi"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "You must build up a minimum of 100 psi in both the primary and secondary systems before driving."
+                }
+            ]
+        },
+        {
+            "id": "air-inspection-1",
+            "title": "Inspecting Air Brakes (Step 1-2)",
+            "cdlReference": "CDL Manual §5.3",
+            "content": [
+                "Step 1: Engine compartment check. Check the air compressor drive belt (if equipped). Condition: snug, not frayed/cracked. Deflection: press in center, should deflect 1/2 to 3/4 inch.",
+                "Step 2: Walk-around inspection. Check manual slack adjusters on S-cam brakes. Park on level ground, chock wheels, release parking brakes. Pull hard on each slack adjuster. It should not move more than 1 inch.",
+                "Revise los tambores de freno (sin grietas de más de 1/2 del ancho del área de fricción) y los forros (no demasiado delgados, sin grasa/aceite)."
+            ],
+            "keyPoints": [
+                "Los ajustadores de tensión no deben moverse más de 1 pulgada cuando se tiran.",
+                "Check belt deflection (1/2 - 3/4 inch).",
+                "Sin aceite/grasa en las pastillas de freno."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "air-q4",
+                    "text": "¿Cuánto puede moverse un ajustador de tensión cuando se tira con la mano?",
+                    "options": [
+                        "Más de 2 pulgadas",
+                        "No más de 1 pulgada",
+                        "No debería moverse en absoluto",
+                        "Hasta 3 pulgadas"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "Si un ajustador de tensión se mueve más de aproximadamente una pulgada en el lugar donde se une la varilla de empuje, es necesario ajustarlo."
+                }
+            ]
+        },
+        {
+            "id": "air-inspection-2",
+            "title": "The 3-Step Air Leakage Test",
+            "cdlReference": "CDL Manual §5.3.3",
+            "content": [
+                "Esto es CRÍTICO para la prueba CDL.",
+                "1. Pruebe la advertencia de baja presión: Apague el motor y ponga la llave en ON. Bombee el pedal del freno para liberar aire. La señal de advertencia (luz/zumbador) DEBE encenderse antes de que la presión caiga a 60 psi.",
+                "2. Pruebe los frenos de resorte: Continúe abanicando (bombeando) los frenos. La válvula de protección del freno de resorte debe salir (se aplican los frenos) cuando la presión cae a 20-45 psi.",
+                "3. Prueba de fugas estática y aplicada: vuelva a aumentar la presión al máximo. Apague el motor. Suelte el freno de estacionamiento. Aplique completamente el freno de pie y manténgalo así durante 1 minuto. El camión limpio no debe perder más de 3 psi (Combinación: 4 psi)."
+            ],
+            "keyPoints": [
+                "La advertencia de nivel bajo de aire DEBE encenderse a 60 psi.",
+                "Spring brakes MUST pop out between 20-45 psi.",
+                "Tasa de fuga (aplicada): máx. 3 psi/min (simple), 4 psi/min (combinado)."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "air-q5",
+                    "text": "¿A qué presión debe aparecer la señal de advertencia de baja presión de aire?",
+                    "options": [
+                        "Antes de que caiga a 60 psi",
+                        "Antes de que baje a 30 psi",
+                        "A 100 psi",
+                        "At 125 psi"
+                    ],
+                    "correctIndex": 0,
+                    "explanation": "La señal de advertencia de baja presión de aire debe encenderse antes de que la presión caiga a menos de 60 psi."
+                }
+            ]
+        },
+        {
+            "id": "air-using-1",
+            "title": "Using Air Brakes",
+            "cdlReference": "CDL Manual §5.4",
+            "content": [
+                "Paradas normales: Pise el pedal del freno. Controle la presión para que el vehículo se detenga de forma suave y segura.",
+                "Paradas de emergencia: si debe detenerse rápidamente, frene para poder girar y mantener el vehículo en línea recta. Utilice el 'Frenado controlado' (apriete con fuerza pero no bloquee) o el 'Frenado de puñalada' (frene por completo, suelte cuando las ruedas se bloqueen, repita).",
+                "Braking Lag: Air brakes take longer to work than hydraulic brakes because air takes time to flow. At 55 mph, this adds about 32 feet to your stopping distance."
+            ],
+            "keyPoints": [
+                "El retardo de frenado aumenta la distancia (32 pies a 55 mph).",
+                "Controlled braking: Apply brakes hard without locking.",
+                "Frenado brusco: bloquear las ruedas, soltar y repetir."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "air-q6",
+                    "text": "¿Qué es el retardo de frenado?",
+                    "options": [
+                        "El tiempo necesario para que el conductor vea un peligro.",
+                        "El tiempo que tarda el aire en fluir a través de las líneas hasta los frenos.",
+                        "El tiempo que lleva mover el pie hasta el pedal.",
+                        "La distancia que se desliza el camión."
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "El retraso del frenado es el tiempo necesario para que el aire fluya a través de las líneas hacia los frenos después de presionar el pedal."
+                }
+            ]
+        },
+        {
+            "id": "air-using-2",
+            "title": "Frenar en pendientes",
+            "cdlReference": "CDL Manual §5.4.3",
+            "content": [
+                "Brake Fading: Brakes can fade or fail from excessive heat caused by using them too much. DO NOT ride the brakes down a hill.",
+                "Técnica adecuada: 1. Seleccione una velocidad baja segura (freno motor). 2. Frene firmemente para reducir la velocidad a 5 mph por debajo de su velocidad segura. 3. Suelte los frenos. 4. Espere a que la velocidad aumente hasta alcanzar una velocidad segura. 5. Repita.",
+                "Esto se llama \"frenado brusco\"."
+            ],
+            "keyPoints": [
+                "El calor provoca que los frenos se desvanezcan.",
+                "Utilice el freno motor y el frenado brusco.",
+                "Aplique los frenos para reducir la velocidad 5 mph y luego suéltelos."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "air-q7",
+                    "text": "¿Por qué debería evitar utilizar los frenos continuamente en una bajada larga?",
+                    "options": [
+                        "Desperdicia combustible",
+                        "Desgasta las llantas",
+                        "The brakes can overheat and fail (fade)",
+                        "es ilegal"
+                    ],
+                    "correctIndex": 2,
+                    "explanation": "El uso excesivo de los frenos de servicio produce sobrecalentamiento y hace que los frenos se desvanezcan."
+                }
+            ]
+        },
+        {
+            "id": "air-parking",
+            "title": "Frenos de estacionamiento",
+            "cdlReference": "CDL Manual §5.4.5",
+            "content": [
+                "Any time you park, use the parking brakes, with two exceptions: 1. The brakes are very hot (they can warp the drums). 2. The brakes are wet in freezing temperatures (they can freeze).",
+                "Frenos de resorte: un resorte mecánico aplica los frenos cuando se elimina la presión del aire. Se utiliza para estacionamiento y frenado de emergencia.",
+                "Nunca pise el pedal del freno cuando los frenos de resorte estén activados. La fuerza combinada podría dañar los frenos."
+            ],
+            "keyPoints": [
+                "Utilice los frenos de mano cada vez que estacione.",
+                "Exceptions: Very hot or wet/freezing.",
+                "No utilice el freno de pie cuando el freno de mano esté puesto."
+            ],
+            "reviewQuestions": [
+                {
+                    "id": "air-q8",
+                    "text": "¿Cuándo NO debes usar los frenos de mano?",
+                    "options": [
+                        "Al comprobar el aceite",
+                        "When the brakes are very hot or wet in freezing weather",
+                        "Al estacionar en una colina",
+                        "Cuando estacione por menos de 5 minutos"
+                    ],
+                    "correctIndex": 1,
+                    "explanation": "No use los frenos de estacionamiento si los frenos están muy calientes (pueden deformar los tambores) o mojados en temperaturas bajo cero (pueden congelarse)."
+                }
+            ]
+        }
+    ]
+};
+

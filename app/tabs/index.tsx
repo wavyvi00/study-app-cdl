@@ -1,8 +1,11 @@
-import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Switch, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, ScrollView, TouchableOpacity, LayoutAnimation, Platform, UIManager, Switch, ActivityIndicator, KeyboardAvoidingView, Modal } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Topic } from '../../data/mock';
 import { useQuestions } from '../../context/QuestionsContext';
+import { useSubscription } from '../../context/SubscriptionContext';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import StatsOverview from '../../components/StatsOverview';
 
@@ -15,7 +18,7 @@ import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
 import Hoverable from '../../components/ui/Hoverable';
-import SubscriptionCard from '../../components/SubscriptionCard';
+import EmailOptInModal from '../../components/EmailOptInModal';
 import { showConfirm } from '../../utils/alerts';
 
 import { getPendingEmails, isSubscriptionDismissed, markSubscriptionDismissed } from '../../data/supabase';
@@ -26,9 +29,11 @@ if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental
 
 export default function TopicsScreen() {
     const router = useRouter();
+    const insets = useSafeAreaInsets();
     const { theme, toggleTheme, isDark, colors, spacing, typography, radius } = useTheme();
     const { t, locale, setLocale } = useLocalization();
     const { topics, isLoading } = useQuestions();
+    const { checkCanAccessQuiz } = useSubscription();
     const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -36,6 +41,31 @@ export default function TopicsScreen() {
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
     const [infoTopic, setInfoTopic] = useState<Topic | null>(null);
     const [showSubscriptionPopup, setShowSubscriptionPopup] = useState(false);
+    const [isBannerDismissed, setIsBannerDismissed] = useState(false);
+
+    const BANNER_STORAGE_KEY = 'study_path_banner_dismissed_v1';
+
+    useEffect(() => {
+        AsyncStorage.getItem(BANNER_STORAGE_KEY).then(val => {
+            if (val === 'true') setIsBannerDismissed(true);
+        });
+    }, []);
+
+    const dismissBanner = async () => {
+        LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
+        setIsBannerDismissed(true);
+        await AsyncStorage.setItem(BANNER_STORAGE_KEY, 'true');
+    };
+
+    const isTopicRecommended = (topicId: string, currentClass?: 'Class A' | 'Class B') => {
+        const cls = currentClass || 'Class A';
+        if (cls === 'Class A') {
+            return ['general_knowledge', 'combinations', 'air_brakes'].includes(topicId);
+        } else {
+            // Class B
+            return ['general_knowledge', 'air_brakes'].includes(topicId);
+        }
+    };
 
     // ... (rest of component logic remains same until return)
 
@@ -43,12 +73,31 @@ export default function TopicsScreen() {
     useFocusEffect(
         useCallback(() => {
             loadStats().then(setStats);
-            // Check if we should show subscription popup
+
+            // Check if we should show email opt-in popup (with 5 second delay)
+            let timeoutId: NodeJS.Timeout | null = null;
+
             Promise.all([getPendingEmails(), isSubscriptionDismissed()]).then(([emails, dismissed]) => {
+                if (__DEV__) console.log('[EmailPopup] Check:', { pendingEmails: emails.length, dismissed });
+                // Temporarily disabled auto-popup on launch to prevent crashes/bad UX
+                /*
                 if (emails.length === 0 && !dismissed) {
-                    setShowSubscriptionPopup(true);
+                    if (__DEV__) console.log('[EmailPopup] Scheduling popup in 3s...');
+                    // Delay popup by 3 seconds for natural timing
+                    timeoutId = setTimeout(() => {
+                        if (__DEV__) console.log('[EmailPopup] Showing popup now');
+                        setShowSubscriptionPopup(true);
+                    }, 3000);
+                } else {
+                    if (__DEV__) console.log('[EmailPopup] Popup skipped (already dismissed or email exists)');
                 }
+                */
             });
+
+            // Cleanup timeout on blur
+            return () => {
+                if (timeoutId) clearTimeout(timeoutId);
+            };
         }, [])
     );
 
@@ -95,6 +144,10 @@ export default function TopicsScreen() {
     }, [topics, selectedTopic]);
 
     const startQuiz = (topicId: string, mode: 'practice' | 'exam') => {
+        if (!checkCanAccessQuiz()) {
+            router.push('/paywall');
+            return;
+        }
         router.push({ pathname: '/quiz', params: { topicId, mode } });
     };
 
@@ -167,13 +220,13 @@ export default function TopicsScreen() {
         <View style={[styles.container, { backgroundColor: colors.background }]}>
             <LinearGradient
                 colors={colors.headerGradient}
-                style={[styles.headerBackground, { paddingTop: 40, paddingBottom: 30, paddingHorizontal: spacing.lg, borderBottomLeftRadius: 30, borderBottomRightRadius: 30 }]}
+                style={[styles.headerBackground, { paddingTop: insets.top + 10, paddingBottom: 20, paddingHorizontal: spacing.lg, borderBottomLeftRadius: 30, borderBottomRightRadius: 30, zIndex: 100 }]}
             >
-                <View style={styles.headerRow}>
-                    <View>
+                <View style={[styles.headerRow, { zIndex: 101 }]}>
+                    <View style={{ flex: 1, marginRight: 12 }}>
                         <Text style={styles.headerLabel}>{t('officialCDLPreparation')}</Text>
-                        <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]}>{t('appTitle')}</Text>
-                        <Text style={[styles.headerSubtitle, { color: 'rgba(255,255,255,0.85)', fontSize: typography.md }]}>{t('appSubtitle')}</Text>
+                        <Text style={[styles.headerTitle, { color: '#FFFFFF', fontSize: typography.xxl }]} numberOfLines={1} adjustsFontSizeToFit minimumFontScale={0.8}>{t('appTitle')}</Text>
+                        <Text style={[styles.headerSubtitle, { color: 'rgba(255,255,255,0.85)', fontSize: typography.md }]} numberOfLines={1} adjustsFontSizeToFit>{t('appSubtitle')}</Text>
                     </View>
                     <View style={{ flexDirection: 'row', gap: 8 }}>
                         <TouchableOpacity
@@ -195,108 +248,63 @@ export default function TopicsScreen() {
                     </View>
                 </View>
 
-                {isMenuOpen && (
-                    <Card style={styles.menuDropdown} padding="sm">
-                        <TouchableOpacity
-                            style={[styles.menuItem, { borderBottomColor: colors.border }]}
-                            onPress={() => {
-                                setIsMenuOpen(false);
-                                router.push('/privacy');
-                            }}
-                            accessibilityRole="button"
-                            accessibilityLabel="Privacy Policy"
-                            accessibilityHint="Double tap to view privacy policy"
-                        >
-                            <FontAwesome name="shield" size={16} color={colors.textSecondary} style={styles.menuIcon} />
-                            <Text style={[styles.menuText, { color: colors.text }]}>{t('privacyPolicy')}</Text>
-                        </TouchableOpacity>
 
-                        <View
-                            accessible={true}
-                            accessibilityRole="switch"
-                            accessibilityLabel="Theme mode"
-                            accessibilityValue={{ text: isDark ? 'Dark mode enabled' : 'Light mode enabled' }}
-                            accessibilityHint="Double tap to toggle between light and dark mode"
-                        >
-                            <TouchableOpacity
-                                style={[styles.menuItem, { borderBottomColor: colors.border }]}
-                                onPress={toggleTheme}
-                            >
-                                <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={colors.textSecondary} style={styles.menuIcon} />
-                                <Text style={[styles.menuText, { color: colors.text }]}>{t(isDark ? 'darkMode' : 'lightMode')}</Text>
-                                <View pointerEvents="none">
-                                    <Switch
-                                        value={isDark}
-                                        onValueChange={toggleTheme}
-                                        trackColor={{ false: "#767577", true: colors.secondary }}
-                                        thumbColor={isDark ? colors.highlight : "#f4f3f4"}
-                                        style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
-                                    />
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-
-
-
-                        <TouchableOpacity
-                            style={[styles.menuItem, { borderBottomWidth: 0 }]}
-                            onPress={handleResetProgress}
-                            accessibilityRole="button"
-                            accessibilityLabel="Reset Progress"
-                            accessibilityHint="Double tap to reset all your progress data"
-                        >
-                            <FontAwesome name="refresh" size={16} color={colors.error} style={styles.menuIcon} />
-                            <Text style={[styles.menuText, { color: colors.error }]}>{t('resetProgress')}</Text>
-                        </TouchableOpacity>
-                    </Card>
-                )}
-
-                {isLangDropdownOpen && (
-                    <Card style={[styles.menuDropdown, { right: 68 }]} padding="sm">
-                        <TouchableOpacity
-                            style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
-                            onPress={() => {
-                                setLocale('en');
-                                setIsLangDropdownOpen(false);
-                            }}
-                            accessibilityRole="button"
-                        >
-                            <Text style={{ fontSize: 20, marginRight: 10 }}>🇺🇸</Text>
-                            <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>English</Text>
-                            {locale === 'en' && <FontAwesome name="check" size={14} color={colors.primary} />}
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
-                            onPress={() => {
-                                setLocale('es');
-                                setIsLangDropdownOpen(false);
-                            }}
-                            accessibilityRole="button"
-                        >
-                            <Text style={{ fontSize: 20, marginRight: 10 }}>🇪🇸</Text>
-                            <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Español</Text>
-                            {locale === 'es' && <FontAwesome name="check" size={14} color={colors.primary} />}
-                        </TouchableOpacity>
-                        <TouchableOpacity
-                            style={[styles.langMenuItem, { borderBottomWidth: 0 }]}
-                            onPress={() => {
-                                setLocale('ru');
-                                setIsLangDropdownOpen(false);
-                            }}
-                            accessibilityRole="button"
-                        >
-                            <Text style={{ fontSize: 20, marginRight: 10 }}>🇷🇺</Text>
-                            <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Русский</Text>
-                            {locale === 'ru' && <FontAwesome name="check" size={14} color={colors.primary} />}
-                        </TouchableOpacity>
-                    </Card>
-                )}
             </LinearGradient>
 
             <ScrollView contentContainerStyle={[styles.scrollContent, { padding: spacing.lg }]}>
+                {/* Setup / Recommendation Banner */}
+                {!stats.username ? (
+                    <TouchableOpacity
+                        style={[styles.studyPathBanner, { backgroundColor: isDark ? 'rgba(255, 193, 7, 0.15)' : '#FFF8E1', borderColor: isDark ? 'rgba(255, 193, 7, 0.3)' : '#FFECB3' }]}
+                        onPress={() => router.push('/tabs/profile')}
+                        activeOpacity={0.8}
+                        accessibilityRole="button"
+                        accessibilityLabel={t('setupProfile')}
+                    >
+                        <View style={{ flexDirection: 'row', alignItems: 'flex-start', flex: 1 }}>
+                            <View style={[styles.bannerIconBox, { backgroundColor: isDark ? 'rgba(255, 193, 7, 0.2)' : '#FFECB3' }]}>
+                                <FontAwesome name="user-plus" size={16} color="#F9A825" />
+                            </View>
+                            <View style={{ marginLeft: 12, flex: 1 }}>
+                                <Text style={[styles.bannerTitle, { color: colors.text }]}>
+                                    {t('setupProfileBannerTitle')}
+                                </Text>
+                                <Text style={[styles.bannerDesc, { color: colors.textSecondary }]}>
+                                    {t('setupProfileBannerDesc')}
+                                </Text>
+                            </View>
+                        </View>
+                        <FontAwesome name="chevron-right" size={14} color={colors.textSecondary} />
+                    </TouchableOpacity>
+                ) : !isBannerDismissed && (
+                    <View style={[styles.studyPathBanner, { backgroundColor: isDark ? 'rgba(33, 150, 243, 0.15)' : '#E3F2FD', borderColor: isDark ? 'rgba(33, 150, 243, 0.3)' : '#BBDEFB' }]}>
+                        <View style={{ flexDirection: 'row', alignItems: 'flex-start', flex: 1 }}>
+                            <View style={[styles.bannerIconBox, { backgroundColor: isDark ? 'rgba(33, 150, 243, 0.2)' : '#BBDEFB' }]}>
+                                <FontAwesome name="map-signs" size={16} color={colors.primary} />
+                            </View>
+                            <View style={{ marginLeft: 12, flex: 1 }}>
+                                <Text style={[styles.bannerTitle, { color: colors.text }]}>
+                                    {t('studyPathBannerTitle').replace('{class}', stats.cdlClass || 'Class A')}
+                                </Text>
+                                <Text style={[styles.bannerDesc, { color: colors.textSecondary }]}>
+                                    {t(stats.cdlClass === 'Class B' ? 'studyPathBannerDesc_ClassB' : 'studyPathBannerDesc_ClassA')}
+                                </Text>
+                            </View>
+                        </View>
+                        <TouchableOpacity
+                            onPress={dismissBanner}
+                            style={{ padding: 4, marginLeft: 8 }}
+                            accessibilityRole="button"
+                            accessibilityLabel={t('dismiss')}
+                        >
+                            <FontAwesome name="times" size={14} color={colors.textSecondary} />
+                        </TouchableOpacity>
+                    </View>
+                )}
+
                 <StatsOverview
                     stats={selectedTopic ? (stats.topicStats[selectedTopic.id] || INITIAL_TOPIC_STATS) : stats}
-                    title={selectedTopic ? `${selectedTopic.title} ${t('yourProgress')}` : t('yourProgress')}
+                    title={selectedTopic ? `${selectedTopic.title} - ${t('yourProgress')}` : t('yourProgress')}
                 />
 
                 <Text style={[styles.sectionTitle, { color: colors.textSecondary, fontSize: typography.sm, marginTop: spacing.lg, marginBottom: spacing.sm }]}>{t('selectTopic')}</Text>
@@ -373,7 +381,15 @@ export default function TopicsScreen() {
                                     </View>
                                     <View style={{ marginLeft: spacing.md, flex: 1 }}>
                                         <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <Text style={[styles.topicCardTitle, { color: colors.text, fontSize: typography.lg }]}>{selectedTopic.title}</Text>
+                                            <View style={{ flex: 1, flexDirection: 'row', alignItems: 'center', flexWrap: 'wrap', gap: 8 }}>
+                                                <Text style={[styles.topicCardTitle, { color: colors.text, fontSize: typography.lg }]}>{selectedTopic.title}</Text>
+                                                {isTopicRecommended(selectedTopic.id, stats.cdlClass) && (
+                                                    <View style={[styles.recommendedBadge, { backgroundColor: isDark ? 'rgba(76, 175, 80, 0.15)' : '#E8F5E9' }]}>
+                                                        <FontAwesome name="star" size={10} color="#4CAF50" style={{ marginRight: 4 }} />
+                                                        <Text style={{ fontSize: 10, fontWeight: '700', color: '#2E7D32' }}>{t('recommendedBadge')}</Text>
+                                                    </View>
+                                                )}
+                                            </View>
                                             <TouchableOpacity
                                                 onPress={() => setInfoTopic(selectedTopic)}
                                                 style={{ padding: 12, minWidth: 44, minHeight: 44, justifyContent: 'center', alignItems: 'center' }}
@@ -406,7 +422,7 @@ export default function TopicsScreen() {
                                             fontWeight: '600',
                                             lineHeight: 16
                                         }}>
-                                            💡 New here? Try Practice first to learn as you go.
+                                            💡 {t('newHereTip')}
                                         </Text>
                                     </View>
                                 )}
@@ -416,7 +432,7 @@ export default function TopicsScreen() {
                                         title={t('studyGuide')}
                                         variant="outline"
                                         onPress={() => router.push({ pathname: '/study', params: { topicId: selectedTopic.id } })}
-                                        style={{ flex: 1, marginRight: 8, height: 42, borderRadius: 12, borderColor: colors.primary, borderWidth: 1.5 }}
+                                        style={{ flex: 1, marginRight: 8, minHeight: 42, borderRadius: 12, borderColor: colors.primary, borderWidth: 1.5, paddingHorizontal: 4 }}
                                         textStyle={{ fontSize: 13, fontWeight: '600', color: colors.primary }}
                                         icon={<FontAwesome name="book" size={12} color={colors.primary} style={{ marginRight: 6 }} />}
                                     />
@@ -424,14 +440,14 @@ export default function TopicsScreen() {
                                         title={t('practice')}
                                         variant="outline"
                                         onPress={() => startQuiz(selectedTopic.id, 'practice')}
-                                        style={{ flex: 1, marginRight: 8, height: 42, borderRadius: 12, borderColor: colors.border }}
+                                        style={{ flex: 1, marginRight: 8, minHeight: 42, borderRadius: 12, borderColor: colors.border, paddingHorizontal: 4 }}
                                         textStyle={{ fontSize: 13, fontWeight: '600', color: colors.textSecondary }}
                                     />
                                     <Button
                                         title={t('exam')}
                                         variant="outline"
                                         onPress={() => startQuiz(selectedTopic.id, 'exam')}
-                                        style={{ flex: 1, height: 42, borderRadius: 12, borderColor: colors.border }}
+                                        style={{ flex: 1, minHeight: 42, borderRadius: 12, borderColor: colors.border, paddingHorizontal: 4 }}
                                         textStyle={{ fontSize: 13, fontWeight: '600', color: colors.error }}
                                         icon={<FontAwesome name="clock-o" size={12} color={colors.error} style={{ marginRight: 6 }} />}
                                     />
@@ -487,25 +503,161 @@ export default function TopicsScreen() {
                 </View>
             )}
 
-            {/* Subscription Popup */}
-            {showSubscriptionPopup && (
-                <View style={{
-                    position: 'absolute',
-                    bottom: 100,
-                    left: spacing.lg,
-                    right: spacing.lg,
-                    zIndex: 900,
-                }}>
-                    <SubscriptionCard
-                        showCloseButton
-                        onClose={() => {
-                            markSubscriptionDismissed();
-                            setShowSubscriptionPopup(false);
-                        }}
-                        onSuccess={() => setShowSubscriptionPopup(false)}
-                    />
-                </View>
-            )}
+            {/* Menus (Moved to Modal for better z-index/positioning) */}
+            <Modal
+                transparent
+                visible={isMenuOpen}
+                animationType="fade"
+                onRequestClose={() => setIsMenuOpen(false)}
+            >
+                <TouchableOpacity
+                    style={StyleSheet.absoluteFill}
+                    activeOpacity={1}
+                    onPress={() => setIsMenuOpen(false)}
+                >
+                    <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.2)' }]}>
+                        {/* Empty view for dimmed background */}
+                    </View>
+
+                    <View
+                        style={[styles.menuDropdown, { top: insets.top + 60, zIndex: 1000, elevation: 5 }]}
+                        onStartShouldSetResponder={() => true}
+                    >
+                        <Card padding="sm">
+                            <TouchableOpacity
+                                style={[styles.menuItem, { borderBottomColor: colors.border }]}
+                                onPress={() => {
+                                    setIsMenuOpen(false);
+                                    router.push('/privacy');
+                                }}
+                                accessibilityRole="button"
+                                accessibilityLabel="Privacy Policy"
+                            >
+                                <FontAwesome name="shield" size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                                <Text style={[styles.menuText, { color: colors.text }]}>{t('privacyPolicy')}</Text>
+                            </TouchableOpacity>
+
+                            <TouchableOpacity
+                                style={[styles.menuItem, { borderBottomColor: colors.border }]}
+                                onPress={() => {
+                                    setIsMenuOpen(false);
+                                    router.push('/terms');
+                                }}
+                                accessibilityRole="button"
+                                accessibilityLabel="Terms of Service"
+                            >
+                                <FontAwesome name="file-text-o" size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                                <Text style={[styles.menuText, { color: colors.text }]}>{t('termsOfService')}</Text>
+                            </TouchableOpacity>
+
+                            <View
+                                accessible={true}
+                                accessibilityRole="switch"
+                                accessibilityLabel="Theme mode"
+                                accessibilityValue={{ text: isDark ? 'Dark mode enabled' : 'Light mode enabled' }}
+                            >
+                                <TouchableOpacity
+                                    style={[styles.menuItem, { borderBottomColor: colors.border }]}
+                                    onPress={toggleTheme}
+                                >
+                                    <FontAwesome name={isDark ? "moon-o" : "sun-o"} size={16} color={colors.textSecondary} style={styles.menuIcon} />
+                                    <Text style={[styles.menuText, { color: colors.text }]}>{t(isDark ? 'darkMode' : 'lightMode')}</Text>
+                                    <View pointerEvents="none">
+                                        <Switch
+                                            value={isDark}
+                                            onValueChange={toggleTheme}
+                                            trackColor={{ false: "#767577", true: colors.secondary }}
+                                            thumbColor={isDark ? colors.highlight : "#f4f3f4"}
+                                            style={{ transform: [{ scaleX: 0.8 }, { scaleY: 0.8 }] }}
+                                        />
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+
+                            <TouchableOpacity
+                                style={[styles.menuItem, { borderBottomWidth: 0 }]}
+                                onPress={handleResetProgress}
+                                accessibilityRole="button"
+                                accessibilityLabel="Reset Progress"
+                            >
+                                <FontAwesome name="refresh" size={16} color={colors.error} style={styles.menuIcon} />
+                                <Text style={[styles.menuText, { color: colors.error }]}>{t('resetProgress')}</Text>
+                            </TouchableOpacity>
+                        </Card>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
+
+            <Modal
+                transparent
+                visible={isLangDropdownOpen}
+                animationType="fade"
+                onRequestClose={() => setIsLangDropdownOpen(false)}
+            >
+                <TouchableOpacity
+                    style={StyleSheet.absoluteFill}
+                    activeOpacity={1}
+                    onPress={() => setIsLangDropdownOpen(false)}
+                >
+                    <View style={[StyleSheet.absoluteFill, { backgroundColor: 'rgba(0,0,0,0.2)' }]}>
+                        {/* Empty view for dimmed background */}
+                    </View>
+
+                    <View
+                        style={[styles.menuDropdown, { top: insets.top + 60, right: 68, width: 180, zIndex: 1000, elevation: 5 }]}
+                        onStartShouldSetResponder={() => true}
+                    >
+                        <Card padding="sm">
+                            <TouchableOpacity
+                                style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
+                                onPress={() => {
+                                    setLocale('en');
+                                    setIsLangDropdownOpen(false);
+                                }}
+                                accessibilityRole="button"
+                            >
+                                <Text style={{ fontSize: 20, marginRight: 10 }}>🇺🇸</Text>
+                                <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>English</Text>
+                                {locale === 'en' && <FontAwesome name="check" size={14} color={colors.primary} />}
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.langMenuItem, { borderBottomColor: colors.border }]}
+                                onPress={() => {
+                                    setLocale('es');
+                                    setIsLangDropdownOpen(false);
+                                }}
+                                accessibilityRole="button"
+                            >
+                                <Text style={{ fontSize: 20, marginRight: 10 }}>🇪🇸</Text>
+                                <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Español</Text>
+                                {locale === 'es' && <FontAwesome name="check" size={14} color={colors.primary} />}
+                            </TouchableOpacity>
+                            <TouchableOpacity
+                                style={[styles.langMenuItem, { borderBottomWidth: 0 }]}
+                                onPress={() => {
+                                    setLocale('ru');
+                                    setIsLangDropdownOpen(false);
+                                }}
+                                accessibilityRole="button"
+                            >
+                                <Text style={{ fontSize: 20, marginRight: 10 }}>🇷🇺</Text>
+                                <Text style={[styles.menuText, { color: colors.text, flex: 1 }]}>Русский</Text>
+                                {locale === 'ru' && <FontAwesome name="check" size={14} color={colors.primary} />}
+                            </TouchableOpacity>
+                        </Card>
+                    </View>
+                </TouchableOpacity>
+            </Modal>
+
+            {/* Email Opt-In Modal */}
+            <EmailOptInModal
+                visible={showSubscriptionPopup}
+                onClose={() => {
+                    markSubscriptionDismissed();
+                    setShowSubscriptionPopup(false);
+                }}
+                onSuccess={() => setShowSubscriptionPopup(false)}
+            />
         </View>
     );
 }
@@ -581,7 +733,7 @@ const styles = StyleSheet.create({
         fontWeight: '500',
     },
     scrollContent: {
-        paddingTop: 30,
+        paddingTop: 16,
     },
     sectionTitle: {
         fontWeight: '700',
@@ -656,5 +808,36 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         paddingVertical: 12,
         borderBottomWidth: 1,
+    },
+    studyPathBanner: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        padding: 16,
+        borderRadius: 16,
+        marginBottom: 16,
+        borderWidth: 1,
+    },
+    bannerIconBox: {
+        width: 32,
+        height: 32,
+        borderRadius: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    bannerTitle: {
+        fontSize: 14,
+        fontWeight: '700',
+        marginBottom: 2,
+    },
+    bannerDesc: {
+        fontSize: 12,
+        lineHeight: 16,
+    },
+    recommendedBadge: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingHorizontal: 8,
+        paddingVertical: 4,
+        borderRadius: 12,
     },
 });

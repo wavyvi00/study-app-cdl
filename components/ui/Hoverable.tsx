@@ -1,26 +1,30 @@
 import React, { useState } from 'react';
-import { Pressable, ViewStyle, StyleProp, PressableStateCallbackType } from 'react-native';
+import { Pressable, ViewStyle, StyleProp, PressableStateCallbackType, PressableProps } from 'react-native';
 
 interface HoverableState {
     hovered: boolean;
     pressed: boolean;
 }
 
-interface Props {
+interface Props extends Omit<PressableProps, 'style' | 'children'> {
     children?: React.ReactNode | ((state: HoverableState) => React.ReactNode);
     style?: StyleProp<ViewStyle> | ((state: HoverableState) => StyleProp<ViewStyle>);
-    onPress?: () => void;
-    disabled?: boolean;
 }
 
-export default function Hoverable({ children, style, onPress, disabled }: Props) {
+export default function Hoverable({ children, style, disabled, ...props }: Props) {
     const [isHovered, setIsHovered] = useState(false);
 
     return (
         <Pressable
-            onHoverIn={() => !disabled && setIsHovered(true)}
-            onHoverOut={() => setIsHovered(false)}
-            onPress={onPress}
+            {...props}
+            onHoverIn={(e) => {
+                if (!disabled) setIsHovered(true);
+                props.onHoverIn?.(e);
+            }}
+            onHoverOut={(e) => {
+                setIsHovered(false);
+                props.onHoverOut?.(e);
+            }}
             disabled={disabled}
             style={(state: PressableStateCallbackType) => {
                 const combinedState = { ...state, hovered: isHovered };

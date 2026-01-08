@@ -15,8 +15,10 @@ import { APP_CONFIG } from '../constants/appConfig';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
+import FeedbackModal from '../components/FeedbackModal';
 
-import { useLocalization } from '../context/LocalizationContext'; // Added import
+import { useLocalization } from '../context/LocalizationContext';
+import { useSubscription } from '../context/SubscriptionContext';
 
 // ... imports
 
@@ -28,9 +30,23 @@ export default function QuizScreen() {
 
     const router = useRouter();
     const { colors, spacing, typography, radius, isDark } = useTheme();
-    const { t } = useLocalization(); // Added hook
+    const { t } = useLocalization();
     const { getQuestions, topics } = useQuestions();
     const insets = useSafeAreaInsets();
+    const { checkCanAccessQuiz, refreshSubscriptionStatus, isPro, questionsAnsweredTotal, incrementQuestionsAnswered } = useSubscription();
+    const { FREE_TRIAL_QUESTION_LIMIT } = APP_CONFIG;
+
+    // Check subscription status on mount - redirect to paywall if limit reached
+    useEffect(() => {
+        const checkAccess = async () => {
+            await refreshSubscriptionStatus();
+            if (!checkCanAccessQuiz()) {
+                // User has hit the free trial limit, redirect to paywall
+                router.replace({ pathname: '/paywall', params: { from: 'quiz' } });
+            }
+        };
+        checkAccess();
+    }, []);
 
     // State to hold potentially restored session data
     const [restoredSession, setRestoredSession] = useState<{
@@ -111,6 +127,7 @@ export default function QuizScreen() {
     const [selectedOption, setSelectedOption] = useState<number | null>(null);
     const [isFinished, setIsFinished] = useState(false);
     const [showReview, setShowReview] = useState(false);
+    const [isFeedbackVisible, setFeedbackVisible] = useState(false);
 
     // Track wrong answers
     const [wrongAnswers, setWrongAnswers] = useState<Array<{
@@ -246,7 +263,9 @@ export default function QuizScreen() {
                 mode === 'exam',
                 topicId
             ).then(result => {
-                console.log('Stats updated:', result.stats);
+                if (__DEV__) {
+
+                }
                 if (result.newAchievements.length > 0) {
                     setRecentAchievements(result.newAchievements);
                     Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
@@ -307,29 +326,31 @@ export default function QuizScreen() {
         setSelectedOption(index);
     };
 
-    const handleNext = () => {
+    const handleNext = async () => {
         Haptics.selectionAsync();
+        if (selectedOption === null) return;
 
+        // Increment global counter immediately
+        await incrementQuestionsAnswered();
+
+        const isLastQuestion = currentIndex === questions.length - 1;
         const isCorrect = selectedOption === currentQuestion.correctIndex;
-        let nextScore = score;
-        let nextWrong = wrongAnswers;
+        const nextScore = isCorrect ? score + 1 : score;
+        const nextWrong = isCorrect ? wrongAnswers : [...wrongAnswers, { question: currentQuestion, selectedIndex: selectedOption }];
 
-        if (isCorrect) {
-            setScore(s => { nextScore = s + 1; return s + 1; });
-        } else if (selectedOption !== null) {
-            setWrongAnswers(prev => {
-                const updated = [...prev, {
-                    question: currentQuestion,
-                    selectedIndex: selectedOption
-                }];
-                nextWrong = updated;
-                return updated;
-            });
-        }
+        // Update state so UI and results are correct
+        setScore(nextScore);
+        setWrongAnswers(nextWrong);
 
         if (isLastQuestion) {
             setIsFinished(true); // Triggers recording
         } else {
+            // Check Lockout immediately after incrementing
+            if (!isPro && (questionsAnsweredTotal + 1) >= FREE_TRIAL_QUESTION_LIMIT) {
+                router.replace({ pathname: '/paywall', params: { from: 'quiz' } });
+                return;
+            }
+
             const nextIndex = currentIndex + 1;
             setCurrentIndex(nextIndex);
             setSelectedOption(null);
@@ -487,7 +508,9 @@ export default function QuizScreen() {
                         style={{ minWidth: 60, justifyContent: 'center' }}
                     />
                 ) : (
-                    <View style={styles.headerSpacer} />
+                    <TouchableOpacity onPress={() => setFeedbackVisible(true)} style={{ padding: 8 }}>
+                        <FontAwesome name="flag" size={16} color={colors.textSecondary} />
+                    </TouchableOpacity>
                 )}
             </View>
 
@@ -605,6 +628,13 @@ export default function QuizScreen() {
                     />
                 </View>
             </View>
+
+            <FeedbackModal
+                visible={isFeedbackVisible}
+                onClose={() => setFeedbackVisible(false)}
+                questionId={currentQuestion?.id || 'unknown'}
+                questionTextShort={currentQuestion?.text}
+            />
         </View >
     );
 }

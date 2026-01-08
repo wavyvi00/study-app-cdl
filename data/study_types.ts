@@ -8,7 +8,8 @@ export interface InteractionQuestion {
 
 export interface StudySection {
     id: string;
-    title: string; // e.g. "2.1 Vehicle Inspection"
+    title: string; // e.g. "Vehicle Inspection"
+    cdlReference?: string; // e.g. "CDL Manual §2.1"
     content: string[]; // Array of paragraphs for easier rendering
     keyPoints: string[]; // Bulleted summary list
     reviewQuestions: InteractionQuestion[];

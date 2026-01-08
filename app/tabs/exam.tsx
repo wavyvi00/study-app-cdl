@@ -3,8 +3,11 @@ import { LinearGradient } from 'expo-linear-gradient';
 import { useRouter } from 'expo-router';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 
+import { useLocalization } from '../../context/LocalizationContext';
+
 export default function ExamScreen() {
     const router = useRouter();
+    const { t } = useLocalization();
 
     const startExam = () => {
         router.push({ pathname: '/quiz', params: { mode: 'exam' } });
@@ -16,16 +19,16 @@ export default function ExamScreen() {
                 colors={['#cb2d3e', '#ef473a']}
                 style={styles.headerBackground}
             >
-                <Text style={styles.headerTitle}>Exam Mode</Text>
-                <Text style={styles.headerSubtitle}>Simulate real conditions. No hints.</Text>
+                <Text style={styles.headerTitle}>{t('examModeTitle')}</Text>
+                <Text style={styles.headerSubtitle}>{t('examModeSubtitle')}</Text>
             </LinearGradient>
 
             <View style={styles.content}>
                 <FontAwesome name="graduation-cap" size={80} color="#cb2d3e" style={{ opacity: 0.2, marginBottom: 20 }} />
-                <Text style={styles.infoText}>Take a simulated exam with questions from all topics. No answers revealed until the end.</Text>
+                <Text style={styles.infoText}>{t('examModeInfo')}</Text>
 
                 <TouchableOpacity style={styles.startButton} onPress={startExam}>
-                    <Text style={styles.startText}>Start Exam</Text>
+                    <Text style={styles.startText}>{t('startExam')}</Text>
                 </TouchableOpacity>
             </View>
         </View>

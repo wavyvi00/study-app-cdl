@@ -121,14 +121,14 @@ async function insertEmailToSupabase(email: string): Promise<boolean> {
         if (error) {
             // If error is duplicate key, consider it success (already subscribed)
             if (error.code === '23505') {
-                console.log('Email already subscribed');
+                if (__DEV__) console.log('Email already subscribed');
                 return true;
             }
             console.error('Supabase insert error:', error);
             return false;
         }
 
-        console.log('Successfully inserted email to Supabase');
+        if (__DEV__) console.log('Successfully inserted email to Supabase');
         return true;
     } catch (error) {
         console.error('Error inserting to Supabase:', error);

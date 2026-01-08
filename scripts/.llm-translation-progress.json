@@ -1,0 +1,91 @@
+{
+  "es": {
+    "translatedQuestions": [
+      {
+        "id": "ab_1",
+        "text": "¿Cuál de los siguientes es aceptable encontrar en el sistema de frenos de aire?",
+        "options": [
+          "El petróleo",
+          "Agua",
+          "Aire",
+          "Todo lo anterior"
+        ],
+        "correctIndex": 2,
+        "explanation": "El sistema de frenos por aire utiliza aire comprimido para hacer funcionar los frenos. Agua y aceite son contaminantes."
+      },
+      {
+        "id": "ab_2",
+        "text": "Pérdida de aire en un vehículo individual (no unidad combinada) no debe ser mayor que ___ con el motor apagado y los frenos puestos.",
+        "options": [
+          "Un pulso por minuto.",
+          "2 pulgadas de columna de agua por minuto",
+          "3 psi por minuto",
+          "4 PSI por minuto"
+        ],
+        "correctIndex": 2,
+        "explanation": "Para un camión recto, la pérdida de aire al aplicar los frenos no debería exceder los 3 psi en un minuto."
+      },
+      {
+        "id": "ab_3",
+        "text": "Un sistema de frenos de aire en un camión o autobús no puede perder más de qué cantidad de psi por minuto cuando el motor esté apagado y los frenos liberados.",
+        "options": [
+          "1 pulgada de columna de agua",
+          "2 pulgadas de columna de agua",
+          "3 pulgadas de columna de agua",
+          "4 pulgadas de columna de agua"
+        ],
+        "correctIndex": 1,
+        "explanation": "Con frenos liberados, un vehículo solo."
+      },
+      {
+        "id": "ab_4",
+        "text": "Si el sistema de aire desarrolla una fuga, ¿qué mantendrá el aire en los depósitos de aire?",
+        "options": [
+          "La válvula de protección del tractor.",
+          "La válvula de retransmisión de emergencia",
+          "La válvula de control unidireccional.",
+          "El compresor de aire."
+        ],
+        "correctIndex": 2,
+        "explanation": "Las válvulas de retención unidireccional impiden que el aire escape desde los depósitos hacia la línea de suministro."
+      },
+      {
+        "id": "ab_5",
+        "text": "Cuando se utilicen los frenos de estacionamiento o los frenos de emergencia, ¿de qué tipo de presión se está utilizando?",
+        "options": [
+          "Presión hidráulica",
+          "Presión del aire",
+          "Presión primaria.",
+          "Presión atmosférica"
+        ],
+        "correctIndex": 2,
+        "explanation": "Los frenos de mando estánretenidos por presión de aire pero aplicados mediante presión del resort."
+      },
+      {
+        "id": "ab_6",
+        "text": "¿Qué activa el interruptor de luz eléctrica del sistema de frenos por aire?",
+        "options": [
+          "El pedal del freno.",
+          "Presión primaria.",
+          "Presión del aire",
+          "La electricidad"
+        ],
+        "correctIndex": 2,
+        "explanation": "La presión del aire activa el interruptor de luz de parada eléctrica cuando aprietas el pedal de freno."
+      },
+      {
+        "id": "ab_7",
+        "text": "¿Qué determinará la eficacia de los frenos de emergencia primavera o los frenos de estacionamiento?",
+        "options": [
+          "Ajuste de frenos de servicio.",
+          "La cantidad de presión de aire.",
+          "Peso del vehículo",
+          "La pendiente del terreno"
+        ],
+        "correctIndex": 0,
+        "explanation": "Los frenos de primavera dependen del ajuste de los frenos de servicio para funcionar eficazmente."
+      }
+    ],
+    "lastIndex": 6
+  }
+}

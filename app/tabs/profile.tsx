@@ -1,13 +1,15 @@
 
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platform, UIManager, LayoutAnimation, Image } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platform, UIManager, LayoutAnimation, Image, Alert } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useCallback, useEffect } from 'react';
-import { useFocusEffect } from 'expo-router';
+import { useFocusEffect, useRouter } from 'expo-router';
 import { loadStats, updateStats, resetAllAppData, UserStats, INITIAL_STATS } from '../../data/stats';
+import { ACHIEVEMENTS, Achievement } from '../../data/achievements';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { restartApp } from '../../utils/restartApp';
 import { showAlert, showConfirm } from '../../utils/alerts';
-import { useLocalization } from '../../context/LocalizationContext'; // Added
+import { useLocalization } from '../../context/LocalizationContext';
+import { useSubscription } from '../../context/SubscriptionContext'; // Added
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -21,8 +23,10 @@ const AVATARS = [
 ];
 
 export default function ProfileScreen() {
+    const router = useRouter();
     const insets = useSafeAreaInsets();
-    const { t } = useLocalization(); // Added
+    const { t } = useLocalization();
+    const { restore } = useSubscription(); // Added
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -61,7 +65,7 @@ export default function ProfileScreen() {
 
     const handleSaveProfile = async () => {
         if (!username.trim()) {
-            showAlert(t('usernameRequired'), t('enterUsername')); // Translated
+            showAlert(t('usernameRequired'), t('enterUsername'));
             setUsernameError(true);
             return;
         }
@@ -79,8 +83,17 @@ export default function ProfileScreen() {
         setIsEditing(false);
     };
 
-    const handleLogout = async () => {
-        const performLogout = async () => {
+    const handleRestore = async () => {
+        try {
+            await restore();
+            Alert.alert('Success', 'Purchases restored successfully!');
+        } catch (error: any) {
+            Alert.alert('Error', error.message || 'Restore failed');
+        }
+    };
+
+    const handleResetProfile = async () => {
+        const performReset = async () => {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
             const cleared = await resetAllAppData();
             setStats(cleared);
@@ -90,17 +103,17 @@ export default function ProfileScreen() {
             setIsEditing(false);
             const restarted = await restartApp();
             if (!restarted && Platform.OS !== 'web') {
-                showAlert(t('logout'), "Local data cleared. Please restart the app if anything looks stale."); // Partial translate
+                showAlert(t('resetProfileTitle'), "Local data cleared. Please restart the app if anything looks stale.");
             }
         };
 
         showConfirm({
-            title: t('logoutTitle'),
-            message: t('logoutMessage'),
-            confirmText: t('logout'),
+            title: t('resetProfileTitle'),
+            message: t('resetProfileMessage'),
+            confirmText: t('resetProfile'),
             cancelText: t('cancel'),
             isDestructive: true,
-            onConfirm: performLogout,
+            onConfirm: performReset,
         });
     };
 
@@ -118,12 +131,7 @@ export default function ProfileScreen() {
             <Text style={styles.label}>{t('chooseAvatar')}</Text>
             <ScrollView horizontal showsHorizontalScrollIndicator={false} contentContainerStyle={styles.avatarList}>
                 {AVATARS.map((avatar) => {
-                    const avatarNames: Record<string, string> = {
-                        'truck': 'Semi truck',
-                        'bus': 'Bus',
-                        'road': 'Steering wheel',
-                        'user': 'Driver'
-                    };
+                    const label = t(`avatar_${avatar.id}` as any);
                     return (
                         <TouchableOpacity
                             key={avatar.id}
@@ -133,7 +141,7 @@ export default function ProfileScreen() {
                             ]}
                             onPress={() => setSelectedAvatar(avatar.id)}
                             accessibilityRole="radio"
-                            accessibilityLabel={avatarNames[avatar.id] || avatar.id}
+                            accessibilityLabel={label}
                             accessibilityState={{ checked: selectedAvatar === avatar.id }}
                             accessibilityHint="Double tap to select this avatar"
                         >
@@ -283,20 +291,77 @@ export default function ProfileScreen() {
                 </View>
             </View>
 
-            {/* Achievements Placeholder */}
+            {/* Achievements Summary */}
             <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>{t('achievements')}</Text>
-                <View style={styles.placeholderBox}>
-                    <FontAwesome name="trophy" size={24} color="#ccc" style={{ marginBottom: 8 }} />
-                    <Text style={styles.placeholderText}>{t('comingSoon')}</Text>
+                <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
+                    <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('achievements')}</Text>
+                    <TouchableOpacity onPress={() => router.push('/achievements')}>
+                        <Text style={{ color: '#1565C0', fontWeight: '600' }}>{t('viewAllAwards')}</Text>
+                    </TouchableOpacity>
+                </View>
+
+                <View style={styles.achievementsList}>
+                    {ACHIEVEMENTS.sort((a, b) => {
+                        const unlockA = stats.unlockedAchievements?.includes(a.id) ? 1 : 0;
+                        const unlockB = stats.unlockedAchievements?.includes(b.id) ? 1 : 0;
+                        return unlockB - unlockA; // Unlocked first
+                    }).slice(0, 3).map((ach) => {
+                        const isUnlocked = stats.unlockedAchievements?.includes(ach.id);
+                        const progress = ach.getProgress(stats);
+                        const percentage = Math.min(100, Math.round((progress.current / progress.target) * 100));
+
+                        // Construct translation keys dynamically
+                        const title = t(`achievement_${ach.id}_title` as any);
+                        const desc = t(`achievement_${ach.id}_desc` as any);
+
+                        return (
+                            <View key={ach.id} style={[styles.achievementCard, !isUnlocked && styles.achievementCardLocked]}>
+                                <View style={[styles.achievementIcon, isUnlocked ? styles.iconUnlocked : styles.iconLocked]}>
+                                    <FontAwesome
+                                        name={ach.icon as any}
+                                        size={24}
+                                        color={isUnlocked ? '#fff' : '#999'}
+                                    />
+                                </View>
+                                <View style={styles.achievementContent}>
+                                    <View style={styles.achievementHeader}>
+                                        <Text style={[styles.achievementTitle, !isUnlocked && styles.textLocked]}>
+                                            {title}
+                                        </Text>
+                                        {isUnlocked && (
+                                            <FontAwesome name="check-circle" size={16} color="#4CAF50" />
+                                        )}
+                                    </View>
+                                    <Text style={styles.achievementDesc}>{desc}</Text>
+
+                                    {!isUnlocked && (
+                                        <View style={styles.progressContainer}>
+                                            <View style={styles.progressBarBg}>
+                                                <View style={[styles.progressBarFill, { width: `${percentage}%` }]} />
+                                            </View>
+                                            <Text style={styles.progressText}>
+                                                {progress.current} / {progress.target}
+                                            </Text>
+                                        </View>
+                                    )}
+                                </View>
+                            </View>
+                        );
+                    })}
                 </View>
             </View>
 
 
             <View style={styles.footer}>
+                <Text style={styles.localStorageNoteText}>{t('localStorageNote')}</Text>
                 <Text style={styles.versionText}>v1.0.0</Text>
-                <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
-                    <Text style={styles.logoutText}>{t('logout')}</Text>
+
+                <TouchableOpacity style={styles.restoreButtonFooter} onPress={handleRestore}>
+                    <Text style={styles.restoreTextFooter}>{t('restorePurchases')}</Text>
+                </TouchableOpacity>
+
+                <TouchableOpacity style={styles.resetProfileButton} onPress={handleResetProfile}>
+                    <Text style={styles.resetProfileText}>{t('resetProfile')}</Text>
                 </TouchableOpacity>
 
 
@@ -582,6 +647,87 @@ const styles = StyleSheet.create({
         color: '#999',
         fontSize: 14,
     },
+    achievementsList: {
+        gap: 12,
+    },
+    achievementCard: {
+        flexDirection: 'row',
+        backgroundColor: 'white',
+        padding: 16,
+        borderRadius: 12,
+        alignItems: 'center',
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
+    },
+    achievementCardLocked: {
+        backgroundColor: '#f9f9f9',
+        opacity: 0.8,
+    },
+    achievementIcon: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginRight: 16,
+    },
+    iconUnlocked: {
+        backgroundColor: '#FFC107', // Gold
+        shadowColor: '#FFC107',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+    },
+    iconLocked: {
+        backgroundColor: '#e0e0e0',
+    },
+    achievementContent: {
+        flex: 1,
+    },
+    achievementHeader: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 4,
+    },
+    achievementTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#333',
+    },
+    textLocked: {
+        color: '#666',
+    },
+    achievementDesc: {
+        fontSize: 12,
+        color: '#666',
+        marginBottom: 8,
+    },
+    progressContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+    },
+    progressBarBg: {
+        flex: 1,
+        height: 6,
+        backgroundColor: '#eee',
+        borderRadius: 3,
+        overflow: 'hidden',
+    },
+    progressBarFill: {
+        height: '100%',
+        backgroundColor: '#1565C0',
+        borderRadius: 3,
+    },
+    progressText: {
+        fontSize: 10,
+        color: '#999',
+        fontWeight: '600',
+    },
     footer: {
         alignItems: 'center',
         marginTop: 20,
@@ -592,18 +738,35 @@ const styles = StyleSheet.create({
         fontSize: 12,
         marginBottom: 16,
     },
-    logoutButton: {
+    resetProfileButton: {
         paddingVertical: 8,
         paddingHorizontal: 16,
     },
-    logoutText: {
+    resetProfileText: {
         color: '#C62828',
         fontSize: 16,
         fontWeight: '600',
+    },
+    localStorageNoteText: {
+        color: '#999',
+        fontSize: 11,
+        textAlign: 'center',
+        marginBottom: 8,
+        fontStyle: 'italic',
     },
     avatarImageLarge: {
         width: 64,
         height: 64,
         borderRadius: 32,
+    },
+    restoreButtonFooter: {
+        marginBottom: 16,
+        padding: 8,
+    },
+    restoreTextFooter: {
+        color: '#1565C0',
+        fontSize: 14,
+        fontWeight: '600',
+        textDecorationLine: 'underline',
     },
 });

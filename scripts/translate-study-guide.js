@@ -9,15 +9,9 @@ const fs = require('fs');
 const path = require('path');
 
 // Translation library
-let translatte;
-try {
-    translatte = require('translatte');
-} catch (e) {
-    console.error('Please install translatte: npm install translatte');
-    process.exit(1);
-}
+const translatte = require('translatte');
 
-const DELAY_MS = 300; // Rate limit
+const DELAY_MS = 6000; // Rate limit increased to 6s per user suggestion
 const sleep = ms => new Promise(resolve => setTimeout(resolve, ms));
 
 const DATA_FILE = path.join(__dirname, '..', 'data', 'study_content.ts');
@@ -29,17 +23,30 @@ async function translate(text, targetLang) {
         const result = await translatte(text, { to: targetLang });
         return result.text;
     } catch (error) {
-        console.error(`Translation error for "${text.substring(0, 20)}...": ${error.message}`);
-        await sleep(1000); // Wait longer on error
-        return text;
+        console.error(`Translation error for "${text.substring(0, 20)}...":`, error);
+        if (error && (error.statusCode === 429 || error.code === 'ETIMEDOUT')) {
+            console.log('Rate limited. Waiting 5s...');
+            await sleep(5000);
+            try {
+                const retry = await translatte(text, { to: targetLang });
+                return retry.text;
+            } catch (e) {
+                console.error('Retry failed:', e.message);
+                return text;
+            }
+        }
+        await sleep(1000);
+        return text; // Fallback to original
     }
 }
 
 // Helper to translate an array of strings (content, keyPoints)
 async function translateArray(arr, targetLang) {
     const result = [];
-    for (const item of arr) {
+    for (let i = 0; i < arr.length; i++) {
+        const item = arr[i];
         if (typeof item === 'string') {
+            process.stdout.write(`\r    Item ${i + 1}/${arr.length}`);
             const translated = await translate(item, targetLang);
             result.push(translated);
             await sleep(DELAY_MS);
@@ -47,6 +54,7 @@ async function translateArray(arr, targetLang) {
             result.push(item);
         }
     }
+    console.log(''); // New line after progress
     return result;
 }
 
@@ -81,75 +89,94 @@ async function translateQuestions(questions, targetLang) {
 }
 
 // Main function
+// Main function
 async function main() {
     console.log(`Reading ${DATA_FILE}...`);
     let fileContent = fs.readFileSync(DATA_FILE, 'utf8');
 
-    // Extract the object data by stripping TS syntax
-    // fail-safe: hardcode the object extraction if regex is tricky, but let's try regex
-    // We want the content inside: export const GeneralKnowledgeStudyGuide: StudyGuide = { ... };
+    // Helper to extract object by name
+    function extractGuide(name) {
+        const regex = new RegExp(`export const ${name}\\s*=\s*({[\\s\\S]*?});\\s*export const|export const ${name}\\s*=\s*({[\\s\\S]*?});\\s*$`, 'm');
+        const match = fileContent.match(regex);
 
-    // 1. Remove imports
-    fileContent = fileContent.replace(/import .*/g, '');
-
-    // 2. Remove type annotation
-    fileContent = fileContent.replace(/: StudyGuide/g, '');
-
-    // 3. Extract the object definition
-    const match = fileContent.match(/export const GeneralKnowledgeStudyGuide\s*=\s*({[\s\S]*?});\s*export const/);
-
-    let studyGuideData;
-
-    if (match && match[1]) {
-        try {
-            // Use eval to parse the object literal
-            // We need to make sure it's valid JS. 
-            // The file content likely has unquoted keys if it's standard JS/TS style, which JSON.parse won't like.
-            // eval is dangerous but fine for a build script running on local trusted code.
-            studyGuideData = eval('(' + match[1] + ')');
-        } catch (e) {
-            console.error("Failed to eval extracted object:", e);
-            process.exit(1);
+        if (match) {
+            const objectLiteral = match[1] || match[2];
+            try {
+                return eval('(' + objectLiteral + ')');
+            } catch (e) {
+                console.error(`Failed to eval ${name}:`, e);
+            }
         }
-    } else {
-        // Fallback: try to find it ending with }; at the end of file or before next export
-        // The regex above expects "export const" after it.
-        // Let's try a simpler approach since we know the file structure.
-        // We'll require the user to verify the script manually if it fails parsing.
-        console.error("Could not extract GeneralKnowledgeStudyGuide object using regex. Please ensure data/study_content.ts matches expected format.");
+        return null;
+    }
 
-        // Since we can't easily parse it without the TS environment, and regex for nested objects is hard...
-        // Let's do a "poor man's" parsing OR just translate the file content line-by-line if we can identify strings?
-        // No, that's brittle.
+    const guidesToTranslate = [
+        // { name: 'GeneralKnowledgeStudyGuide', data: extractGuide('GeneralKnowledgeStudyGuide') },
+        // { name: 'CombinationsStudyGuide', data: extractGuide('CombinationsStudyGuide') },
+        { name: 'AirBrakesStudyGuide', data: extractGuide('AirBrakesStudyGuide') },
+        // { name: 'HazmatStudyGuide', data: extractGuide('HazmatStudyGuide') },
+        // { name: 'PassengerStudyGuide', data: extractGuide('PassengerStudyGuide') },
+        // { name: 'DoublesTriplesStudyGuide', data: extractGuide('DoublesTriplesStudyGuide') },
+        // { name: 'TankVehiclesStudyGuide', data: extractGuide('TankVehiclesStudyGuide') },
+        // { name: 'SchoolBusStudyGuide', data: extractGuide('SchoolBusStudyGuide') }
+    ];
 
-        // ALTERNATIVE: Use a temporary JS file.
-        // We can write a temporary .js file that exports the object, strip the type annotations, and require it.
+    // Filter out missing guides
+    const validGuides = guidesToTranslate.filter(g => g.data);
+
+    if (validGuides.length === 0) {
+        console.error("Failed to load any study guide data.");
+        // Try the temp file method as fallback if eval failed but regex might have worked or not
         const tempJsContent = fileContent
             .replace(/import .*/g, '')
             .replace(/: StudyGuide/g, '')
-            .replace(/: InteractionQuestion/g, '') // if present
-            .replace(/: StudySection/g, '') // if present
-            .replace(/export const STUDY_GUIDES[\s\S]*/, '') // remove the end map
-            .replace(/export const/g, 'exports.'); // export for node
+            .replace(/: InteractionQuestion/g, '')
+            .replace(/: StudySection/g, '')
+            .replace(/export const STUDY_GUIDES[\s\S]*/, '')
+            .replace(/export const/g, 'exports.');
 
         const tempFile = path.join(__dirname, 'temp_study_data.js');
         fs.writeFileSync(tempFile, tempJsContent);
 
         try {
-            studyGuideData = require(tempFile).GeneralKnowledgeStudyGuide;
-            fs.unlinkSync(tempFile); // clean up
+            const tempModule = require(tempFile);
+            // if (tempModule.GeneralKnowledgeStudyGuide) {
+            //     validGuides.push({ name: 'GeneralKnowledgeStudyGuide', data: tempModule.GeneralKnowledgeStudyGuide });
+            // }
+            // if (tempModule.CombinationsStudyGuide) {
+            //     validGuides.push({ name: 'CombinationsStudyGuide', data: tempModule.CombinationsStudyGuide });
+            // }
+            if (tempModule.AirBrakesStudyGuide) {
+                validGuides.push({ name: 'AirBrakesStudyGuide', data: tempModule.AirBrakesStudyGuide });
+            }
+            // if (tempModule.HazmatStudyGuide) {
+            //     validGuides.push({ name: 'HazmatStudyGuide', data: tempModule.HazmatStudyGuide });
+            // }
+            // if (tempModule.PassengerStudyGuide) {
+            //     validGuides.push({ name: 'PassengerStudyGuide', data: tempModule.PassengerStudyGuide });
+            // }
+            // if (tempModule.DoublesTriplesStudyGuide) {
+            //     validGuides.push({ name: 'DoublesTriplesStudyGuide', data: tempModule.DoublesTriplesStudyGuide });
+            // }
+            // if (tempModule.TankVehiclesStudyGuide) {
+            //     validGuides.push({ name: 'TankVehiclesStudyGuide', data: tempModule.TankVehiclesStudyGuide });
+            // }
+            // if (tempModule.SchoolBusStudyGuide) {
+            //     validGuides.push({ name: 'SchoolBusStudyGuide', data: tempModule.SchoolBusStudyGuide });
+            // }
+            fs.unlinkSync(tempFile);
         } catch (e) {
             console.error("Failed to require temp file:", e);
             process.exit(1);
         }
     }
 
-    if (!studyGuideData) {
-        console.error("Failed to load study guide data.");
+    if (validGuides.length === 0) {
+        console.error("No guides found to translate.");
         process.exit(1);
     }
 
-    console.log(`Loaded study guide: ${studyGuideData.topicId}, ${studyGuideData.sections.length} sections.`);
+    console.log(`Found ${validGuides.length} guides to translate.`);
 
     // Target languages
     const targets = ['es', 'ru'];
@@ -157,41 +184,57 @@ async function main() {
     for (const lang of targets) {
         console.log(`\n=== Translating to ${lang.toUpperCase()} ===`);
 
-        const newGuide = {
-            topicId: studyGuideData.topicId,
-            sections: []
-        };
+        // Read existing file content if it exists
+        const outFile = path.join(__dirname, '..', 'data', `study_content_${lang}.ts`);
+        let outputContent = '';
 
-        for (const section of studyGuideData.sections) {
-            console.log(`  Section: ${section.title}`);
-
-            const translatedTitle = await translate(section.title, lang);
-            await sleep(DELAY_MS);
-
-            const translatedContent = await translateArray(section.content, lang);
-            const translatedKeyPoints = await translateArray(section.keyPoints || [], lang);
-
-            let translatedQuestions = [];
-            if (section.reviewQuestions) {
-                translatedQuestions = await translateQuestions(section.reviewQuestions, lang);
-            }
-
-            newGuide.sections.push({
-                id: section.id,
-                title: translatedTitle,
-                content: translatedContent,
-                keyPoints: translatedKeyPoints,
-                reviewQuestions: translatedQuestions
-            });
+        if (fs.existsSync(outFile)) {
+            outputContent = fs.readFileSync(outFile, 'utf8');
+        } else {
+            outputContent = `import { StudyGuide } from './study_types';\n\n`;
         }
 
-        // Generate output file content
-        const outputContent = `import { StudyGuide } from './study_types';
+        for (const guideObj of validGuides) {
+            const { name, data } = guideObj;
+            console.log(`Processing ${name}...`);
 
-export const GeneralKnowledgeStudyGuide_${lang.toUpperCase()}: StudyGuide = ${JSON.stringify(newGuide, null, 4)};
-`;
+            const newGuide = {
+                topicId: data.topicId,
+                sections: []
+            };
 
-        const outFile = path.join(__dirname, '..', 'data', `study_content_${lang}.ts`);
+            for (const section of data.sections) {
+                console.log(`  Section: ${section.title}`);
+
+                const translatedTitle = await translate(section.title, lang);
+                await sleep(DELAY_MS);
+
+                const translatedContent = await translateArray(section.content, lang);
+                const translatedKeyPoints = await translateArray(section.keyPoints || [], lang);
+
+                let translatedQuestions = [];
+                if (section.reviewQuestions) {
+                    translatedQuestions = await translateQuestions(section.reviewQuestions, lang);
+                }
+
+                newGuide.sections.push({
+                    id: section.id,
+                    title: translatedTitle,
+                    cdlReference: section.cdlReference,
+                    content: translatedContent,
+                    keyPoints: translatedKeyPoints,
+                    reviewQuestions: translatedQuestions
+                });
+            }
+
+            // Append to output content if not already present (simple check)
+            if (!outputContent.includes(`export const ${name}_${lang.toUpperCase()}`)) {
+                outputContent += `export const ${name}_${lang.toUpperCase()}: StudyGuide = ${JSON.stringify(newGuide, null, 4)};\n\n`;
+            } else {
+                console.log(`Skipping ${name} as it already exists in output file.`);
+            }
+        }
+
         fs.writeFileSync(outFile, outputContent);
         console.log(`Saved to ${outFile}`);
     }

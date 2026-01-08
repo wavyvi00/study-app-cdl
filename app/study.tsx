@@ -12,13 +12,14 @@ import * as Haptics from '../utils/haptics';
 import Button from '../components/ui/Button';
 import Card from '../components/ui/Card';
 import Badge from '../components/ui/Badge';
+import FeedbackModal from '../components/FeedbackModal';
 
 export default function StudyScreen() {
     const params = useLocalSearchParams();
     const router = useRouter();
     const { colors, spacing, typography, radius, isDark } = useTheme();
     const { topics } = useQuestions();
-    const { locale } = useLocalization(); // Added
+    const { locale, t } = useLocalization(); // Added
     const insets = useSafeAreaInsets();
     const scrollViewRef = useRef<ScrollView>(null);
 
@@ -33,6 +34,7 @@ export default function StudyScreen() {
     const [answers, setAnswers] = useState<Record<string, number>>({});
 
     const [isCompleted, setIsCompleted] = useState(false);
+    const [isFeedbackVisible, setFeedbackVisible] = useState(false);
 
     // Reset scroll and answers when section changes
     useEffect(() => {
@@ -192,14 +194,23 @@ export default function StudyScreen() {
                         <View style={[styles.progressBarFill, { backgroundColor: colors.primary, width: `${((sectionIndex + 1) / studyGuide.sections.length) * 100}%` }]} />
                     </View>
                 </View>
-                <View style={{ width: 60 }} />
+                <TouchableOpacity onPress={() => setFeedbackVisible(true)} style={{ width: 60, alignItems: 'flex-end', paddingRight: 8 }}>
+                    <FontAwesome name="flag" size={18} color={colors.textSecondary} />
+                </TouchableOpacity>
             </View>
 
             <ScrollView ref={scrollViewRef} contentContainerStyle={[styles.scrollViewContent, { padding: spacing.lg }]}>
 
                 {/* Content Card */}
                 <Card padding="lg" style={{ marginBottom: spacing.xl }}>
-                    <Text style={[styles.sectionTitle, { color: colors.text, fontSize: typography.xl, marginBottom: spacing.lg }]}>{currentSection.title}</Text>
+                    {currentSection.cdlReference && (
+                        <Text style={{ fontSize: typography.sm, color: colors.textSecondary, marginBottom: spacing.xs, fontWeight: '500' }}>
+                            {currentSection.cdlReference}
+                        </Text>
+                    )}
+                    <Text style={[styles.sectionTitle, { color: colors.text, fontSize: typography.xl, marginBottom: spacing.lg }]}>
+                        {sectionIndex + 1}. {currentSection.title}
+                    </Text>
 
                     {/* Main Text Content */}
                     {currentSection.content.map((paragraph, idx) => (
@@ -214,7 +225,7 @@ export default function StudyScreen() {
                     <Card padding="lg" style={{ marginBottom: spacing.xl, backgroundColor: isDark ? '#2a2a20' : '#FFF9C4', borderColor: isDark ? '#444' : 'transparent' }}>
                         <View style={{ flexDirection: 'row', alignItems: 'center', marginBottom: spacing.md }}>
                             <FontAwesome name="lightbulb-o" size={20} color={colors.highlight} />
-                            <Text style={[styles.keyPointsTitle, { color: isDark ? colors.highlight : '#F57F17', fontSize: typography.lg, marginLeft: spacing.sm }]}>Key Takeaways</Text>
+                            <Text style={[styles.keyPointsTitle, { color: isDark ? colors.highlight : '#F57F17', fontSize: typography.lg, marginLeft: spacing.sm }]}>{t('keyTakeaways')}</Text>
                         </View>
                         {currentSection.keyPoints.map((point, idx) => (
                             <View key={idx} style={styles.bulletRow}>
@@ -228,7 +239,7 @@ export default function StudyScreen() {
                 {/* Comprehension Questions */}
                 {currentSection.reviewQuestions && currentSection.reviewQuestions.length > 0 && (
                     <View style={styles.quizSection}>
-                        <Text style={[styles.quizHeader, { color: colors.text, fontSize: typography.lg, marginBottom: spacing.md }]}>Check Your Understanding</Text>
+                        <Text style={[styles.quizHeader, { color: colors.text, fontSize: typography.lg, marginBottom: spacing.md }]}>{t('checkYourUnderstanding')}</Text>
 
                         {currentSection.reviewQuestions.map((q, idx) => {
                             const selected = answers[q.id];
@@ -344,6 +355,12 @@ export default function StudyScreen() {
                 <View style={{ height: 40 }} />
             </ScrollView>
 
+            <FeedbackModal
+                visible={isFeedbackVisible}
+                onClose={() => setFeedbackVisible(false)}
+                questionId={`study:${topic.id}:${sectionIndex}`}
+                questionTextShort={`Section: ${currentSection.title}`}
+            />
         </View>
     );
 }
@@ -376,13 +393,14 @@ const styles = StyleSheet.create({
         marginBottom: 4,
     },
     progressBarBg: {
-        width: 120,
-        height: 4,
-        borderRadius: 2,
+        flex: 1,
+        marginHorizontal: 12,
+        height: 6,
+        borderRadius: 3,
     },
     progressBarFill: {
         height: '100%',
-        borderRadius: 2,
+        borderRadius: 3,
     },
     backButton: {
         flexDirection: 'row',
