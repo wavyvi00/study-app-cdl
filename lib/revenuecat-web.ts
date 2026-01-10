@@ -1,10 +1,22 @@
 /**
  * RevenueCat Web SDK Integration
  * Uses @revenuecat/purchases-js for web purchases via Stripe
+ * 
+ * IMPORTANT: This module should ONLY be used on web platform.
+ * On iOS/Android, purchases flow through react-native-purchases (Apple IAP / Google Play).
+ * The Platform checks in revenuecat.ts ensure this, but we add a guard here as defense-in-depth.
  */
+import { Platform } from 'react-native';
 import { Purchases, type CustomerInfo, type Package, type Offerings } from '@revenuecat/purchases-js';
 
+// Defensive guard: Prevent accidental use on native platforms
+const IS_WEB = Platform.OS === 'web';
+if (!IS_WEB && __DEV__) {
+    console.warn('[RevenueCat Web] WARNING: This module should only be used on web platform. Native platforms should use react-native-purchases directly.');
+}
+
 const ENTITLEMENT_ID = 'CDL ZERO Pro';
+
 
 let purchasesInstance: Purchases | null = null;
 let currentAppUserId: string | null = null;
@@ -21,16 +33,29 @@ export interface WebSubscriptionStatus {
  * Call logInWeb() after to bind to authenticated user
  */
 export const initRevenueCatWeb = async (): Promise<void> => {
+    // DEFENSIVE GUARD: Bail out immediately if not on web platform
+    // This prevents any web SDK initialization on iOS/Android
+    if (!IS_WEB) {
+        if (__DEV__) console.warn('[RevenueCat Web] Blocked initialization on non-web platform');
+        return;
+    }
+
     if (isConfigured) {
         if (__DEV__) console.log('[RevenueCat Web] Already configured, skipping');
         return;
     }
 
+
     const apiKey = process.env.EXPO_PUBLIC_REVENUECAT_WEB_API_KEY;
 
     if (!apiKey) {
-        console.error('[RevenueCat Web] API key not found');
+        console.error('[RevenueCat Web] API key not found. Set EXPO_PUBLIC_REVENUECAT_WEB_API_KEY in your .env file.');
         return;
+    }
+
+    // Validate API key format (should start with 'strp_' for Stripe Public SDK Key)
+    if (!apiKey.startsWith('strp_')) {
+        console.warn('[RevenueCat Web] API key format may be incorrect. Expected format: strp_xxxxx (Stripe Public SDK Key). Got:', apiKey.slice(0, 8) + '...');
     }
 
     try {
@@ -38,11 +63,23 @@ export const initRevenueCatWeb = async (): Promise<void> => {
         // Will be replaced when logInWeb() is called with authenticated user
         const tempUserId = getOrCreateAnonymousUserId();
         currentAppUserId = tempUserId;
+
+        if (__DEV__) {
+            console.log('[RevenueCat Web] Configuring SDK with:', {
+                apiKeyPrefix: apiKey.slice(0, 8) + '...',
+                userId: tempUserId.slice(0, 16) + '...',
+            });
+        }
+
         purchasesInstance = Purchases.configure(apiKey, tempUserId);
         isConfigured = true;
-        if (__DEV__) console.log('[RevenueCat Web] SDK configured with temp user:', tempUserId.slice(0, 12) + '...');
-    } catch (error) {
+        if (__DEV__) console.log('[RevenueCat Web] SDK configured successfully');
+    } catch (error: any) {
         console.error('[RevenueCat Web] Failed to configure:', error);
+        // Log additional details for 401 errors
+        if (error.message?.includes('401') || error.status === 401) {
+            console.error('[RevenueCat Web] 401 Unauthorized - Check that your API key is correct and Web Billing is enabled in RevenueCat dashboard');
+        }
     }
 };
 
@@ -120,23 +157,30 @@ export const logOutWeb = async (): Promise<void> => {
 };
 
 /**
- * Get or create an anonymous user ID for web
+ * Get or create a stable anonymous user ID for web
  * This persists across sessions using localStorage
+ * Uses a clean format compatible with RevenueCat
  */
 const getOrCreateAnonymousUserId = (): string => {
-    const STORAGE_KEY = 'rc_anonymous_user_id';
+    const STORAGE_KEY = 'rc_web_user_id';
 
     if (typeof window !== 'undefined' && window.localStorage) {
         let userId = localStorage.getItem(STORAGE_KEY);
         if (!userId) {
-            userId = `$RCAnonymousID:${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+            // Use crypto.randomUUID if available, otherwise fallback to timestamp + random
+            if (typeof crypto !== 'undefined' && crypto.randomUUID) {
+                userId = `web_${crypto.randomUUID()}`;
+            } else {
+                userId = `web_${Date.now()}_${Math.random().toString(36).substring(2, 11)}`;
+            }
             localStorage.setItem(STORAGE_KEY, userId);
+            if (__DEV__) console.log('[RevenueCat Web] Created new anonymous user ID:', userId.slice(0, 16) + '...');
         }
         return userId;
     }
 
-    // Fallback for SSR or no localStorage
-    return `$RCAnonymousID:temp_${Date.now()}`;
+    // SSR fallback - will be replaced on client hydration
+    return `web_anon_${Date.now()}`;
 };
 
 /**
