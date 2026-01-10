@@ -11,7 +11,7 @@ import { ThemeProvider, useTheme } from '../context/ThemeContext';
 import { LocalizationProvider } from '../context/LocalizationContext';
 import { QuestionsProvider } from '../context/QuestionsContext';
 import { SubscriptionProvider } from '../context/SubscriptionContext';
-import { WebAuthProvider } from '../context/WebAuthContext';
+import { AuthProvider } from '../context/AuthContext';
 import EntryScreen from '../components/EntryScreen';
 import { startEmailSync } from '../utils/emailSync';
 
@@ -31,7 +31,7 @@ function RootNavigator() {
                 <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
                 <Stack.Screen name="achievements" options={{ headerShown: false }} />
                 <Stack.Screen name="paywall" options={{ headerShown: false, presentation: 'modal' }} />
-                {/* Web-only auth routes - directory with its own _layout */}
+                {/* Auth screens - now available on all platforms */}
                 <Stack.Screen name="auth" options={{ headerShown: false }} />
                 <Stack.Screen name="+not-found" />
             </Stack>
@@ -82,24 +82,15 @@ export default function RootLayout() {
         return () => clearTimeout(timer);
     }, []);
 
-    // Wrap with WebAuthProvider only on web
-    const content = (
-        <SubscriptionProvider>
-            <AppContent fontsLoaded={loaded} />
-        </SubscriptionProvider>
-    );
-
     return (
         <ThemeProvider>
             <LocalizationProvider>
                 <QuestionsProvider>
-                    {Platform.OS === 'web' ? (
-                        <WebAuthProvider>
-                            {content}
-                        </WebAuthProvider>
-                    ) : (
-                        content
-                    )}
+                    <AuthProvider>
+                        <SubscriptionProvider>
+                            <AppContent fontsLoaded={loaded} />
+                        </SubscriptionProvider>
+                    </AuthProvider>
                 </QuestionsProvider>
             </LocalizationProvider>
         </ThemeProvider>

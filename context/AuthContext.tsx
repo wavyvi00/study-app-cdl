@@ -1,10 +1,9 @@
 /**
- * Web-Only Authentication Context
- * Manages Supabase auth state for web users only
- * iOS/Android use anonymous RevenueCat IDs and don't use this context
+ * Cross-Platform Authentication Context
+ * Manages Supabase auth state for all platforms (iOS, Android, Web).
+ * Provides a stable user ID that can be used with RevenueCat.
  */
 import React, { createContext, useContext, useState, useEffect, useCallback, ReactNode } from 'react';
-import { Platform } from 'react-native';
 import type { User, Session } from '@supabase/supabase-js';
 import {
     signUpWithEmail,
@@ -15,37 +14,30 @@ import {
     onAuthStateChange,
 } from '../lib/supabase-auth';
 
-interface WebAuthState {
+interface AuthState {
     user: User | null;
     session: Session | null;
     isLoading: boolean;
     isAuthenticated: boolean;
 }
 
-interface WebAuthContextType extends WebAuthState {
+interface AuthContextType extends AuthState {
+    /** The stable user ID to use with RevenueCat (Supabase user UUID) */
+    userId: string | null;
     signUp: (email: string, password: string) => Promise<{ error: string | null }>;
     signIn: (email: string, password: string) => Promise<{ error: string | null }>;
     signOut: () => Promise<{ error: string | null }>;
     resetPassword: (email: string) => Promise<{ error: string | null }>;
 }
 
-const WebAuthContext = createContext<WebAuthContextType | null>(null);
+const AuthContext = createContext<AuthContextType | null>(null);
 
-interface WebAuthProviderProps {
+interface AuthProviderProps {
     children: ReactNode;
 }
 
-export function WebAuthProvider({ children }: WebAuthProviderProps) {
-    // Only run on web
-    if (Platform.OS !== 'web') {
-        return <>{children}</>;
-    }
-
-    return <WebAuthProviderInner>{children}</WebAuthProviderInner>;
-}
-
-function WebAuthProviderInner({ children }: WebAuthProviderProps) {
-    const [state, setState] = useState<WebAuthState>({
+export function AuthProvider({ children }: AuthProviderProps) {
+    const [state, setState] = useState<AuthState>({
         user: null,
         session: null,
         isLoading: true,
@@ -54,18 +46,31 @@ function WebAuthProviderInner({ children }: WebAuthProviderProps) {
 
     // Initialize session on mount
     useEffect(() => {
+        let isMounted = true;
+
         const initSession = async () => {
             try {
                 const session = await getCurrentSession();
+                if (!isMounted) return;
+
                 setState({
                     user: session?.user || null,
                     session,
                     isLoading: false,
                     isAuthenticated: !!session?.user,
                 });
+
+                if (__DEV__) {
+                    console.log('[Auth] Session initialized:', {
+                        hasUser: !!session?.user,
+                        userId: session?.user?.id?.slice(0, 8) + '...',
+                    });
+                }
             } catch (error) {
-                console.error('[WebAuth] Init error:', error);
-                setState(prev => ({ ...prev, isLoading: false }));
+                console.error('[Auth] Init error:', error);
+                if (isMounted) {
+                    setState(prev => ({ ...prev, isLoading: false }));
+                }
             }
         };
 
@@ -73,19 +78,27 @@ function WebAuthProviderInner({ children }: WebAuthProviderProps) {
 
         // Listen for auth changes
         const unsubscribe = onAuthStateChange(async (event, session) => {
-            console.log('[WebAuth] Auth state changed:', event);
+            if (!isMounted) return;
+
+            if (__DEV__) {
+                console.log('[Auth] Auth state changed:', event, {
+                    hasUser: !!session?.user,
+                    userId: session?.user?.id?.slice(0, 8) + '...',
+                });
+            }
+
             setState({
                 user: session?.user || null,
                 session,
                 isLoading: false,
                 isAuthenticated: !!session?.user,
             });
-
-            // RevenueCat user binding is now handled by SubscriptionContext
-            // which reacts to auth state changes from AuthContext
         });
 
-        return unsubscribe;
+        return () => {
+            isMounted = false;
+            unsubscribe();
+        };
     }, []);
 
     const signUp = useCallback(async (email: string, password: string) => {
@@ -144,8 +157,9 @@ function WebAuthProviderInner({ children }: WebAuthProviderProps) {
         return authResetPassword(email);
     }, []);
 
-    const value: WebAuthContextType = {
+    const value: AuthContextType = {
         ...state,
+        userId: state.user?.id || null,
         signUp,
         signIn,
         signOut,
@@ -153,39 +167,29 @@ function WebAuthProviderInner({ children }: WebAuthProviderProps) {
     };
 
     return (
-        <WebAuthContext.Provider value={value}>
+        <AuthContext.Provider value={value}>
             {children}
-        </WebAuthContext.Provider>
+        </AuthContext.Provider>
     );
 }
 
 /**
- * Hook to access web auth context
- * Returns null on non-web platforms
+ * Hook to access auth context
+ * Returns null if used outside of AuthProvider
  */
-export function useWebAuth(): WebAuthContextType | null {
-    const context = useContext(WebAuthContext);
-
-    // On non-web platforms, context will be null
-    if (Platform.OS !== 'web') {
-        return null;
-    }
-
-    return context;
+export function useAuth(): AuthContextType | null {
+    return useContext(AuthContext);
 }
 
 /**
- * Hook that throws if used outside provider (web only)
+ * Hook that throws if used outside AuthProvider
+ * Use this in components that require authentication
  */
-export function useWebAuthRequired(): WebAuthContextType {
-    const context = useContext(WebAuthContext);
-
-    if (Platform.OS !== 'web') {
-        throw new Error('useWebAuthRequired is only available on web');
-    }
+export function useAuthRequired(): AuthContextType {
+    const context = useContext(AuthContext);
 
     if (!context) {
-        throw new Error('useWebAuthRequired must be used within WebAuthProvider');
+        throw new Error('useAuthRequired must be used within AuthProvider');
     }
 
     return context;

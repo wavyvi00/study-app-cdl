@@ -1,16 +1,10 @@
 /**
- * Auth Layout (Web Only)
- * Simple layout wrapper for auth routes
+ * Auth Layout (Cross-Platform)
+ * Layout wrapper for auth routes - works on iOS, Android, and Web
  */
 import { Stack } from 'expo-router';
-import { Platform } from 'react-native';
 
 export default function AuthLayout() {
-    // On non-web platforms, render nothing
-    if (Platform.OS !== 'web') {
-        return null;
-    }
-
     return (
         <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="login" />

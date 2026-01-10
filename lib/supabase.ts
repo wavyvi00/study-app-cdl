@@ -1,16 +1,18 @@
-import { createClient } from '@supabase/supabase-js';
+import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL!;
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY!;
+// Safely get environment variables with fallbacks to prevent crashes
+const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
+const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
 
-if (!supabaseUrl || !supabaseAnonKey) {
-    console.warn("Supabase credentials missing from environment variables");
+// Validate config before creating client to prevent crashes
+const isValidConfig = Boolean(supabaseUrl && supabaseAnonKey && supabaseUrl.length > 0 && supabaseAnonKey.length > 0);
+
+if (!isValidConfig) {
+    console.warn('[Supabase] Credentials missing from environment variables - some features will be disabled');
 }
 
-// Validating config to prevent crashes if env vars are missing
-const isValidConfig = supabaseUrl.length > 0 && supabaseAnonKey.length > 0;
-
-export const supabase = isValidConfig
+// Create client only if valid config, otherwise null
+export const supabase: SupabaseClient | null = isValidConfig
     ? createClient(supabaseUrl, supabaseAnonKey)
     : null;
 
@@ -29,33 +31,43 @@ export interface DbQuestion {
 export async function fetchQuestions(topicId: string): Promise<DbQuestion[]> {
     if (!supabase) return [];
 
-    const { data, error } = await supabase
-        .from('questions')
-        .select('*')
-        .eq('topic_id', topicId)
-        .order('created_at', { ascending: true });
+    try {
+        const { data, error } = await supabase
+            .from('questions')
+            .select('*')
+            .eq('topic_id', topicId)
+            .order('created_at', { ascending: true });
 
-    if (error) {
-        console.error('Error fetching questions:', error);
+        if (error) {
+            console.error('[Supabase] Error fetching questions:', error);
+            return [];
+        }
+
+        return data || [];
+    } catch (error) {
+        console.error('[Supabase] Exception fetching questions:', error);
         return [];
     }
-
-    return data || [];
 }
 
 // Fetch all questions
 export async function fetchAllQuestions(): Promise<DbQuestion[]> {
     if (!supabase) return [];
 
-    const { data, error } = await supabase
-        .from('questions')
-        .select('*')
-        .order('topic_id', { ascending: true });
+    try {
+        const { data, error } = await supabase
+            .from('questions')
+            .select('*')
+            .order('topic_id', { ascending: true });
 
-    if (error) {
-        console.error('Error fetching all questions:', error);
+        if (error) {
+            console.error('[Supabase] Error fetching all questions:', error);
+            return [];
+        }
+
+        return data || [];
+    } catch (error) {
+        console.error('[Supabase] Exception fetching all questions:', error);
         return [];
     }
-
-    return data || [];
 }

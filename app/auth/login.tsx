@@ -1,6 +1,6 @@
 /**
- * Login Page (Web Only)
- * Email + password login for web users
+ * Login Page (Cross-Platform)
+ * Email + password login for all platforms (iOS, Android, Web)
  */
 import React, { useState, useEffect } from 'react';
 import {
@@ -12,12 +12,13 @@ import {
     Platform,
     KeyboardAvoidingView,
     ActivityIndicator,
+    ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useWebAuth } from '../../context/WebAuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { BackgroundShapes } from '../../components/ui/BackgroundShapes';
 import { useWindowDimensions } from 'react-native';
 
@@ -25,7 +26,7 @@ export default function LoginScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const { width, height } = useWindowDimensions();
-    const webAuth = useWebAuth();
+    const auth = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -35,15 +36,10 @@ export default function LoginScreen() {
 
     // Redirect to home if already authenticated
     useEffect(() => {
-        if (webAuth?.isAuthenticated) {
+        if (auth?.isAuthenticated) {
             router.replace('/tabs');
         }
-    }, [webAuth?.isAuthenticated]);
-
-    // Web-only page
-    if (Platform.OS !== 'web') {
-        return null;
-    }
+    }, [auth?.isAuthenticated]);
 
     const handleLogin = async () => {
         if (!email.trim() || !password.trim()) {
@@ -55,11 +51,11 @@ export default function LoginScreen() {
         setIsSubmitting(true);
 
         try {
-            const result = await webAuth?.signIn(email.trim(), password);
+            const result = await auth?.signIn(email.trim(), password);
             if (result?.error) {
                 setError(result.error);
             } else {
-                // Success - redirect to home or paywall
+                // Success - redirect to home
                 router.replace('/tabs');
             }
         } catch (err: any) {
@@ -80,101 +76,103 @@ export default function LoginScreen() {
             <BackgroundShapes width={width} height={height} />
 
             <KeyboardAvoidingView
-                behavior="padding"
-                style={[styles.content, { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 20 }]}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.keyboardView}
             >
-                {/* Header */}
-                <View style={styles.header}>
-                    <FontAwesome name="lock" size={48} color="#38bdf8" />
-                    <Text style={styles.title}>Welcome Back</Text>
-                    <Text style={styles.subtitle}>Sign in to access your purchases</Text>
-                </View>
-
-                {/* Form */}
-                <View style={styles.form}>
-                    {error ? (
-                        <View style={styles.errorContainer}>
-                            <FontAwesome name="exclamation-circle" size={16} color="#ef4444" />
-                            <Text style={styles.errorText}>{error}</Text>
-                        </View>
-                    ) : null}
-
-                    <View style={styles.inputContainer}>
-                        <FontAwesome name="envelope" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Email"
-                            placeholderTextColor="rgba(255,255,255,0.4)"
-                            value={email}
-                            onChangeText={setEmail}
-                            keyboardType="email-address"
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            editable={!isSubmitting}
-                        />
+                <ScrollView
+                    contentContainerStyle={[
+                        styles.content,
+                        { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 20 }
+                    ]}
+                    keyboardShouldPersistTaps="handled"
+                >
+                    {/* Header */}
+                    <View style={styles.header}>
+                        <FontAwesome name="lock" size={48} color="#38bdf8" />
+                        <Text style={styles.title}>Welcome Back</Text>
+                        <Text style={styles.subtitle}>Sign in to sync your progress</Text>
                     </View>
 
-                    <View style={styles.inputContainer}>
-                        <FontAwesome name="key" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
-                        <TextInput
-                            style={styles.input}
-                            placeholder="Password"
-                            placeholderTextColor="rgba(255,255,255,0.4)"
-                            value={password}
-                            onChangeText={setPassword}
-                            secureTextEntry={!showPassword}
-                            autoCapitalize="none"
-                            autoCorrect={false}
-                            editable={!isSubmitting}
-                        />
-                        <TouchableOpacity
-                            onPress={() => setShowPassword(!showPassword)}
-                            style={styles.eyeButton}
-                        >
-                            <FontAwesome
-                                name={showPassword ? 'eye-slash' : 'eye'}
-                                size={18}
-                                color="rgba(255,255,255,0.5)"
+                    {/* Form */}
+                    <View style={styles.form}>
+                        {error ? (
+                            <View style={styles.errorContainer}>
+                                <FontAwesome name="exclamation-circle" size={16} color="#ef4444" />
+                                <Text style={styles.errorText}>{error}</Text>
+                            </View>
+                        ) : null}
+
+                        <View style={styles.inputContainer}>
+                            <FontAwesome name="envelope" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Email"
+                                placeholderTextColor="rgba(255,255,255,0.4)"
+                                value={email}
+                                onChangeText={setEmail}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                editable={!isSubmitting}
+                                returnKeyType="next"
                             />
+                        </View>
+
+                        <View style={styles.inputContainer}>
+                            <FontAwesome name="key" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Password"
+                                placeholderTextColor="rgba(255,255,255,0.4)"
+                                value={password}
+                                onChangeText={setPassword}
+                                secureTextEntry={!showPassword}
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                editable={!isSubmitting}
+                                returnKeyType="done"
+                                onSubmitEditing={handleLogin}
+                            />
+                            <TouchableOpacity
+                                onPress={() => setShowPassword(!showPassword)}
+                                style={styles.eyeButton}
+                            >
+                                <FontAwesome
+                                    name={showPassword ? 'eye-slash' : 'eye'}
+                                    size={18}
+                                    color="rgba(255,255,255,0.5)"
+                                />
+                            </TouchableOpacity>
+                        </View>
+
+                        <TouchableOpacity
+                            style={[styles.button, isSubmitting && styles.buttonDisabled]}
+                            onPress={handleLogin}
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? (
+                                <ActivityIndicator color="#fff" />
+                            ) : (
+                                <Text style={styles.buttonText}>Sign In</Text>
+                            )}
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.linkButton}
+                            onPress={() => router.push('/auth/forgot-password')}
+                        >
+                            <Text style={styles.linkText}>Forgot password?</Text>
                         </TouchableOpacity>
                     </View>
 
-                    <TouchableOpacity
-                        style={[styles.button, isSubmitting && styles.buttonDisabled]}
-                        onPress={handleLogin}
-                        disabled={isSubmitting}
-                    >
-                        {isSubmitting ? (
-                            <ActivityIndicator color="#fff" />
-                        ) : (
-                            <Text style={styles.buttonText}>Sign In</Text>
-                        )}
-                    </TouchableOpacity>
-
-                    <TouchableOpacity
-                        style={styles.linkButton}
-                        onPress={() => router.push('/auth/forgot-password')}
-                    >
-                        <Text style={styles.linkText}>Forgot password?</Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Footer */}
-                <View style={styles.footer}>
-                    <Text style={styles.footerText}>Don't have an account?</Text>
-                    <TouchableOpacity onPress={() => router.push('/auth/signup')}>
-                        <Text style={styles.footerLink}>Create one</Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Back to app */}
-                <TouchableOpacity
-                    style={styles.backButton}
-                    onPress={() => router.replace('/tabs')}
-                >
-                    <FontAwesome name="arrow-left" size={14} color="rgba(255,255,255,0.6)" />
-                    <Text style={styles.backText}>Continue without account</Text>
-                </TouchableOpacity>
+                    {/* Footer */}
+                    <View style={styles.footer}>
+                        <Text style={styles.footerText}>Don't have an account?</Text>
+                        <TouchableOpacity onPress={() => router.push('/auth/signup')}>
+                            <Text style={styles.footerLink}>Create one</Text>
+                        </TouchableOpacity>
+                    </View>
+                </ScrollView>
             </KeyboardAvoidingView>
         </View>
     );
@@ -185,8 +183,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#0f172a',
     },
-    content: {
+    keyboardView: {
         flex: 1,
+    },
+    content: {
+        flexGrow: 1,
         paddingHorizontal: 24,
         justifyContent: 'center',
     },
@@ -288,17 +289,5 @@ const styles = StyleSheet.create({
         color: '#38bdf8',
         fontSize: 14,
         fontWeight: '600',
-    },
-    backButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 24,
-        gap: 8,
-        padding: 8,
-    },
-    backText: {
-        color: 'rgba(255,255,255,0.6)',
-        fontSize: 14,
     },
 });

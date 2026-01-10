@@ -1,6 +1,6 @@
 /**
- * Forgot Password Page (Web Only)
- * Password reset request for web users
+ * Forgot Password Page (Cross-Platform)
+ * Password reset request for all platforms (iOS, Android, Web)
  */
 import React, { useState } from 'react';
 import {
@@ -12,12 +12,13 @@ import {
     Platform,
     KeyboardAvoidingView,
     ActivityIndicator,
+    ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useWebAuth } from '../../context/WebAuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { BackgroundShapes } from '../../components/ui/BackgroundShapes';
 import { useWindowDimensions } from 'react-native';
 
@@ -25,17 +26,12 @@ export default function ForgotPasswordScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const { width, height } = useWindowDimensions();
-    const webAuth = useWebAuth();
+    const auth = useAuth();
 
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
     const [success, setSuccess] = useState(false);
     const [isSubmitting, setIsSubmitting] = useState(false);
-
-    // Web-only page
-    if (Platform.OS !== 'web') {
-        return null;
-    }
 
     const handleResetPassword = async () => {
         if (!email.trim()) {
@@ -47,7 +43,7 @@ export default function ForgotPasswordScreen() {
         setIsSubmitting(true);
 
         try {
-            const result = await webAuth?.resetPassword(email.trim());
+            const result = await auth?.resetPassword(email.trim());
             if (result?.error) {
                 setError(result.error);
             } else {
@@ -71,87 +67,97 @@ export default function ForgotPasswordScreen() {
             <BackgroundShapes width={width} height={height} />
 
             <KeyboardAvoidingView
-                behavior="padding"
-                style={[styles.content, { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 20 }]}
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.keyboardView}
             >
-                {/* Back button */}
-                <TouchableOpacity
-                    style={styles.backArrow}
-                    onPress={() => router.back()}
+                <ScrollView
+                    contentContainerStyle={[
+                        styles.content,
+                        { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 20 }
+                    ]}
+                    keyboardShouldPersistTaps="handled"
                 >
-                    <FontAwesome name="arrow-left" size={20} color="rgba(255,255,255,0.7)" />
-                </TouchableOpacity>
+                    {/* Back button */}
+                    <TouchableOpacity
+                        style={styles.backArrow}
+                        onPress={() => router.back()}
+                    >
+                        <FontAwesome name="arrow-left" size={20} color="rgba(255,255,255,0.7)" />
+                    </TouchableOpacity>
 
-                {/* Header */}
-                <View style={styles.header}>
-                    <FontAwesome name="unlock-alt" size={48} color="#38bdf8" />
-                    <Text style={styles.title}>Reset Password</Text>
-                    <Text style={styles.subtitle}>
-                        Enter your email and we'll send you a link to reset your password
-                    </Text>
-                </View>
+                    {/* Header */}
+                    <View style={styles.header}>
+                        <FontAwesome name="unlock-alt" size={48} color="#38bdf8" />
+                        <Text style={styles.title}>Reset Password</Text>
+                        <Text style={styles.subtitle}>
+                            Enter your email and we'll send you a link to reset your password
+                        </Text>
+                    </View>
 
-                {/* Form */}
-                <View style={styles.form}>
-                    {success ? (
-                        <View style={styles.successContainer}>
-                            <FontAwesome name="check-circle" size={48} color="#22c55e" />
-                            <Text style={styles.successTitle}>Check your email</Text>
-                            <Text style={styles.successText}>
-                                We've sent a password reset link to {email}
-                            </Text>
-                            <TouchableOpacity
-                                style={styles.button}
-                                onPress={() => router.push('/auth/login')}
-                            >
-                                <Text style={styles.buttonText}>Back to Login</Text>
-                            </TouchableOpacity>
-                        </View>
-                    ) : (
-                        <>
-                            {error ? (
-                                <View style={styles.errorContainer}>
-                                    <FontAwesome name="exclamation-circle" size={16} color="#ef4444" />
-                                    <Text style={styles.errorText}>{error}</Text>
-                                </View>
-                            ) : null}
-
-                            <View style={styles.inputContainer}>
-                                <FontAwesome name="envelope" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
-                                <TextInput
-                                    style={styles.input}
-                                    placeholder="Email"
-                                    placeholderTextColor="rgba(255,255,255,0.4)"
-                                    value={email}
-                                    onChangeText={setEmail}
-                                    keyboardType="email-address"
-                                    autoCapitalize="none"
-                                    autoCorrect={false}
-                                    editable={!isSubmitting}
-                                />
+                    {/* Form */}
+                    <View style={styles.form}>
+                        {success ? (
+                            <View style={styles.successContainer}>
+                                <FontAwesome name="check-circle" size={48} color="#22c55e" />
+                                <Text style={styles.successTitle}>Check your email</Text>
+                                <Text style={styles.successText}>
+                                    We've sent a password reset link to {email}
+                                </Text>
+                                <TouchableOpacity
+                                    style={styles.button}
+                                    onPress={() => router.push('/auth/login')}
+                                >
+                                    <Text style={styles.buttonText}>Back to Login</Text>
+                                </TouchableOpacity>
                             </View>
+                        ) : (
+                            <>
+                                {error ? (
+                                    <View style={styles.errorContainer}>
+                                        <FontAwesome name="exclamation-circle" size={16} color="#ef4444" />
+                                        <Text style={styles.errorText}>{error}</Text>
+                                    </View>
+                                ) : null}
 
-                            <TouchableOpacity
-                                style={[styles.button, isSubmitting && styles.buttonDisabled]}
-                                onPress={handleResetPassword}
-                                disabled={isSubmitting}
-                            >
-                                {isSubmitting ? (
-                                    <ActivityIndicator color="#fff" />
-                                ) : (
-                                    <Text style={styles.buttonText}>Send Reset Link</Text>
-                                )}
-                            </TouchableOpacity>
+                                <View style={styles.inputContainer}>
+                                    <FontAwesome name="envelope" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="Email"
+                                        placeholderTextColor="rgba(255,255,255,0.4)"
+                                        value={email}
+                                        onChangeText={setEmail}
+                                        keyboardType="email-address"
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                        editable={!isSubmitting}
+                                        returnKeyType="done"
+                                        onSubmitEditing={handleResetPassword}
+                                    />
+                                </View>
 
-                            <TouchableOpacity
-                                style={styles.linkButton}
-                                onPress={() => router.push('/auth/login')}
-                            >
-                                <Text style={styles.linkText}>Back to Login</Text>
-                            </TouchableOpacity>
-                        </>
-                    )}
-                </View>
+                                <TouchableOpacity
+                                    style={[styles.button, isSubmitting && styles.buttonDisabled]}
+                                    onPress={handleResetPassword}
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? (
+                                        <ActivityIndicator color="#fff" />
+                                    ) : (
+                                        <Text style={styles.buttonText}>Send Reset Link</Text>
+                                    )}
+                                </TouchableOpacity>
+
+                                <TouchableOpacity
+                                    style={styles.linkButton}
+                                    onPress={() => router.push('/auth/login')}
+                                >
+                                    <Text style={styles.linkText}>Back to Login</Text>
+                                </TouchableOpacity>
+                            </>
+                        )}
+                    </View>
+                </ScrollView>
             </KeyboardAvoidingView>
         </View>
     );
@@ -162,15 +168,18 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#0f172a',
     },
-    content: {
+    keyboardView: {
         flex: 1,
+    },
+    content: {
+        flexGrow: 1,
         paddingHorizontal: 24,
         justifyContent: 'center',
     },
     backArrow: {
         position: 'absolute',
-        top: 60,
-        left: 24,
+        top: 20,
+        left: 0,
         padding: 8,
         zIndex: 10,
     },

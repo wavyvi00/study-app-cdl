@@ -8,6 +8,7 @@ const ENTITLEMENT_ID = 'CDL ZERO Pro';
 
 let purchasesInstance: Purchases | null = null;
 let currentAppUserId: string | null = null;
+let isConfigured = false;
 
 export interface WebSubscriptionStatus {
     isPro: boolean;
@@ -16,29 +17,15 @@ export interface WebSubscriptionStatus {
 }
 
 /**
- * Get app user ID - prioritizes authenticated Supabase user over anonymous
- */
-const getAppUserId = async (): Promise<string> => {
-    // Check for authenticated Supabase user first
-    try {
-        const { getCurrentUser } = await import('./supabase-auth');
-        const user = await getCurrentUser();
-        if (user?.id) {
-            console.log('[RevenueCat Web] Using authenticated user ID:', user.id);
-            return user.id;
-        }
-    } catch (error) {
-        // Auth module not available or user not logged in, fall through to anonymous
-    }
-
-    // Fallback to anonymous ID
-    return getOrCreateAnonymousUserId();
-};
-
-/**
- * Initialize RevenueCat for web
+ * Initialize RevenueCat for web (anonymous user initially)
+ * Call logInWeb() after to bind to authenticated user
  */
 export const initRevenueCatWeb = async (): Promise<void> => {
+    if (isConfigured) {
+        if (__DEV__) console.log('[RevenueCat Web] Already configured, skipping');
+        return;
+    }
+
     const apiKey = process.env.EXPO_PUBLIC_REVENUECAT_WEB_API_KEY;
 
     if (!apiKey) {
@@ -47,26 +34,88 @@ export const initRevenueCatWeb = async (): Promise<void> => {
     }
 
     try {
-        const appUserId = await getAppUserId();
-        currentAppUserId = appUserId;
-        purchasesInstance = Purchases.configure(apiKey, appUserId);
-        console.log('[RevenueCat Web] Initialized successfully with user:', appUserId);
+        // Initialize with a temporary anonymous ID
+        // Will be replaced when logInWeb() is called with authenticated user
+        const tempUserId = getOrCreateAnonymousUserId();
+        currentAppUserId = tempUserId;
+        purchasesInstance = Purchases.configure(apiKey, tempUserId);
+        isConfigured = true;
+        if (__DEV__) console.log('[RevenueCat Web] SDK configured with temp user:', tempUserId.slice(0, 12) + '...');
     } catch (error) {
-        console.error('[RevenueCat Web] Failed to initialize:', error);
+        console.error('[RevenueCat Web] Failed to configure:', error);
     }
 };
 
 /**
- * Reinitialize RevenueCat with new user ID (call after login/logout)
+ * Log in a user to RevenueCat Web with their Supabase user ID.
+ * This binds all purchases to the authenticated user.
+ * @param userId - The Supabase user UUID
  */
-export const reinitRevenueCatWeb = async (): Promise<void> => {
-    const newUserId = await getAppUserId();
+export const logInWeb = async (userId: string): Promise<WebSubscriptionStatus> => {
+    const apiKey = process.env.EXPO_PUBLIC_REVENUECAT_WEB_API_KEY;
 
-    // Only reinitialize if user changed
-    if (newUserId !== currentAppUserId) {
-        console.log('[RevenueCat Web] User changed, reinitializing...');
-        currentAppUserId = newUserId;
-        await initRevenueCatWeb();
+    if (!apiKey) {
+        console.error('[RevenueCat Web] API key not found');
+        return { isPro: false, activeEntitlements: [], expirationDate: null };
+    }
+
+    // If same user, just return current status
+    if (userId === currentAppUserId && purchasesInstance) {
+        if (__DEV__) console.log('[RevenueCat Web] Already logged in as this user');
+        return getWebSubscriptionStatus();
+    }
+
+    try {
+        if (__DEV__) console.log('[RevenueCat Web] Logging in user:', userId.slice(0, 8) + '...');
+
+        // RevenueCat Web SDK doesn't have a logIn method like mobile
+        // We need to reconfigure with the new user ID
+        currentAppUserId = userId;
+        purchasesInstance = Purchases.configure(apiKey, userId);
+        isConfigured = true;
+
+        // Get customer info after login
+        const customerInfo = await purchasesInstance.getCustomerInfo();
+        const entitlement = customerInfo.entitlements.active[ENTITLEMENT_ID];
+
+        if (__DEV__) {
+            console.log('[RevenueCat Web] Login successful, isPro:', !!entitlement);
+        }
+
+        return {
+            isPro: !!entitlement,
+            activeEntitlements: Object.keys(customerInfo.entitlements.active),
+            expirationDate: (entitlement as any)?.expiresDate?.toISOString() || null,
+        };
+    } catch (error) {
+        console.error('[RevenueCat Web] Login error:', error);
+        return { isPro: false, activeEntitlements: [], expirationDate: null };
+    }
+};
+
+/**
+ * Log out the current user from RevenueCat Web.
+ * Resets to an anonymous user state.
+ */
+export const logOutWeb = async (): Promise<void> => {
+    const apiKey = process.env.EXPO_PUBLIC_REVENUECAT_WEB_API_KEY;
+
+    if (!apiKey) {
+        console.error('[RevenueCat Web] API key not found');
+        return;
+    }
+
+    try {
+        if (__DEV__) console.log('[RevenueCat Web] Logging out user');
+
+        // Reset to a new anonymous ID
+        const anonId = getOrCreateAnonymousUserId();
+        currentAppUserId = anonId;
+        purchasesInstance = Purchases.configure(apiKey, anonId);
+
+        if (__DEV__) console.log('[RevenueCat Web] Logout successful, now anonymous');
+    } catch (error) {
+        console.error('[RevenueCat Web] Logout error:', error);
     }
 };
 
@@ -80,14 +129,14 @@ const getOrCreateAnonymousUserId = (): string => {
     if (typeof window !== 'undefined' && window.localStorage) {
         let userId = localStorage.getItem(STORAGE_KEY);
         if (!userId) {
-            userId = `web_${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
+            userId = `$RCAnonymousID:${Date.now()}_${Math.random().toString(36).substring(2, 15)}`;
             localStorage.setItem(STORAGE_KEY, userId);
         }
         return userId;
     }
 
     // Fallback for SSR or no localStorage
-    return `web_temp_${Date.now()}`;
+    return `$RCAnonymousID:temp_${Date.now()}`;
 };
 
 /**
@@ -124,14 +173,12 @@ export const getWebOfferings = async (): Promise<Offerings | null> => {
 
     try {
         const offerings = await purchasesInstance.getOfferings();
-        console.log('[RevenueCat Web] Offerings fetched:', {
-            current: offerings.current?.identifier,
-            packagesCount: offerings.current?.availablePackages?.length,
-            packages: offerings.current?.availablePackages?.map(p => ({
-                id: p.identifier,
-                productId: p.rcBillingProduct?.identifier
-            }))
-        });
+        if (__DEV__) {
+            console.log('[RevenueCat Web] Offerings fetched:', {
+                current: offerings.current?.identifier,
+                packagesCount: offerings.current?.availablePackages?.length,
+            });
+        }
         return offerings;
     } catch (error) {
         console.error('[RevenueCat Web] Error fetching offerings:', error);
@@ -149,7 +196,6 @@ export const purchaseWebPackage = async (packageToPurchase: Package): Promise<We
     }
 
     try {
-        // Purchase will redirect to Stripe Checkout
         const { customerInfo } = await purchasesInstance.purchase({ rcPackage: packageToPurchase });
         const entitlement = customerInfo.entitlements.active[ENTITLEMENT_ID];
 
@@ -159,7 +205,6 @@ export const purchaseWebPackage = async (packageToPurchase: Package): Promise<We
             expirationDate: (entitlement as any)?.expiresDate?.toISOString() || null,
         };
     } catch (error: any) {
-        // Check if user cancelled
         if (error.code === 'USER_CANCELLED' || error.message?.includes('cancel')) {
             return getWebSubscriptionStatus();
         }
@@ -172,8 +217,6 @@ export const purchaseWebPackage = async (packageToPurchase: Package): Promise<We
  * Restore purchases on web
  */
 export const restoreWebPurchases = async (): Promise<WebSubscriptionStatus> => {
-    // On web, customer info is fetched from RevenueCat servers
-    // No "restore" needed like on mobile, just refresh customer info
     return getWebSubscriptionStatus();
 };
 

@@ -1,6 +1,6 @@
 /**
- * Signup Page (Web Only)
- * Email + password registration for web users
+ * Signup Page (Cross-Platform)
+ * Email + password registration for all platforms (iOS, Android, Web)
  */
 import React, { useState, useEffect } from 'react';
 import {
@@ -18,7 +18,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { useWebAuth } from '../../context/WebAuthContext';
+import { useAuth } from '../../context/AuthContext';
 import { BackgroundShapes } from '../../components/ui/BackgroundShapes';
 import { useWindowDimensions } from 'react-native';
 
@@ -26,7 +26,7 @@ export default function SignupScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const { width, height } = useWindowDimensions();
-    const webAuth = useWebAuth();
+    const auth = useAuth();
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
@@ -37,15 +37,10 @@ export default function SignupScreen() {
 
     // Redirect to home if already authenticated
     useEffect(() => {
-        if (webAuth?.isAuthenticated) {
+        if (auth?.isAuthenticated) {
             router.replace('/tabs');
         }
-    }, [webAuth?.isAuthenticated]);
-
-    // Web-only page
-    if (Platform.OS !== 'web') {
-        return null;
-    }
+    }, [auth?.isAuthenticated]);
 
     const getPasswordStrength = (): { label: string; color: string; width: string } => {
         if (password.length === 0) return { label: '', color: 'transparent', width: '0%' };
@@ -77,7 +72,7 @@ export default function SignupScreen() {
         setIsSubmitting(true);
 
         try {
-            const result = await webAuth?.signUp(email.trim(), password);
+            const result = await auth?.signUp(email.trim(), password);
             if (result?.error) {
                 // Handle common error messages
                 if (result.error.includes('already registered') || result.error.includes('already exists')) {
@@ -106,19 +101,22 @@ export default function SignupScreen() {
             />
             <BackgroundShapes width={width} height={height} />
 
-            <ScrollView
-                contentContainerStyle={[
-                    styles.scrollContent,
-                    { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 20 }
-                ]}
-                keyboardShouldPersistTaps="handled"
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={styles.keyboardView}
             >
-                <KeyboardAvoidingView behavior="padding" style={styles.content}>
+                <ScrollView
+                    contentContainerStyle={[
+                        styles.scrollContent,
+                        { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 20 }
+                    ]}
+                    keyboardShouldPersistTaps="handled"
+                >
                     {/* Header */}
                     <View style={styles.header}>
                         <FontAwesome name="user-plus" size={48} color="#38bdf8" />
                         <Text style={styles.title}>Create Account</Text>
-                        <Text style={styles.subtitle}>Sign up to manage your purchases</Text>
+                        <Text style={styles.subtitle}>Sign up to sync your progress everywhere</Text>
                     </View>
 
                     {/* Form */}
@@ -142,6 +140,7 @@ export default function SignupScreen() {
                                 autoCapitalize="none"
                                 autoCorrect={false}
                                 editable={!isSubmitting}
+                                returnKeyType="next"
                             />
                         </View>
 
@@ -157,6 +156,7 @@ export default function SignupScreen() {
                                 autoCapitalize="none"
                                 autoCorrect={false}
                                 editable={!isSubmitting}
+                                returnKeyType="next"
                             />
                             <TouchableOpacity
                                 onPress={() => setShowPassword(!showPassword)}
@@ -199,6 +199,8 @@ export default function SignupScreen() {
                                 autoCapitalize="none"
                                 autoCorrect={false}
                                 editable={!isSubmitting}
+                                returnKeyType="done"
+                                onSubmitEditing={handleSignup}
                             />
                         </View>
 
@@ -222,16 +224,8 @@ export default function SignupScreen() {
                             <Text style={styles.footerLink}>Sign in</Text>
                         </TouchableOpacity>
                     </View>
-
-                    <TouchableOpacity
-                        style={styles.backButton}
-                        onPress={() => router.replace('/tabs')}
-                    >
-                        <FontAwesome name="arrow-left" size={14} color="rgba(255,255,255,0.6)" />
-                        <Text style={styles.backText}>Continue without account</Text>
-                    </TouchableOpacity>
-                </KeyboardAvoidingView>
-            </ScrollView>
+                </ScrollView>
+            </KeyboardAvoidingView>
         </View>
     );
 }
@@ -241,12 +235,11 @@ const styles = StyleSheet.create({
         flex: 1,
         backgroundColor: '#0f172a',
     },
+    keyboardView: {
+        flex: 1,
+    },
     scrollContent: {
         flexGrow: 1,
-        justifyContent: 'center',
-    },
-    content: {
-        flex: 1,
         paddingHorizontal: 24,
         justifyContent: 'center',
     },
@@ -264,6 +257,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: 'rgba(255,255,255,0.7)',
         marginTop: 8,
+        textAlign: 'center',
     },
     form: {
         width: '100%',
@@ -361,17 +355,5 @@ const styles = StyleSheet.create({
         color: '#38bdf8',
         fontSize: 14,
         fontWeight: '600',
-    },
-    backButton: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        marginTop: 24,
-        gap: 8,
-        padding: 8,
-    },
-    backText: {
-        color: 'rgba(255,255,255,0.6)',
-        fontSize: 14,
     },
 });

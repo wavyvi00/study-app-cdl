@@ -1,3 +1,14 @@
+/**
+ * Paywall Screen
+ * 
+ * Platform-specific purchase flow:
+ * - iOS: Apple In-App Purchase via RevenueCat
+ * - Android: Google Play Billing via RevenueCat  
+ * - Web: RevenueCat Web Billing with Stripe
+ * 
+ * IMPORTANT: Authentication is required on ALL platforms before showing purchase options.
+ * This ensures the purchase is bound to the user's account for cross-platform entitlement sync.
+ */
 import React from 'react';
 import {
     View,
@@ -7,11 +18,11 @@ import {
     ScrollView,
     Platform,
     Alert,
-    StatusBar, // Added StatusBar
-    Linking, // Added Linking
+    StatusBar,
+    Linking,
     ActivityIndicator,
 } from 'react-native';
-import { PurchasesPackage } from 'react-native-purchases'; // Added import
+import { PurchasesPackage } from 'react-native-purchases';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { LinearGradient } from 'expo-linear-gradient';
@@ -19,9 +30,7 @@ import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
 import { useLocalization } from '../context/LocalizationContext';
 import { useSubscription } from '../context/SubscriptionContext';
-import { useWebAuth } from '../context/WebAuthContext';
-import { APP_CONFIG } from '../constants/appConfig';
-import Button from '../components/ui/Button';
+import { useAuth } from '../context/AuthContext';
 import { BackgroundShapes } from '../components/ui/BackgroundShapes';
 import { PremiumIcon } from '../components/icons/PremiumIcon';
 import { useWindowDimensions } from 'react-native';
@@ -29,17 +38,15 @@ import { useWindowDimensions } from 'react-native';
 export default function PaywallScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    const { colors, spacing, typography } = useTheme();
+    const { colors, spacing } = useTheme();
     const { width, height } = useWindowDimensions();
     const { t } = useLocalization();
-    const { questionsAnsweredTotal, refreshSubscriptionStatus, purchase, restore, offerings, isLoading } = useSubscription();
+    const { questionsAnsweredTotal, purchase, restore, offerings, isLoading } = useSubscription();
+    const auth = useAuth();
 
-    // Web auth - only used on web platform
-    const webAuth = useWebAuth();
+    const { from } = useLocalSearchParams();
 
-    const { PRICING } = APP_CONFIG;
-
-    // Safe navigation helper to prevent GO_BACK warnings
+    // Safe navigation helper
     const safeGoBack = () => {
         if (router.canGoBack()) {
             router.back();
@@ -48,71 +55,35 @@ export default function PaywallScreen() {
         }
     };
 
-    const handlePurchase = async (productId: string) => {
+    const handleClose = () => {
+        if (from === 'quiz') {
+            router.navigate('/tabs');
+        } else {
+            safeGoBack();
+        }
+    };
+
+    /**
+     * Handle purchase - uses RevenueCat package directly
+     * The purchase() function from SubscriptionContext handles platform routing:
+     * - iOS: Apple IAP
+     * - Android: Google Play Billing
+     * - Web: Stripe via RevenueCat Web SDK
+     */
+    const handlePurchase = async (packageToBuy: PurchasesPackage) => {
         try {
-            console.log('[Paywall] handlePurchase called with productId:', productId);
-            console.log('[Paywall] Available offerings:', offerings);
-            console.log('[Paywall] Available packages:', offerings?.availablePackages?.map((pkg: any) => ({
-                identifier: pkg.identifier,
-                productIdentifier: pkg.product?.identifier,
-                rcBillingProduct: pkg.rcBillingProduct?.identifier,
-            })));
-
-            if (!offerings && !__DEV__) {
-                alert(t('errorLoadingProducts'));
-                return;
+            if (__DEV__) {
+                console.log('[Paywall] Initiating purchase for:', packageToBuy.identifier);
             }
 
-            // Helper to get product identifier from package (works for both mobile and web SDKs)
-            const getProductId = (pkg: any): string => {
-                // Web SDK uses rcBillingProduct, mobile uses product
-                return pkg.rcBillingProduct?.identifier || pkg.product?.identifier || '';
-            };
-
-            // Flexible package matching - try multiple strategies
-            let packageToBuy = offerings?.availablePackages.find(
-                (pkg: PurchasesPackage) => getProductId(pkg) === productId || pkg.identifier === productId
-            );
-
-            // If exact match fails, try matching by package type
-            if (!packageToBuy) {
-                const packageTypeMap: Record<string, string[]> = {
-                    '$rc_monthly': ['$rc:monthly', 'monthly', 'MONTHLY'],
-                    '$rc_annual': ['$rc:annual', 'annual', 'ANNUAL', 'yearly', 'YEARLY'],
-                    '$rc_lifetime': ['$rc:lifetime', 'lifetime', 'LIFETIME'],
-                };
-
-                const alternateIds = packageTypeMap[productId] || [];
-                console.log('[Paywall] Trying alternate IDs:', alternateIds);
-
-                packageToBuy = offerings?.availablePackages.find((pkg: PurchasesPackage) => {
-                    const pkgId = (pkg.identifier || '').toLowerCase();
-                    const productPkgId = getProductId(pkg).toLowerCase();
-                    return alternateIds.some(alt =>
-                        pkgId.includes(alt.toLowerCase()) || productPkgId.includes(alt.toLowerCase())
-                    );
-                });
-            }
-
-            console.log('[Paywall] Package found:', packageToBuy);
-
-            if (!packageToBuy) {
-                console.error('[Paywall] No package found for productId:', productId);
-                if (__DEV__) {
-                    Alert.alert('Error', 'Dev Mode: Product not found in RevenueCat. Setup required.\nID: ' + productId);
-                } else {
-                    Alert.alert('Error', t('productNotFound'));
-                }
-                return;
-            }
-
-            console.log('[Paywall] Initiating purchase for package:', packageToBuy.identifier);
             await purchase(packageToBuy);
-            // On success, the context updates state and we can close or navigate away
+            // On success, entitlement is updated via RevenueCat
+            // SubscriptionContext refreshes state automatically
             safeGoBack();
 
         } catch (error: any) {
             console.error('[Paywall] Purchase error:', error);
+            // Don't show alert for user cancellation
             if (!error.userCancelled) {
                 Alert.alert('Error', error.message || 'Purchase failed');
             }
@@ -129,6 +100,7 @@ export default function PaywallScreen() {
         }
     };
 
+    // Feature list for the paywall
     const features = [
         { icon: 'check-circle' as const, text: t('unlimitedPractice') },
         { icon: 'book' as const, text: t('allStudyGuides') },
@@ -136,23 +108,14 @@ export default function PaywallScreen() {
         { icon: 'language' as const, text: t('allLanguages') },
     ];
 
-    const { from } = useLocalSearchParams();
-
-    // ...
-
-    const handleClose = () => {
-        if (from === 'quiz') {
-            // Prevent loop if coming from a forced redirect in Quiz
-            router.navigate('/tabs');
-        } else {
-            safeGoBack();
-        }
-    };
-
-    // On Web, require authentication before showing purchase options
-    if (Platform.OS === 'web' && webAuth && !webAuth.isAuthenticated) {
-        // Show login prompt for web users
-        if (webAuth.isLoading) {
+    // ==================================================================
+    // AUTHENTICATION GATE - ALL PLATFORMS
+    // Users must be authenticated to purchase. This ensures:
+    // 1. Purchase is bound to their RevenueCat appUserID
+    // 2. Entitlement syncs across all platforms
+    // ==================================================================
+    if (!auth?.isAuthenticated) {
+        if (auth?.isLoading) {
             return (
                 <View style={[styles.container, { backgroundColor: '#0f172a', justifyContent: 'center', alignItems: 'center' }]}>
                     <LinearGradient
@@ -166,6 +129,7 @@ export default function PaywallScreen() {
             );
         }
 
+        // Show authentication required screen
         return (
             <View style={[styles.container, { backgroundColor: '#0f172a' }]}>
                 <StatusBar barStyle="light-content" />
@@ -190,10 +154,10 @@ export default function PaywallScreen() {
                 <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 24 }}>
                     <PremiumIcon />
                     <Text style={[styles.headerTitle, { marginTop: 16, fontSize: 26 }]}>
-                        You've reached your free limit
+                        Account Required
                     </Text>
                     <Text style={[styles.headerSubtitle, { marginTop: 12, fontSize: 16, textAlign: 'center', maxWidth: 320 }]}>
-                        You've completed your 50 free questions! Create an account to save your progress and unlock unlimited access.
+                        Create an account to save your progress and unlock CDL ZERO Pro on all your devices.
                     </Text>
 
                     <TouchableOpacity
@@ -224,11 +188,79 @@ export default function PaywallScreen() {
         );
     }
 
+    // ==================================================================
+    // LOADING STATE
+    // ==================================================================
+    if (isLoading || !offerings) {
+        return (
+            <View style={[styles.container, { backgroundColor: '#0f172a', justifyContent: 'center', alignItems: 'center' }]}>
+                <LinearGradient
+                    colors={['#0a0a23', '#1a1a3a', '#0000a3']}
+                    start={{ x: 0, y: 0 }}
+                    end={{ x: 1, y: 1 }}
+                    style={StyleSheet.absoluteFill}
+                />
+                <ActivityIndicator size="large" color="#38bdf8" />
+                <Text style={{ color: 'rgba(255,255,255,0.6)', marginTop: 16 }}>
+                    Loading prices...
+                </Text>
+            </View>
+        );
+    }
+
+    // ==================================================================
+    // MAIN PAYWALL UI
+    // Prices come from RevenueCat offerings (platform-specific)
+    // No hardcoded prices or cross-platform pricing mentions
+    // ==================================================================
+
+    // Get available packages from RevenueCat
+    const packages = offerings.availablePackages || [];
+
+    // Helper to get price string from package (works for both mobile and web)
+    const getPriceString = (pkg: PurchasesPackage): string => {
+        // Mobile SDK
+        if (pkg.product?.priceString) {
+            return pkg.product.priceString;
+        }
+        // Web SDK
+        if ((pkg as any).rcBillingProduct?.currentPrice?.formattedPrice) {
+            return (pkg as any).rcBillingProduct.currentPrice.formattedPrice;
+        }
+        return '';
+    };
+
+    // Helper to get package title
+    const getPackageTitle = (pkg: PurchasesPackage): string => {
+        const id = pkg.identifier.toLowerCase();
+        if (id.includes('annual') || id.includes('yearly')) return t('yearly');
+        if (id.includes('monthly')) return t('monthly');
+        if (id.includes('lifetime')) return t('lifetime');
+        return pkg.identifier;
+    };
+
+    // Helper to check if package is the "best value" (annual)
+    const isBestValue = (pkg: PurchasesPackage): boolean => {
+        const id = pkg.identifier.toLowerCase();
+        return id.includes('annual') || id.includes('yearly');
+    };
+
+    // Sort packages: annual first, then monthly, then lifetime
+    const sortedPackages = [...packages].sort((a, b) => {
+        const order = (pkg: PurchasesPackage) => {
+            const id = pkg.identifier.toLowerCase();
+            if (id.includes('annual') || id.includes('yearly')) return 0;
+            if (id.includes('monthly')) return 1;
+            if (id.includes('lifetime')) return 2;
+            return 3;
+        };
+        return order(a) - order(b);
+    });
+
     return (
         <View style={[styles.container, { backgroundColor: '#0f172a' }]}>
             <StatusBar barStyle="light-content" />
 
-            {/* Deep premium background matching Onboarding */}
             <LinearGradient
                 colors={['#0a0a23', '#1a1a3a', '#0000a3']}
                 start={{ x: 0, y: 0 }}
@@ -277,60 +309,46 @@ export default function PaywallScreen() {
                     ))}
                 </View>
 
-                {/* Pricing options */}
+                {/* Pricing options - from RevenueCat offerings */}
                 <View style={[styles.pricingContainer, { paddingHorizontal: spacing.lg, marginTop: 10 }]}>
-                    {/* Yearly - Best Value */}
-                    <TouchableOpacity
-                        style={[styles.pricingCard, styles.pricingCardBest]}
-                        onPress={() => handlePurchase(PRICING.YEARLY.productId)}
-                        activeOpacity={0.8}
-                    >
-                        <View style={[styles.bestValueBadge]}>
-                            <Text style={styles.bestValueText}>{t('bestValue')}</Text>
-                        </View>
-                        <Text style={[styles.pricingPeriod]}>
-                            {t('yearly')}
-                        </Text>
-                        <Text style={[styles.pricingPrice]}>
-                            ${PRICING.YEARLY.price}
-                        </Text>
-                        <Text style={[styles.pricingSavings]}>
-                            {t('save')} {PRICING.YEARLY.savingsPercent}%
-                        </Text>
-                    </TouchableOpacity>
-
-
-                    {/* Monthly */}
-                    <TouchableOpacity
-                        style={[styles.pricingCard]}
-                        onPress={() => handlePurchase(PRICING.MONTHLY.productId)}
-                        activeOpacity={0.8}
-                    >
-                        <Text style={[styles.pricingPeriod]}>
-                            {t('monthly')}
-                        </Text>
-                        <Text style={[styles.pricingPrice]}>
-                            ${PRICING.MONTHLY.price}/{t('mo')}
-                        </Text>
-                    </TouchableOpacity>
-
-                    {/* Lifetime */}
-                    <TouchableOpacity
-                        style={[styles.pricingCard]}
-                        onPress={() => handlePurchase(PRICING.LIFETIME.productId)}
-                        activeOpacity={0.8}
-                    >
-                        <Text style={[styles.pricingPeriod]}>
-                            {t('lifetime')}
-                        </Text>
-                        <Text style={[styles.pricingPrice]}>
-                            ${PRICING.LIFETIME.price}
-                        </Text>
-                        <Text style={[styles.pricingNote]}>
-                            {t('oneTimePayment')}
-                        </Text>
-                    </TouchableOpacity>
+                    {sortedPackages.map((pkg) => (
+                        <TouchableOpacity
+                            key={pkg.identifier}
+                            style={[
+                                styles.pricingCard,
+                                isBestValue(pkg) && styles.pricingCardBest
+                            ]}
+                            onPress={() => handlePurchase(pkg)}
+                            activeOpacity={0.8}
+                        >
+                            {isBestValue(pkg) && (
+                                <View style={[styles.bestValueBadge]}>
+                                    <Text style={styles.bestValueText}>{t('bestValue')}</Text>
+                                </View>
+                            )}
+                            <Text style={[styles.pricingPeriod]}>
+                                {getPackageTitle(pkg)}
+                            </Text>
+                            <Text style={[styles.pricingPrice]}>
+                                {getPriceString(pkg)}
+                            </Text>
+                            {pkg.identifier.toLowerCase().includes('lifetime') && (
+                                <Text style={[styles.pricingNote]}>
+                                    {t('oneTimePayment')}
+                                </Text>
+                            )}
+                        </TouchableOpacity>
+                    ))}
                 </View>
+
+                {/* No packages available */}
+                {sortedPackages.length === 0 && (
+                    <View style={{ alignItems: 'center', padding: 20 }}>
+                        <Text style={{ color: 'rgba(255,255,255,0.6)' }}>
+                            No purchase options available
+                        </Text>
+                    </View>
+                )}
 
                 {/* Restore purchases */}
                 <TouchableOpacity onPress={handleRestore} style={styles.restoreButton}>
@@ -375,7 +393,7 @@ const styles = StyleSheet.create({
     },
     closeButton: {
         position: 'absolute',
-        top: Platform.OS === 'ios' ? 50 : 30, // Adjusted for new padding
+        top: Platform.OS === 'ios' ? 50 : 30,
         right: 20,
         padding: 8,
         zIndex: 10,
@@ -428,11 +446,11 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         marginRight: 10,
-        backgroundColor: 'rgba(56, 189, 248, 0.15)', // Light blue bg
+        backgroundColor: 'rgba(56, 189, 248, 0.15)',
     },
     featureText: {
         fontSize: 14,
-        color: '#e2e8f0', // Slate-200
+        color: '#e2e8f0',
         fontWeight: '500',
         flex: 1,
     },
@@ -452,7 +470,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255,255,255,0.1)',
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,0.1)',
-        // Glass effect
         shadowColor: "#000",
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
@@ -460,9 +477,9 @@ const styles = StyleSheet.create({
     },
     pricingCardBest: {
         borderWidth: 2,
-        borderColor: '#38bdf8', // Aquamarine border for best value
+        borderColor: '#38bdf8',
         backgroundColor: 'rgba(56, 189, 248, 0.1)',
-        transform: [{ scale: 1.05 }], // Slightly emphasized
+        transform: [{ scale: 1.05 }],
         zIndex: 10,
     },
     bestValueBadge: {
@@ -495,12 +512,6 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         marginTop: 4,
     },
-    pricingSavings: {
-        fontSize: 12,
-        fontWeight: '700',
-        color: '#4ade80', // Green-400
-        marginTop: 4,
-    },
     pricingNote: {
         fontSize: 11,
         color: 'rgba(255,255,255,0.6)',
@@ -509,11 +520,11 @@ const styles = StyleSheet.create({
     restoreButton: {
         alignItems: 'center',
         marginTop: 20,
-        padding: 10,
+        paddingVertical: 10,
+        paddingHorizontal: 24,
         borderRadius: 20,
         backgroundColor: 'rgba(255,255,255,0.05)',
         alignSelf: 'center',
-        width: 200,
     },
     restoreText: {
         fontSize: 14,

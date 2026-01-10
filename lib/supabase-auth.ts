@@ -1,8 +1,8 @@
 /**
- * Supabase Authentication Helpers (Web Only)
- * Provides auth functions using the existing Supabase client
+ * Supabase Authentication Helpers (Cross-Platform)
+ * Provides auth functions using the existing Supabase client.
+ * Works on iOS, Android, and Web.
  */
-import { Platform } from 'react-native';
 import { supabase } from './supabase';
 import type { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
 
@@ -16,8 +16,8 @@ export interface AuthResult {
  * Sign up with email and password
  */
 export const signUpWithEmail = async (email: string, password: string): Promise<AuthResult> => {
-    if (Platform.OS !== 'web' || !supabase) {
-        return { user: null, session: null, error: 'Auth only available on web' };
+    if (!supabase) {
+        return { user: null, session: null, error: 'Supabase client not configured' };
     }
 
     try {
@@ -53,8 +53,8 @@ export const signUpWithEmail = async (email: string, password: string): Promise<
  * Sign in with email and password
  */
 export const signInWithEmail = async (email: string, password: string): Promise<AuthResult> => {
-    if (Platform.OS !== 'web' || !supabase) {
-        return { user: null, session: null, error: 'Auth only available on web' };
+    if (!supabase) {
+        return { user: null, session: null, error: 'Supabase client not configured' };
     }
 
     try {
@@ -81,8 +81,8 @@ export const signInWithEmail = async (email: string, password: string): Promise<
  * Sign out current user
  */
 export const signOut = async (): Promise<{ error: string | null }> => {
-    if (Platform.OS !== 'web' || !supabase) {
-        return { error: 'Auth only available on web' };
+    if (!supabase) {
+        return { error: 'Supabase client not configured' };
     }
 
     try {
@@ -97,8 +97,8 @@ export const signOut = async (): Promise<{ error: string | null }> => {
  * Send password reset email
  */
 export const resetPassword = async (email: string): Promise<{ error: string | null }> => {
-    if (Platform.OS !== 'web' || !supabase) {
-        return { error: 'Auth only available on web' };
+    if (!supabase) {
+        return { error: 'Supabase client not configured' };
     }
 
     try {
@@ -117,7 +117,7 @@ export const resetPassword = async (email: string): Promise<{ error: string | nu
  * Get current authenticated user
  */
 export const getCurrentUser = async (): Promise<User | null> => {
-    if (Platform.OS !== 'web' || !supabase) {
+    if (!supabase) {
         return null;
     }
 
@@ -133,7 +133,7 @@ export const getCurrentUser = async (): Promise<User | null> => {
  * Get current session
  */
 export const getCurrentSession = async (): Promise<Session | null> => {
-    if (Platform.OS !== 'web' || !supabase) {
+    if (!supabase) {
         return null;
     }
 
@@ -151,7 +151,7 @@ export const getCurrentSession = async (): Promise<Session | null> => {
 export const onAuthStateChange = (
     callback: (event: AuthChangeEvent, session: Session | null) => void
 ): (() => void) => {
-    if (Platform.OS !== 'web' || !supabase) {
+    if (!supabase) {
         return () => { }; // No-op unsubscribe
     }
 
