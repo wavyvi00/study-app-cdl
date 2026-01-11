@@ -10,7 +10,8 @@ import { restartApp } from '../../utils/restartApp';
 import { showAlert, showConfirm } from '../../utils/alerts';
 import { useLocalization } from '../../context/LocalizationContext';
 import { useSubscription } from '../../context/SubscriptionContext';
-import { useWebAuth } from '../../context/WebAuthContext';
+import { useAuth } from '../../context/AuthContext';
+
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -28,7 +29,8 @@ export default function ProfileScreen() {
     const insets = useSafeAreaInsets();
     const { t } = useLocalization();
     const { restore, isPro } = useSubscription();
-    const webAuth = useWebAuth(); // Web-only auth
+    const auth = useAuth(); // Cross-platform auth
+
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -119,12 +121,12 @@ export default function ProfileScreen() {
         });
     };
 
-    // Web-only sign out handler
+    // Sign out handler
     const handleSignOut = async () => {
-        if (!webAuth) return;
+        if (!auth) return;
 
         try {
-            await webAuth.signOut();
+            await auth.signOut();
             // RevenueCat will reinitialize with anonymous ID via auth state change listener
             Alert.alert('Signed Out', 'You have been signed out successfully.');
         } catch (error: any) {
@@ -286,11 +288,11 @@ export default function ProfileScreen() {
                 <View style={styles.sectionContainer}>
                     <Text style={styles.sectionTitle}>Account</Text>
                     <View style={styles.accountCard}>
-                        {webAuth?.isAuthenticated ? (
+                        {auth?.isAuthenticated ? (
                             <>
                                 <View style={styles.accountRow}>
                                     <FontAwesome name="envelope" size={18} color="#666" />
-                                    <Text style={styles.accountEmail}>{webAuth.user?.email}</Text>
+                                    <Text style={styles.accountEmail}>{auth.user?.email}</Text>
                                 </View>
                                 <View style={styles.accountRow}>
                                     <FontAwesome name="star" size={18} color={isPro ? '#FFC107' : '#ccc'} />
