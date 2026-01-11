@@ -46,6 +46,16 @@ export default function PaywallScreen() {
 
     const { from } = useLocalSearchParams();
 
+    // Debug: Log offerings state
+    if (__DEV__) {
+        console.log('[Paywall] State:', {
+            isLoading,
+            hasOfferings: !!offerings,
+            availablePackages: offerings?.availablePackages?.length ?? 0,
+        });
+    }
+
+
     // Safe navigation helper
     const safeGoBack = () => {
         if (router.canGoBack()) {

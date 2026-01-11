@@ -53,19 +53,9 @@ export const initRevenueCatWeb = async (): Promise<void> => {
         return;
     }
 
-    // Validate API key format - RevenueCat Web Billing SDK keys typically start with:
-    // - 'rcb_' (RevenueCat Billing)
-    // - 'pk_' (Public Key) 
-    // NOT 'strp_' (that's the Stripe key used internally by RevenueCat)
-    const validPrefixes = ['rcb_', 'pk_'];
-    const hasValidPrefix = validPrefixes.some(prefix => apiKey.startsWith(prefix));
-
-    if (!hasValidPrefix) {
-        console.error('[RevenueCat Web] Invalid API key format!');
-        console.error('[RevenueCat Web] Expected: rcb_xxxxx or pk_xxxxx (Web Billing SDK API Key)');
-        console.error('[RevenueCat Web] Got:', apiKey.slice(0, 8) + '...');
-        console.error('[RevenueCat Web] NOTE: Do NOT use strp_ keys - those are Stripe keys used internally by RevenueCat');
-        console.error('[RevenueCat Web] Get your Web Billing SDK API Key from: RevenueCat Dashboard → Project → Apps → Web → API Keys');
+    // Log the key format for debugging
+    if (__DEV__) {
+        console.log('[RevenueCat Web] Using API key with prefix:', apiKey.slice(0, 8) + '...');
     }
 
     try {
@@ -231,6 +221,10 @@ export const getWebOfferings = async (): Promise<Offerings | null> => {
             console.log('[RevenueCat Web] Offerings fetched:', {
                 current: offerings.current?.identifier,
                 packagesCount: offerings.current?.availablePackages?.length,
+                packages: offerings.current?.availablePackages?.map(p => ({
+                    id: p.identifier,
+                    productId: (p as any).rcBillingProduct?.identifier || (p as any).product?.identifier,
+                })),
             });
         }
         return offerings;
@@ -238,6 +232,7 @@ export const getWebOfferings = async (): Promise<Offerings | null> => {
         console.error('[RevenueCat Web] Error fetching offerings:', error);
         return null;
     }
+
 };
 
 /**

@@ -100,11 +100,24 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
                     await initRevenueCat();
                     isInitialized.current = true;
                     if (__DEV__) console.log('[Subscription] RevenueCat SDK initialized');
+
+                    // After SDK is ready, handle auth and load state
+                    const userId = auth?.userId;
+                    if (userId) {
+                        if (__DEV__) console.log('[Subscription] Logging in user after SDK init:', userId.slice(0, 8) + '...');
+                        lastLoggedInUserId.current = userId;
+                        await rcLogIn(userId);
+                    }
+
+                    // Load subscription state (offerings, entitlements)
+                    await loadSubscriptionState();
                 } catch (e) {
                     console.error('[Subscription] RevenueCat init failed:', e);
+                    setState(prev => ({ ...prev, isLoading: false }));
                 }
             } catch (error) {
                 console.error('[Subscription] Fatal init error:', error);
+                setState(prev => ({ ...prev, isLoading: false }));
             }
         };
 
@@ -112,6 +125,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
 
         return () => { isMounted = false; };
     }, []);
+
 
 
     /**
