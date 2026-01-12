@@ -10,6 +10,7 @@ import Hoverable from '../../components/ui/Hoverable';
 import Card from '../../components/ui/Card';
 import { TranslationKey } from '../../data/translations';
 import { useLocalization } from '../../context/LocalizationContext';
+import { useAuth } from '../../context/AuthContext';
 
 interface AchievementItemProps {
     achievement: Achievement;
@@ -133,18 +134,19 @@ const AchievementItem = ({ achievement, index, total, stats, isDark, colors, spa
 export default function AchievementsScreen() {
     const { colors, spacing, radius, typography, isDark } = useTheme();
     const { t } = useLocalization();
+    const auth = useAuth();
     const [stats, setStats] = useState<UserStats | null>(null);
     const [refreshing, setRefreshing] = useState(false);
 
     const fetchStats = async () => {
-        const data = await loadStats();
+        const data = await loadStats(auth?.userId);
         setStats(data);
     };
 
     useFocusEffect(
         useCallback(() => {
             fetchStats();
-        }, [])
+        }, [auth?.userId])
     );
 
     const onRefresh = async () => {

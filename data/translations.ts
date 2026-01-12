@@ -39,6 +39,7 @@ export type TranslationKey =
     | 'confirmResetMessage'
     | 'cancel'
     | 'reset'
+    | 'error'
     // New Keys
     | 'officialCDLPreparation'
     | 'yourProgress'
@@ -79,6 +80,11 @@ export type TranslationKey =
     | 'setupProfileBannerTitle'
     | 'setupProfileBannerDesc'
     | 'setupProfile'
+    | 'setupProfileSubtitle'
+    | 'pleaseEnterUsername'
+    | 'usernameTooShort'
+    | 'saving'
+    | 'continue'
     // Achievement Keys
     | 'achievement_first_steps_title' | 'achievement_first_steps_desc'
     | 'achievement_dedicated_learner_title' | 'achievement_dedicated_learner_desc'
@@ -144,6 +150,7 @@ export type TranslationKey =
     | 'onboardingTitle1' | 'onboardingDesc1'
     | 'onboardingTitle2' | 'onboardingDesc2'
     | 'onboardingTitle3' | 'onboardingDesc3'
+    | 'onboardingFreeTrialInfo'
     | 'getStarted'
     | 'chooseLanguage'
     | 'startEngine'
@@ -233,6 +240,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         confirmResetMessage: 'Are you sure you want to reset all your progress? Achievements will not be cleared.',
         cancel: 'Cancel',
         reset: 'Reset',
+        error: 'Error',
         // New Keys
         officialCDLPreparation: 'OFFICIAL CDL PREPARATION',
         yourProgress: 'Your Progress',
@@ -272,6 +280,11 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         setupProfileBannerTitle: 'Customize Your Study Path',
         setupProfileBannerDesc: 'Select your CDL Class to get personalized recommendations.',
         setupProfile: 'Setup Profile',
+        setupProfileSubtitle: 'Let\'s set up your profile to track your progress.',
+        pleaseEnterUsername: 'Please enter a username.',
+        usernameTooShort: 'Username must be at least 3 characters.',
+        saving: 'Saving...',
+        continue: 'Continue',
         // Achievement Translations
         achievement_first_steps_title: 'First Steps',
         achievement_first_steps_desc: 'Answer 10 questions',
@@ -349,6 +362,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         onboardingDesc2: 'Access official study materials and practice with realistic exam simulations in multiple languages.',
         onboardingTitle3: 'Track Progress',
         onboardingDesc3: 'Monitor your improvement and know exactly when you are ready to pass the real exam.',
+        onboardingFreeTrialInfo: 'Start free with 50 questions • Upgrade anytime',
         getStarted: 'Get Started',
         chooseLanguage: 'Choose Language',
         startEngine: 'Start Engine',
@@ -369,7 +383,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         save: 'Save',
         oneTimePayment: 'One-time payment',
         restorePurchases: 'Restore Purchases',
-        subscriptionTerms: 'Subscription automatically renews unless auto-renew is turned off at least 24-hours before the end of the current period.',
+        subscriptionTerms: 'Subscription automatically renews unless canceled at least 24 hours before the end of the current period. Manage or cancel anytime in your App Store account settings.',
         trialQuestionsRemaining: '{count} free questions remaining',
         upgradeToContinue: 'Upgrade to Continue',
         noThanks: "No Thanks, maybe later",
@@ -437,6 +451,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         confirmResetMessage: '¿Estás seguro de que quieres reiniciar todo tu progreso? Los logros no se borrarán.',
         cancel: 'Cancelar',
         reset: 'Reiniciar',
+        error: 'Error',
         // New Keys
         officialCDLPreparation: 'PREPARACIÓN OFICIAL CDL',
         yourProgress: 'Tu Progreso',
@@ -476,6 +491,11 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         setupProfileBannerTitle: 'Personaliza tu Ruta de Estudio',
         setupProfileBannerDesc: 'Selecciona tu Clase CDL para obtener recomendaciones personalizadas.',
         setupProfile: 'Crear Perfil',
+        setupProfileSubtitle: 'Configuremos tu perfil para seguir tu progreso.',
+        pleaseEnterUsername: 'Por favor ingresa un nombre de usuario.',
+        usernameTooShort: 'El nombre de usuario debe tener al menos 3 caracteres.',
+        saving: 'Guardando...',
+        continue: 'Continuar',
         // Achievement Translations
         achievement_first_steps_title: 'Primeros Pasos',
         achievement_first_steps_desc: 'Responde 10 preguntas',
@@ -553,6 +573,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         onboardingDesc2: 'Accede a materiales de estudio oficiales y practica con simulaciones de examen realistas.',
         onboardingTitle3: 'Sigue tu Progreso',
         onboardingDesc3: 'Monitorea tu mejora y sabe exactamente cuándo estás listo para aprobar el examen real.',
+        onboardingFreeTrialInfo: 'Comienza gratis con 50 preguntas • Actualiza cuando quieras',
         getStarted: 'Empezar',
         chooseLanguage: 'Elegir Idioma',
         startEngine: 'Arrancar Motor',
@@ -573,7 +594,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         save: 'Ahorra',
         oneTimePayment: 'Pago único',
         restorePurchases: 'Restaurar Compras',
-        subscriptionTerms: 'La suscripción se renueva automáticamente a menos que se desactive la renovación automática al menos 24 horas antes del final del periodo actual.',
+        subscriptionTerms: 'La suscripción se renueva automáticamente a menos que se cancele al menos 24 horas antes del final del periodo actual. Administra o cancela en cualquier momento en la configuración de tu cuenta de App Store.',
         trialQuestionsRemaining: 'Quedan {count} preguntas gratuitas',
         upgradeToContinue: 'Actualizar para Continuar',
         noThanks: "No gracias, quizás después",
@@ -641,6 +662,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         confirmResetMessage: 'Вы уверены, что хотите сбросить весь прогресс? Достижения не будут удалены.',
         cancel: 'Отмена',
         reset: 'Сброс',
+        error: 'Ошибка',
         // New Keys
         officialCDLPreparation: 'ОФИЦИАЛЬНАЯ ПОДГОТОВКА',
         yourProgress: 'Ваш прогресс',
@@ -680,6 +702,11 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         setupProfileBannerTitle: 'Настройте свой план обучения',
         setupProfileBannerDesc: 'Выберите класс CDL для персональных рекомендаций.',
         setupProfile: 'Создать профиль',
+        setupProfileSubtitle: 'Давайте настроим ваш профиль для отслеживания прогресса.',
+        pleaseEnterUsername: 'Пожалуйста, введите имя пользователя.',
+        usernameTooShort: 'Имя пользователя должно содержать не менее 3 символов.',
+        saving: 'Сохранение...',
+        continue: 'Продолжить',
         // Achievement Translations
         achievement_first_steps_title: 'Первые шаги',
         achievement_first_steps_desc: 'Ответьте на 10 вопросов',
@@ -757,6 +784,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         onboardingDesc2: 'Доступ к официальным материалам и реалистичным симуляторам экзамена на разных языках.',
         onboardingTitle3: 'Отслеживайте прогресс',
         onboardingDesc3: 'Следите за улучшениями и знайте точно, когда вы готовы к реальному экзамену.',
+        onboardingFreeTrialInfo: 'Начните бесплатно с 50 вопросов • Обновите в любое время',
         getStarted: 'Начать',
         chooseLanguage: 'Выберите язык',
         startEngine: 'Поехали',
@@ -777,7 +805,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         save: 'Скидка',
         oneTimePayment: 'Одноразовый платеж',
         restorePurchases: 'Восстановить покупки',
-        subscriptionTerms: 'Подписка продлевается автоматически, если автопродление не отключено по крайней мере за 24 часа до окончания текущего периода.',
+        subscriptionTerms: 'Подписка продлевается автоматически, если не отменена по крайней мере за 24 часа до окончания текущего периода. Управляйте или отменяйте в любое время в настройках аккаунта App Store.',
         trialQuestionsRemaining: 'Осталось {count} бесплатных вопросов',
         upgradeToContinue: 'Обновить для продолжения',
         noThanks: "Нет, спасибо, может быть позже",

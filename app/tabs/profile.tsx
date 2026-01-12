@@ -3,13 +3,15 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platfo
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useCallback, useEffect } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { loadStats, updateStats, resetAllAppData, UserStats, INITIAL_STATS } from '../../data/stats';
+import { loadStats, updateStats, resetStats, UserStats, INITIAL_STATS } from '../../data/stats';
 import { ACHIEVEMENTS, Achievement } from '../../data/achievements';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { restartApp } from '../../utils/restartApp';
 import { showAlert, showConfirm } from '../../utils/alerts';
 import { useLocalization } from '../../context/LocalizationContext';
-import { useSubscription } from '../../context/SubscriptionContext'; // Added
+import { useSubscription } from '../../context/SubscriptionContext';
+import { useAuth } from '../../context/AuthContext';
+
 
 if (Platform.OS === 'android' && UIManager.setLayoutAnimationEnabledExperimental) {
     UIManager.setLayoutAnimationEnabledExperimental(true);
@@ -26,7 +28,9 @@ export default function ProfileScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const { t } = useLocalization();
-    const { restore } = useSubscription(); // Added
+    const { restore, isPro } = useSubscription();
+    const auth = useAuth(); // Cross-platform auth
+
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
     const [isLoading, setIsLoading] = useState(true);
     const [isEditing, setIsEditing] = useState(false);
@@ -39,7 +43,7 @@ export default function ProfileScreen() {
 
     useFocusEffect(
         useCallback(() => {
-            loadStats().then(s => {
+            loadStats(auth?.userId).then(s => {
                 setStats(s);
                 if (s.username) {
                     setUsername(s.username);
@@ -78,7 +82,7 @@ export default function ProfileScreen() {
             cdlClass: selectedClass,
         };
 
-        const updated = await updateStats(updates);
+        const updated = await updateStats(updates, auth?.userId);
         setStats(updated);
         setIsEditing(false);
     };
@@ -95,15 +99,18 @@ export default function ProfileScreen() {
     const handleResetProfile = async () => {
         const performReset = async () => {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-            const cleared = await resetAllAppData();
+            // resetStats is safer for multi-user/cloud
+            const cleared = await resetStats(auth?.userId || null);
             setStats(cleared);
             setUsername('');
             setSelectedAvatar('truck');
             setSelectedClass('Class A');
             setIsEditing(false);
+
+            // Note: restartApp won't work perfectly on Expo Go/Client often, so we rely on state reset
             const restarted = await restartApp();
             if (!restarted && Platform.OS !== 'web') {
-                showAlert(t('resetProfileTitle'), "Local data cleared. Please restart the app if anything looks stale.");
+                showAlert(t('resetProfileTitle'), "Local data cleared.");
             }
         };
 
@@ -117,7 +124,18 @@ export default function ProfileScreen() {
         });
     };
 
+    // Sign out handler
+    const handleSignOut = async () => {
+        if (!auth) return;
 
+        try {
+            await auth.signOut();
+            // RevenueCat will reinitialize with anonymous ID via auth state change listener
+            Alert.alert('Signed Out', 'You have been signed out successfully.');
+        } catch (error: any) {
+            Alert.alert('Error', error.message || 'Sign out failed');
+        }
+    };
     if (isLoading) return null;
 
     const renderFormInfo = (title: string) => (
@@ -267,6 +285,45 @@ export default function ProfileScreen() {
                     </View>
                 </View>
             </View>
+
+            {/* Web-Only Account Section */}
+            {Platform.OS === 'web' && (
+                <View style={styles.sectionContainer}>
+                    <Text style={styles.sectionTitle}>Account</Text>
+                    <View style={styles.accountCard}>
+                        {auth?.isAuthenticated ? (
+                            <>
+                                <View style={styles.accountRow}>
+                                    <FontAwesome name="envelope" size={18} color="#666" />
+                                    <Text style={styles.accountEmail}>{auth.user?.email}</Text>
+                                </View>
+                                <View style={styles.accountRow}>
+                                    <FontAwesome name="star" size={18} color={isPro ? '#FFC107' : '#ccc'} />
+                                    <Text style={[styles.accountStatus, isPro && styles.accountStatusPro]}>
+                                        {isPro ? 'CDL ZERO Pro Member' : 'Free Account'}
+                                    </Text>
+                                </View>
+                                <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
+                                    <FontAwesome name="sign-out" size={16} color="#C62828" />
+                                    <Text style={styles.signOutText}>Sign Out</Text>
+                                </TouchableOpacity>
+                            </>
+                        ) : (
+                            <>
+                                <Text style={styles.accountPromptText}>
+                                    Sign in to sync your purchases across devices
+                                </Text>
+                                <TouchableOpacity
+                                    style={styles.signInButton}
+                                    onPress={() => router.push('/auth/login')}
+                                >
+                                    <Text style={styles.signInButtonText}>Sign In</Text>
+                                </TouchableOpacity>
+                            </>
+                        )}
+                    </View>
+                </View>
+            )}
 
             {/* Global Progress */}
             <View style={styles.sectionContainer}>
@@ -768,5 +825,64 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
         textDecorationLine: 'underline',
+    },
+    // Web Account Section Styles
+    accountCard: {
+        backgroundColor: 'white',
+        borderRadius: 12,
+        padding: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
+    },
+    accountRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        marginBottom: 12,
+    },
+    accountEmail: {
+        fontSize: 16,
+        color: '#333',
+        fontWeight: '500',
+    },
+    accountStatus: {
+        fontSize: 14,
+        color: '#666',
+    },
+    accountStatusPro: {
+        color: '#FFC107',
+        fontWeight: '600',
+    },
+    signOutButton: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        paddingVertical: 8,
+        marginTop: 4,
+    },
+    signOutText: {
+        color: '#C62828',
+        fontSize: 14,
+        fontWeight: '600',
+    },
+    accountPromptText: {
+        fontSize: 14,
+        color: '#666',
+        marginBottom: 12,
+        textAlign: 'center',
+    },
+    signInButton: {
+        backgroundColor: '#1565C0',
+        paddingVertical: 12,
+        borderRadius: 8,
+        alignItems: 'center',
+    },
+    signInButtonText: {
+        color: 'white',
+        fontSize: 14,
+        fontWeight: '600',
     },
 });

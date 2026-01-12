@@ -19,6 +19,7 @@ import FeedbackModal from '../components/FeedbackModal';
 
 import { useLocalization } from '../context/LocalizationContext';
 import { useSubscription } from '../context/SubscriptionContext';
+import { useAuth } from '../context/AuthContext';
 
 // ... imports
 
@@ -34,6 +35,7 @@ export default function QuizScreen() {
     const { getQuestions, topics } = useQuestions();
     const insets = useSafeAreaInsets();
     const { checkCanAccessQuiz, refreshSubscriptionStatus, isPro, questionsAnsweredTotal, incrementQuestionsAnswered } = useSubscription();
+    const auth = useAuth();
     const { FREE_TRIAL_QUESTION_LIMIT } = APP_CONFIG;
 
     // Check subscription status on mount - redirect to paywall if limit reached
@@ -60,7 +62,7 @@ export default function QuizScreen() {
     useEffect(() => {
         const initSession = async () => {
             if (mode === 'practice') {
-                const stats = await import('../data/stats').then(m => m.loadStats());
+                const stats = await import('../data/stats').then(m => m.loadStats(auth?.userId));
 
                 if (resume === 'true' && stats.currentPracticeSession && stats.currentPracticeSession.topicId === topicId) {
                     // Restore session
@@ -87,10 +89,10 @@ export default function QuizScreen() {
 
                 // If not resuming or restore failed, we'll start fresh (the normal flow)
             }
-            logActivityStart(topicId as string, mode as 'practice' | 'exam');
+            logActivityStart(topicId as string, mode as 'practice' | 'exam', auth?.userId);
         };
         initSession();
-    }, [topicId, mode, resume]);
+    }, [topicId, mode, resume, auth?.userId]);
 
     // Logic to load questions
     const questions = useMemo(() => {
@@ -162,10 +164,10 @@ export default function QuizScreen() {
                     score: 0,
                     wrongAnswers: [],
                     startTime: Date.now()
-                });
+                }, auth?.userId);
             });
         }
-    }, [mode, questions, topicId, restoredSession]);
+    }, [mode, questions, topicId, restoredSession, auth?.userId]);
 
     // Timer state for Exam mode
     const [timeLeft, setTimeLeft] = useState(APP_CONFIG.EXAM_TIME_LIMIT_SECONDS);
@@ -261,7 +263,8 @@ export default function QuizScreen() {
                 accuracyPercentage, // Use ACCURACY for stats (average score)
                 answeredCount,      // Use ACTUAL COUNT for total questions stats
                 mode === 'exam',
-                topicId
+                topicId,
+                auth?.userId
             ).then(result => {
                 if (__DEV__) {
 
@@ -316,7 +319,7 @@ export default function QuizScreen() {
                 score: newScore,
                 wrongAnswers: newWrong.map(w => ({ questionId: w.question.id, selectedIndex: w.selectedIndex })),
                 startTime: Date.now()
-            });
+            }, auth?.userId);
         }
     };
 
@@ -376,7 +379,7 @@ export default function QuizScreen() {
                         score: score,
                         wrongAnswers: wrongAnswers.map(w => ({ questionId: w.question.id, selectedIndex: w.selectedIndex })),
                         startTime: Date.now()
-                    });
+                    }, auth?.userId);
                 });
             }
             return newOrder;

@@ -18,7 +18,7 @@ This document outlines potential features and improvements for CDL Prep Mastery.
 *   **Mistake Review**: A generated quiz consisting solely of questions answered incorrectly in the past.
 
 ## 👤 Profile & Social
-*   **Cloud Sync (Authenticated)**: Optional full user accounts to sync stats across devices (currently local-only).
+*   **✅ Cloud Sync (Authenticated)**: Full user accounts to sync stats across devices with guest merging support.
 *   **Leaderboards**: Anon global rankings based on study streaks or exam scores.
 *   **Achievements Expansion**: More granular badges for specific milestones (e.g., "Air Brakes Master").
 

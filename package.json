@@ -16,6 +16,7 @@
     "@react-native-async-storage/async-storage": "^2.2.0",
     "@react-navigation/core": "^7.13.6",
     "@react-navigation/native": "^7.1.25",
+    "@revenuecat/purchases-js": "^1.23.0",
     "@supabase/supabase-js": "^2.87.3",
     "@types/crypto-js": "^4.2.2",
     "@vercel/analytics": "^1.6.1",

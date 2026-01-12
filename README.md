@@ -1,138 +1,217 @@
-# CDL Prep Mastery
+# CDL Zero: Permit Practice
 
-**CDL Prep Mastery** is a comprehensive, offline-first mobile application designed to help aspiring truck drivers prepare for their Commercial Driver's License (CDL) exams. Built with React Native and Expo, it offers a robust study experience with practice questions, simulated exams, and detailed progress tracking.
+A comprehensive, cross-platform mobile application designed to help aspiring truck drivers prepare for their Commercial Driver's License (CDL) exams. Built with React Native and Expo, it offers a robust study experience with practice questions, simulated exams, and detailed progress tracking.
 
-## 🚀 Features
+## Features
 
-*   **Extensive Question Bank**: Over 600 verified questions covering 8 major CDL topics:
-    *   General Knowledge
-    *   Air Brakes
-    *   Combination Vehicles
-    *   Hazardous Materials (Hazmat)
-    *   Passenger Transport
-    *   Tank Vehicles
-    *   Doubles/Triples
-    *   School Bus
-*   **Two Study Modes**:
-    *   **Practice Mode**: Learn at your own pace with immediate feedback and detailed explanations for every question.
-    *   **Exam Mode**: Simulate real test conditions with randomized questions and no hints until the end.
-*   **Offline-First**: Fully functional without an internet connection. All questions and user progress are stored locally on your device.
-*   **Progress Tracking**: Automatically tracks your stats, including:
-    *   Average Score
-    *   Total Questions Answered
-    *   Study Time
-    *   Exam Attempts
-    *   Daily Streaks
-*   **Dark Mode**: Seamlessly switch between light and dark themes for comfortable studying day or night.
+- **Extensive Question Bank**: Over 600 verified questions covering 8 major CDL topics:
+  - General Knowledge
+  - Air Brakes
+  - Combination Vehicles
+  - Hazardous Materials (Hazmat)
+  - Passenger Transport
+  - Tank Vehicles
+  - Doubles/Triples
+  - School Bus
 
-## 🛠 Tech Stack
+- **Two Study Modes**:
+  - **Practice Mode**: Learn at your own pace with immediate feedback and detailed explanations for every question.
+  - **Exam Mode**: Simulate real test conditions with randomized questions and no hints until the end.
 
-*   **Framework**: [Expo](https://expo.dev) (React Native)
-*   **Language**: TypeScript
-*   **Navigation**: Expo Router
-*   **Storage**: `@react-native-async-storage/async-storage` (for offline persistence)
-*   **Styling**: Custom stylesheets with Expo Linear Gradient
-*   **Icons**: FontAwesome via `@expo/vector-icons`
+- **Cloud & Local Sync**: Robust data synchronization powered by Supabase.
+  - **Guest Mode**: Start immediately without an account; progress is saved locally.
+  - **Account Sync**: Sign up to back up your stats, achievements, and profile to the cloud.
+  - **Smart Merging**: Seamlessly merges guest progress when you sign in.
 
-## 🏃‍♂️ Getting Started
+- **Profile Wizard**: Personalize your learning experience.
+  - Choose a **username**.
+  - Select an **avatar** (Truck, Bus, etc.).
+  - Pick your **CDL Class** (Class A or Class B) for tailored recommendations.
+
+- **Progress Tracking**: Automatically tracks your stats, including average score, total questions answered, study time, exam attempts, and daily streaks.
+
+
+- **Dark Mode**: Seamlessly switch between light and dark themes for comfortable studying day or night.
+
+- **Multi-Language Support**: Available in English, Spanish, and Russian.
+
+## Tech Stack
+
+| Category | Technology |
+|----------|-----------|
+| Framework | Expo (React Native) |
+| Language | TypeScript |
+| Navigation | Expo Router |
+| Authentication | Supabase Auth |
+| Subscriptions | RevenueCat |
+| Payments | Apple IAP, Google Play, Stripe |
+| Storage | AsyncStorage |
+| Database | Supabase PostgreSQL |
+
+## Architecture
+
+```
+                    ┌─────────────────────────────────────┐
+                    │         Supabase Auth               │
+                    │   (User Identity - UUID)            │
+                    │   (Profiles & Stats Sync)           │
+                    └──────────────┬──────────────────────┘
+                                   │
+                    ┌──────────────▼──────────────────────┐
+                    │         RevenueCat                  │
+                    │   (Entitlements - "CDL ZERO Pro")   │
+                    ├─────────┬───────────┬───────────────┤
+                    │  Apple  │  Google   │    Stripe     │
+                    │   IAP   │   Play    │    (Web)      │
+                    └────┬────┴─────┬─────┴───────┬───────┘
+                         │          │             │
+                    ┌────▼────┐ ┌───▼────┐ ┌──────▼─────┐
+                    │   iOS   │ │Android │ │    Web     │
+                    │   App   │ │  App   │ │    App     │
+                    └─────────┘ └────────┘ └────────────┘
+```
+
+**Key Design Principles:**
+- User identity flows from Supabase (single UUID across platforms)
+- RevenueCat manages all subscriptions using Supabase UUID as appUserID
+- Entitlements sync automatically when user logs in on any platform
+- Entitlement is the single source of truth for premium access
+
+## Getting Started
 
 ### Prerequisites
 
-*   Node.js (LTS version recommended)
-*   npm or yarn
+- Node.js (LTS version recommended)
+- npm or yarn
 
 ### Installation
 
-1.  Clone the repository (if applicable) or navigate to the project directory.
-2.  Install dependencies:
-    ```bash
-    npm install
-    ```
+```bash
+git clone <repository-url>
+cd study-app-cdl
+npm install
+```
 
 ### Running the App
-
-Start the development server:
 
 ```bash
 npx expo start
 ```
 
-*   **iOS Simulator**: Press `i` (requires Xcode installed on macOS).
-*   **Android Emulator**: Press `a` (requires Android Studio).
-*   **Web**: Press `w`.
-*   **Physical Device**: Download the "Expo Go" app on your phone and scan the QR code.
+- **iOS Simulator**: Press `i` (requires Xcode on macOS)
+- **Android Emulator**: Press `a` (requires Android Studio)
+- **Web**: Press `w`
+- **Physical Device**: Download "Expo Go" app and scan the QR code
 
-## 📱 Building for Production
+## Environment Setup
 
-This project is configured for **EAS Build**.
+Create a `.env` file in the root directory. All environment variables are required for full functionality:
 
-1.  Install the EAS CLI globally:
-    ```bash
-    npm install -g eas-cli
-    ```
-2.  Log in to your Expo account:
-    ```bash
-    eas login
-    ```
-3.  Configure the build (if not already done):
-    ```bash
-    eas build:configure
-    ```
-4.  Create a build:
-    *   **Android (.aab)**: `eas build --platform android`
-    *   **iOS**: `eas build --platform ios`
+```env
+# Supabase (Required)
+EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
 
-## 📂 Project Structure
-
-*   `app/`: Application screens and routing (Expo Router).
-*   `components/`: Reusable UI components (e.g., StatsOverview).
-*   `context/`: React Contexts for global state (Theme, Questions).
-*   `data/`: Static question data and stats logic.
-*   `assets/`: Images and icons.
-*   `utils/`: Helper functions (e.g., email sync, validation).
-*   `scripts/`: Utility scripts (e.g., translation tools, SQL generation).
-
-## 🌍 Localization & Translation
-
-The app supports multiple languages (English, Spanish, Russian). We use custom scripts to automate the translation of question content.
-
-### Translation Tools
-
-We provide two robust tools for translating content found in `data/`:
-
-#### 1. OpenAI Translator (Recommended)
-Fast, reliable, and cost-efficient using `gpt-4o-mini`. Requires an API key.
-
-```bash
-# Translate a specific file to Spanish
-OPENAI_API_KEY=your_key node scripts/translate-openai.js --lang=es --source=questions_hazmat.ts
+# RevenueCat (Required for subscriptions)
+EXPO_PUBLIC_REVENUECAT_API_KEY=appl_your_revenuecat_key
+EXPO_PUBLIC_REVENUECAT_WEB_API_KEY=rcb_your_web_key
 ```
 
-#### 2. Local LLM Translator (Offline)
-Free and privacy-focused using [Ollama](https://ollama.com).
+> **Note**: The app will run without these variables but authentication and subscription features will be disabled.
+
+## Building for Production
+
+This project uses **EAS Build**.
 
 ```bash
-# Translate a specific file to Russian using a local model
+# Install EAS CLI
+npm install -g eas-cli
+
+# Login to Expo
+eas login
+
+# Build for platforms
+eas build --platform android
+eas build --platform ios
+npm run build:web
+```
+
+## Project Structure
+
+```
+study-app-cdl/
+├── app/                    # Screens & Navigation (Expo Router)
+│   ├── _layout.tsx         # Root layout with providers
+│   ├── tabs/               # Bottom tab screens
+│   ├── auth/               # Auth screens (all platforms)
+│   ├── quiz.tsx            # Quiz gameplay
+│   ├── paywall.tsx         # Subscription paywall
+│   └── onboarding.tsx      # First-time flow
+├── components/             # Reusable UI components
+├── context/                # React Context providers
+│   ├── AuthContext.tsx     # Cross-platform auth
+│   ├── SubscriptionContext.tsx  # RevenueCat state
+│   ├── ThemeContext.tsx    # Light/Dark mode
+│   └── LocalizationContext.tsx  # i18n
+├── lib/                    # External service integrations
+│   ├── supabase.ts         # Supabase client
+│   ├── revenuecat.ts       # RevenueCat iOS/Android
+│   └── revenuecat-web.ts   # RevenueCat Web + Stripe
+└── data/                   # Questions & translations
+```
+
+## Subscription System
+
+### How It Works
+
+1. **Authentication Required**: Users must create an account before purchasing
+2. **Unified Identity**: Supabase user UUID is used as RevenueCat appUserID
+3. **Platform-Specific Payments**:
+   - iOS: Apple In-App Purchase
+   - Android: Google Play Billing
+   - Web: Stripe via RevenueCat
+4. **Entitlement Sync**: Login on any platform fetches entitlements from RevenueCat
+5. **Restore Purchases**: Syncs with app stores to recover owned purchases
+
+### Entitlement
+
+The app uses a single entitlement: `CDL ZERO Pro`
+
+Access is granted when `customerInfo.entitlements.active["CDL ZERO Pro"]` exists.
+
+## App Store Submission
+
+### Required Links
+
+For iOS App Store submission, include these links in your App Store description:
+
+- **Privacy Policy**: https://sites.google.com/view/cdlzeropermittest2026/home
+- **Terms of Use**: https://sites.google.com/view/cdlzerotos/home
+
+These links are also displayed in the in-app paywall.
+
+### Subscription Requirements
+
+The paywall includes all Apple-required subscription information:
+- Subscription title and duration
+- Price (fetched from RevenueCat/App Store)
+- Auto-renewal terms
+- Links to Privacy Policy and Terms of Use
+
+## Localization
+
+Supports 3 languages with custom translation scripts:
+
+```bash
+# Translate using OpenAI
+OPENAI_API_KEY=your_key node scripts/translate-openai.js --lang=es --source=questions_hazmat.ts
+
+# Translate using local LLM (Ollama)
 node scripts/translate-local.js --lang=ru --source=questions_hazmat.ts
 ```
 
-### Supported Languages
-*   `es`: Neutral Latin American Spanish
-*   `ru`: Russian
+Supported: `en` (English), `es` (Spanish), `ru` (Russian)
 
-## 📝 Changelog
-
-See [CHANGELOG.md](./CHANGELOG.md) for a detailed history of changes.
-
-## 🔐 Environment Setup
-
-Create a `.env` file in the root directory with your Supabase credentials:
-
-```env
-EXPO_PUBLIC_SUPABASE_URL=your_supabase_url
-EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-```
-
-## 📄 License
+## License
 
 This project is proprietary and intended for educational purposes.

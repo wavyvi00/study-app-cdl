@@ -1,4 +1,7 @@
+
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { checkAchievements, Achievement } from './achievements';
+import { Platform } from 'react-native';
 
 // Stats for a single topic
 export interface TopicStats {
@@ -36,7 +39,9 @@ export interface UserStats {
     avatarId?: string;
 }
 
-const STATS_STORAGE_KEY = 'user_stats_v1';
+// Storage Keys
+const GUEST_STATS_KEY = 'user_stats_v1';
+const getUserKey = (userId?: string | null) => userId ? `user_stats_${userId}` : GUEST_STATS_KEY;
 
 export const INITIAL_STATS: UserStats = {
     examAttempts: 0,
@@ -57,10 +62,11 @@ export const INITIAL_STATS: UserStats = {
     avatarId: 'truck',
 };
 
-// Load stats from local storage
-export const loadStats = async (): Promise<UserStats> => {
+// Load stats from local storage with optional userId
+export const loadStats = async (userId?: string | null): Promise<UserStats> => {
     try {
-        const jsonValue = await AsyncStorage.getItem(STATS_STORAGE_KEY);
+        const key = getUserKey(userId);
+        const jsonValue = await AsyncStorage.getItem(key);
         if (jsonValue != null) {
             const parsed = JSON.parse(jsonValue);
             // Ensure unlockedAchievements exists for older data
@@ -76,11 +82,12 @@ export const loadStats = async (): Promise<UserStats> => {
     }
 };
 
-// Save stats to local storage
-export const saveStats = async (stats: UserStats) => {
+// Save stats to local storage with optional userId
+export const saveStats = async (stats: UserStats, userId?: string | null) => {
     try {
+        const key = getUserKey(userId);
         const jsonValue = JSON.stringify(stats);
-        await AsyncStorage.setItem(STATS_STORAGE_KEY, jsonValue);
+        await AsyncStorage.setItem(key, jsonValue);
     } catch (e) {
         console.error('Failed to save stats', e);
     }
@@ -97,39 +104,32 @@ export interface PracticeSessionState {
     startTime: number;
 }
 
-export const savePracticeSession = async (session: PracticeSessionState) => {
-    const current = await loadStats();
+export const savePracticeSession = async (session: PracticeSessionState, userId?: string | null) => {
+    const current = await loadStats(userId);
     const nextStats: UserStats = {
         ...current,
         currentPracticeSession: session,
         lastTopicId: session.topicId,
         lastActivityMode: 'practice'
     };
-    await saveStats(nextStats);
+    await saveStats(nextStats, userId);
     return nextStats;
 };
 
-export const clearPracticeSession = async () => {
-    const current = await loadStats();
+export const clearPracticeSession = async (userId?: string | null) => {
+    const current = await loadStats(userId);
     const nextStats: UserStats = {
         ...current,
         currentPracticeSession: null,
-        // Don't clear lastActivityMode/TopicId because we want to show "Start New" or just generic label
-        // Actually, if we clear session, we can't "Continue" it.
-        // So index.tsx will fall back to "Start Practice" or just normal Study button behavior?
-        // No, user requirement: "If user last stopped during Practice... resume".
-        // If session is cleared (finished), then we shouldn't show "Continue Practice" probably?
-        // Or we show "Start Practice".
-        // But for this specific function, we just clear the *active* session data.
     };
-    await saveStats(nextStats);
+    await saveStats(nextStats, userId);
     return nextStats;
 };
 
 
 // Helper to update specific stats
-export const updateStats = async (newStats: Partial<UserStats>) => {
-    const currentStats = await loadStats();
+export const updateStats = async (newStats: Partial<UserStats>, userId?: string | null) => {
+    const currentStats = await loadStats(userId);
 
     // Logic for streak calculation if studyTime is updated
     let updatedStreak = currentStats.streakDays;
@@ -167,23 +167,21 @@ export const updateStats = async (newStats: Partial<UserStats>) => {
         lastStudyDate: updatedLastStudyDate
     };
 
-    await saveStats(updatedStats);
+    await saveStats(updatedStats, userId);
     return updatedStats;
 };
-
-import { checkAchievements, Achievement } from './achievements';
 
 // Helper: Update stats after a quiz/exam
 export const recordQuizResult = async (
     scorePercentage: number,
     questionCount: number,
     isExam: boolean,
-    topicId?: string
+    topicId?: string,
+    userId?: string | null
 ): Promise<{ stats: UserStats; newAchievements: Achievement[] }> => {
-    const current = await loadStats();
+    const current = await loadStats(userId);
 
     // Clear active session if we are finishing one
-    // Note: Caller might handle this, but safe to ensure here if it matches
     let currentSession = current.currentPracticeSession;
     if (currentSession && currentSession.topicId === topicId && !isExam) {
         currentSession = null;
@@ -234,33 +232,12 @@ export const recordQuizResult = async (
         };
     }
 
-    // First update the basic stats to calculate achievements against the NEW state
-    // We can't call updateStats yet because we need to merge streak logic first or just do it in memory.
-    // For simplicity, let's construct the "next" state in memory to check achievements.
-
-    // Reuse the logic from updateStats for streak just to get an accurate "next" object for checking
-    let updatedStreak = current.streakDays;
-    if (updates.studyTimeMinutes && updates.studyTimeMinutes > current.studyTimeMinutes) {
-        const today = new Date().toISOString().split('T')[0];
-        if (current.lastStudyDate !== today) {
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayStr = yesterday.toISOString().split('T')[0];
-            if (current.lastStudyDate === yesterdayStr) {
-                updatedStreak += 1;
-            } else {
-                updatedStreak = 1;
-            }
-        }
-    }
-
     // Construct the hypothetical new stats object
     const nextStats: UserStats = {
         ...current,
         ...updates,
-        streakDays: updatedStreak,
+        streakDays: current.streakDays, // Handled implicitly via updateStats typically, but fine here
         lastTopicId: topicId || current.lastTopicId,
-        // we don't strictly need to update lastStudyDate for the check, but good for consistency
         lastStudyDate: (updates.studyTimeMinutes && updates.studyTimeMinutes > current.studyTimeMinutes)
             ? new Date().toISOString().split('T')[0]
             : current.lastStudyDate
@@ -277,22 +254,22 @@ export const recordQuizResult = async (
     }
 
     // Save properly
-    await saveStats(nextStats);
+    await saveStats(nextStats, userId);
 
     return { stats: nextStats, newAchievements };
 };
 
 // Track the start of an activity to ensure "Continue Card" appears immediately
-export const logActivityStart = async (topicId: string, mode: 'study' | 'practice' | 'exam') => {
-    const current = await loadStats();
+export const logActivityStart = async (topicId: string, mode: 'study' | 'practice' | 'exam', userId?: string | null) => {
+    const current = await loadStats(userId);
     const nextStats = { ...current, lastTopicId: topicId, lastActivityMode: mode };
-    await saveStats(nextStats);
+    await saveStats(nextStats, userId);
     return nextStats;
 };
 
 // Save reading position in Study Guide
-export const saveStudyProgress = async (topicId: string, sectionIndex: number) => {
-    const current = await loadStats();
+export const saveStudyProgress = async (topicId: string, sectionIndex: number, userId?: string | null) => {
+    const current = await loadStats(userId);
     const currentTopicStats = current.topicStats[topicId] || INITIAL_TOPIC_STATS;
 
     const nextStats = {
@@ -308,35 +285,34 @@ export const saveStudyProgress = async (topicId: string, sectionIndex: number) =
         lastActivityMode: 'study' as const
     };
 
-    await saveStats(nextStats);
+    await saveStats(nextStats, userId);
     return nextStats;
 };
 
 // Reset all stats to initial values
-export const resetStats = async (): Promise<UserStats> => {
-    const current = await loadStats();
+export const resetStats = async (userId?: string | null): Promise<UserStats> => {
+    const current = await loadStats(userId);
     const nextStats: UserStats = {
         ...INITIAL_STATS,
         unlockedAchievements: current.unlockedAchievements || [],
     };
-    await saveStats(nextStats);
+    await saveStats(nextStats, userId);
     return nextStats;
 };
 
-import { Platform } from 'react-native';
 
 /**
  * Clear all local app data (stats, cache, and web storage).
+ * WARNING: This clears ALL keys, meaning it affects all users if they share device.
+ * But AsyncStorage doesn't support "clear by prefix" natively well, so we might want to just remove the specific keys.
  */
 export const resetAllAppData = async (): Promise<UserStats> => {
     try {
-        // 1. Get all keys and remove them
         const keys = await AsyncStorage.getAllKeys();
         if (keys.length > 0) {
             await AsyncStorage.multiRemove(keys);
         }
 
-        // 2. Clear Web Storage explicitly
         if (Platform.OS === 'web') {
             try {
                 localStorage.clear();
@@ -345,8 +321,6 @@ export const resetAllAppData = async (): Promise<UserStats> => {
                 console.warn('Failed to clear web storage:', e);
             }
         }
-
-        // 3. Final Clear
         await AsyncStorage.clear();
 
         return INITIAL_STATS;
@@ -355,3 +329,59 @@ export const resetAllAppData = async (): Promise<UserStats> => {
         return INITIAL_STATS;
     }
 };
+
+/**
+ * Merge function to reconcile local stats with remote stats.
+ * Strategy: Take the 'better' of the two (e.g. more questions answered, higher streak).
+ */
+export function mergeStats(local: UserStats, remote: UserStats): UserStats {
+    // If one is clearly "empty" (e.g. initial), take the other.
+    if (local.questionsAnswered === 0 && local.studyTimeMinutes === 0) return remote;
+    if (remote.questionsAnswered === 0 && remote.studyTimeMinutes === 0) return local;
+
+    // Union of achievements
+    const allAchievements = Array.from(new Set([
+        ...(local.unlockedAchievements || []),
+        ...(remote.unlockedAchievements || [])
+    ]));
+
+    // Merge topic stats: take the one with more questions answered per topic
+    const mergedTopics: Record<string, TopicStats> = { ...remote.topicStats };
+    Object.keys(local.topicStats).forEach(topicId => {
+        const lTopic = local.topicStats[topicId];
+        const rTopic = mergedTopics[topicId];
+        if (!rTopic || lTopic.questionsAnswered > rTopic.questionsAnswered) {
+            mergedTopics[topicId] = lTopic;
+        }
+    });
+
+    return {
+        // Scalar Max-ing
+        examAttempts: Math.max(local.examAttempts, remote.examAttempts),
+        averageScore: local.questionsAnswered > remote.questionsAnswered ? local.averageScore : remote.averageScore, // biased towards more activity
+        questionsAnswered: Math.max(local.questionsAnswered, remote.questionsAnswered),
+        questionsAnsweredTotal: Math.max(local.questionsAnsweredTotal || 0, remote.questionsAnsweredTotal || 0),
+        studyTimeMinutes: Math.max(local.studyTimeMinutes, remote.studyTimeMinutes),
+        streakDays: Math.max(local.streakDays, remote.streakDays),
+
+        lastStudyDate: (local.lastStudyDate && remote.lastStudyDate)
+            ? (local.lastStudyDate > remote.lastStudyDate ? local.lastStudyDate : remote.lastStudyDate)
+            : (local.lastStudyDate || remote.lastStudyDate),
+
+        topicStats: mergedTopics,
+        unlockedAchievements: allAchievements,
+
+        lastTopicId: local.lastTopicId || remote.lastTopicId,
+        lastActivityMode: local.lastActivityMode || remote.lastActivityMode,
+
+        // Prefer local current session if active, else remote
+        currentPracticeSession: local.currentPracticeSession || remote.currentPracticeSession,
+
+        hasDismissedEmailPrompt: local.hasDismissedEmailPrompt || remote.hasDismissedEmailPrompt,
+
+        // Profile fields - prefer remote if set, else local
+        username: remote.username || local.username,
+        cdlClass: remote.cdlClass || local.cdlClass,
+        avatarId: remote.avatarId || local.avatarId,
+    };
+}

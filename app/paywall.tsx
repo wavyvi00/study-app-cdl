@@ -1,3 +1,7 @@
+
+/**
+ * Paywall Screen (Trust/Light Theme Redesign)
+ */
 import React from 'react';
 import {
     View,
@@ -7,69 +11,68 @@ import {
     ScrollView,
     Platform,
     Alert,
-    StatusBar, // Added StatusBar
-    Linking, // Added Linking
+    StatusBar,
+    Linking,
+    ActivityIndicator,
+    useWindowDimensions,
 } from 'react-native';
-import { PurchasesPackage } from 'react-native-purchases'; // Added import
+import { PurchasesPackage } from 'react-native-purchases';
 import { useRouter, useLocalSearchParams } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
 import { useLocalization } from '../context/LocalizationContext';
 import { useSubscription } from '../context/SubscriptionContext';
-import { APP_CONFIG } from '../constants/appConfig';
-import Button from '../components/ui/Button';
-import { BackgroundShapes } from '../components/ui/BackgroundShapes';
+import { useAuth } from '../context/AuthContext';
 import { PremiumIcon } from '../components/icons/PremiumIcon';
-import { useWindowDimensions } from 'react-native';
 
 export default function PaywallScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    const { colors, spacing, typography } = useTheme();
-    const { width, height } = useWindowDimensions();
+    const { width } = useWindowDimensions();
     const { t } = useLocalization();
-    const { questionsAnsweredTotal, refreshSubscriptionStatus, purchase, restore, offerings, isLoading } = useSubscription();
+    const { questionsAnsweredTotal, purchase, restore, offerings, isLoading } = useSubscription();
+    const auth = useAuth();
+    const { from } = useLocalSearchParams();
 
-    const { PRICING } = APP_CONFIG;
+    // CDL Zero Brand Palette (Matches ThemeContext)
+    // Using 'blueGrotto' (#0067b3) as primary for Trust/Brand alignment
+    // Using 'aquamarine' (#40b0df) for accent/highlights
+    const TRUST_THEME = {
+        background: '#FFFFFF',
+        surface: '#F8FAFC',
+        primary: '#0067b3', // CDL Blue Grotto
+        primaryLight: '#E0F2FE', // Very light blue for backgrounds
+        accent: '#40b0df', // CDL Aquamarine
+        text: '#0F172A', // Dark Slate
+        textSecondary: '#64748B',
+        border: '#E2E8F0',
+        success: '#10B981',
+    };
 
-    // Safe navigation helper to prevent GO_BACK warnings
+    // Safe navigation helper
     const safeGoBack = () => {
         if (router.canGoBack()) {
             router.back();
         } else {
-            router.replace('/(tabs)');
+            router.replace('/tabs');
         }
     };
 
-    const handlePurchase = async (productId: string) => {
-        try {
-            if (!offerings && !__DEV__) {
-                alert(t('errorLoadingProducts'));
-                return;
-            }
-
-            // Find package matching the productId (either Store ID or RC Identifier)
-            const packageToBuy = offerings?.availablePackages.find(
-                (pkg: PurchasesPackage) => pkg.product.identifier === productId || pkg.identifier === productId
-            );
-
-            if (!packageToBuy) {
-                if (__DEV__) {
-                    Alert.alert('Error', 'Dev Mode: Product not found in RevenueCat. Setup required.\nID: ' + productId);
-                } else {
-                    Alert.alert('Error', t('productNotFound'));
-                }
-                return;
-            }
-
-            await purchase(packageToBuy);
-            // On success, the context updates state and we can close or navigate away
-            // The useEffect in the context or the redirect logic elsewhere handles the rest
+    const handleClose = () => {
+        if (from === 'quiz') {
+            router.navigate('/tabs');
+        } else {
             safeGoBack();
+        }
+    };
 
+    const handlePurchase = async (packageToBuy: PurchasesPackage) => {
+        try {
+            await purchase(packageToBuy);
+            safeGoBack();
         } catch (error: any) {
+            console.error('[Paywall] Purchase error:', error);
             if (!error.userCancelled) {
                 Alert.alert('Error', error.message || 'Purchase failed');
             }
@@ -90,158 +93,226 @@ export default function PaywallScreen() {
         { icon: 'check-circle' as const, text: t('unlimitedPractice') },
         { icon: 'book' as const, text: t('allStudyGuides') },
         { icon: 'trophy' as const, text: t('allExamModes') },
-        { icon: 'language' as const, text: t('allLanguages') },
+        { icon: 'globe' as const, text: t('allLanguages') },
     ];
 
-    const { from } = useLocalSearchParams();
-
-    // ...
-
-    const handleClose = () => {
-        if (from === 'quiz') {
-            // Prevent loop if coming from a forced redirect in Quiz
-            router.navigate('/(tabs)');
-        } else {
-            safeGoBack();
+    // Auth Gate
+    if (!auth?.isAuthenticated) {
+        if (auth?.isLoading) {
+            return (
+                <View style={[styles.container, { backgroundColor: TRUST_THEME.background, justifyContent: 'center', alignItems: 'center' }]}>
+                    <ActivityIndicator size="large" color={TRUST_THEME.primary} />
+                </View>
+            );
         }
+
+        return (
+            <View style={[styles.container, { backgroundColor: TRUST_THEME.background }]}>
+                <StatusBar barStyle="dark-content" />
+
+                <View style={[styles.header, { paddingTop: insets.top + 10 }]}>
+                    <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+                        <FontAwesome name="times" size={24} color={TRUST_THEME.textSecondary} />
+                    </TouchableOpacity>
+                </View>
+
+                <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', paddingHorizontal: 24 }}>
+                    <View style={[styles.iconCircle, { backgroundColor: TRUST_THEME.primaryLight }]}>
+                        <FontAwesome name="lock" size={40} color={TRUST_THEME.primary} />
+                    </View>
+                    <Text style={[styles.headerTitle, { color: TRUST_THEME.text, marginTop: 24 }]}>
+                        {t('createProfile')}
+                    </Text>
+                    <Text style={[styles.headerSubtitle, { color: TRUST_THEME.textSecondary, marginTop: 12 }]}>
+                        Create a free account to back up your progress and unlock Pro features across all your devices.
+                    </Text>
+
+                    <TouchableOpacity
+                        style={[styles.primaryButton, { backgroundColor: TRUST_THEME.primary, marginTop: 32 }]}
+                        onPress={() => router.push('/auth/signup')}
+                    >
+                        <Text style={styles.primaryButtonText}>{t('getStarted')}</Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={{ marginTop: 20, padding: 8 }}
+                        onPress={() => router.push('/auth/login')}
+                    >
+                        <Text style={{ color: TRUST_THEME.primary, fontWeight: '600' }}>
+                            Sign In
+                        </Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        );
+    }
+
+    if (isLoading || !offerings) {
+        return (
+            <View style={[styles.container, { backgroundColor: TRUST_THEME.background, justifyContent: 'center', alignItems: 'center' }]}>
+                <ActivityIndicator size="large" color={TRUST_THEME.primary} />
+            </View>
+        );
+    }
+
+    const packages = offerings.availablePackages || [];
+    const getPriceString = (pkg: PurchasesPackage): string => {
+        if (pkg.product?.priceString) return pkg.product.priceString;
+        if ((pkg as any).rcBillingProduct?.currentPrice?.formattedPrice) return (pkg as any).rcBillingProduct.currentPrice.formattedPrice;
+        return '';
     };
 
+    const getPackageTitle = (pkg: PurchasesPackage): string => {
+        const id = pkg.identifier.toLowerCase();
+        if (id.includes('annual') || id.includes('yearly')) return t('yearly');
+        if (id.includes('monthly')) return t('monthly');
+        if (id.includes('lifetime')) return t('lifetime');
+        return pkg.identifier;
+    };
+
+    const isBestValue = (pkg: PurchasesPackage): boolean => {
+        const id = pkg.identifier.toLowerCase();
+        return id.includes('annual') || id.includes('yearly');
+    };
+
+    const sortedPackages = [...packages].sort((a, b) => {
+        const order = (pkg: PurchasesPackage) => {
+            const id = pkg.identifier.toLowerCase();
+            if (id.includes('annual') || id.includes('yearly')) return 0;
+            if (id.includes('monthly')) return 1;
+            if (id.includes('lifetime')) return 2;
+            return 3;
+        };
+        return order(a) - order(b);
+    });
+
+    const isWideScreen = width > 768; // Simple breakpoint
+
     return (
-        <View style={[styles.container, { backgroundColor: '#0f172a' }]}>
-            <StatusBar barStyle="light-content" />
-
-            {/* Deep premium background matching Onboarding */}
-            <LinearGradient
-                colors={['#0a0a23', '#1a1a3a', '#0000a3']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={StyleSheet.absoluteFill}
-            />
-
-            <BackgroundShapes width={width} height={height} />
+        <View style={[styles.container, { backgroundColor: TRUST_THEME.background }]}>
+            <StatusBar barStyle="dark-content" />
 
             <View style={[styles.header, { paddingTop: insets.top + 10, paddingBottom: 10 }]}>
-                <TouchableOpacity
-                    onPress={handleClose}
-                    style={styles.closeButton}
-                    accessibilityLabel={t('close')}
-                >
-                    <FontAwesome name="times" size={24} color="rgba(255,255,255,0.7)" />
+                <TouchableOpacity onPress={handleClose} style={styles.closeButton}>
+                    <FontAwesome name="times" size={24} color={TRUST_THEME.textSecondary} />
                 </TouchableOpacity>
-
-                <View style={[styles.headerContent, { marginTop: 0 }]}>
-                    <PremiumIcon />
-                    <Text style={[styles.headerTitle, { marginTop: 10, fontSize: 26 }]}>{t('unlockCDLZeroPro')}</Text>
-                    <Text style={[styles.headerSubtitle, { marginTop: 4, fontSize: 14 }]}>
-                        {t('freeTrialEnded').replace('{count}', String(questionsAnsweredTotal))}
-                    </Text>
-                </View>
             </View>
 
             <ScrollView
                 style={styles.scrollView}
-                contentContainerStyle={[styles.scrollContent, { paddingBottom: insets.bottom + 20 }]}
+                contentContainerStyle={{ paddingBottom: insets.bottom + 40 }}
+                showsVerticalScrollIndicator={false}
             >
-                {/* Features list */}
-                <View style={[styles.featuresContainer, { padding: spacing.lg }]}>
-                    <Text style={[styles.featuresTitle]}>
-                        {t('whatYouGet')}
+                <View style={{ alignItems: 'center', paddingHorizontal: 24 }}>
+                    <View style={[styles.iconCircle, { backgroundColor: TRUST_THEME.primaryLight }]}>
+                        <FontAwesome name="star" size={32} color={TRUST_THEME.primary} />
+                    </View>
+
+                    <Text style={[styles.headerTitle, { color: TRUST_THEME.text, marginTop: 20 }]}>
+                        {t('unlockCDLZeroPro')}
                     </Text>
-                    {features.map((feature, index) => (
-                        <View key={index} style={styles.featureRow}>
-                            <View style={[styles.featureIcon]}>
-                                <FontAwesome name={feature.icon} size={20} color="#38bdf8" />
-                            </View>
-                            <Text style={[styles.featureText]}>
-                                {feature.text}
-                            </Text>
-                        </View>
-                    ))}
-                </View>
-
-                {/* Pricing options */}
-                <View style={[styles.pricingContainer, { paddingHorizontal: spacing.lg, marginTop: 10 }]}>
-                    {/* Yearly - Best Value */}
-                    <TouchableOpacity
-                        style={[styles.pricingCard, styles.pricingCardBest]}
-                        onPress={() => handlePurchase(PRICING.YEARLY.productId)}
-                        activeOpacity={0.8}
-                    >
-                        <View style={[styles.bestValueBadge]}>
-                            <Text style={styles.bestValueText}>{t('bestValue')}</Text>
-                        </View>
-                        <Text style={[styles.pricingPeriod]}>
-                            {t('yearly')}
-                        </Text>
-                        <Text style={[styles.pricingPrice]}>
-                            ${PRICING.YEARLY.price}
-                        </Text>
-                        <Text style={[styles.pricingSavings]}>
-                            {t('save')} {PRICING.YEARLY.savingsPercent}%
-                        </Text>
-                    </TouchableOpacity>
-
-
-                    {/* Monthly */}
-                    <TouchableOpacity
-                        style={[styles.pricingCard]}
-                        onPress={() => handlePurchase(PRICING.MONTHLY.productId)}
-                        activeOpacity={0.8}
-                    >
-                        <Text style={[styles.pricingPeriod]}>
-                            {t('monthly')}
-                        </Text>
-                        <Text style={[styles.pricingPrice]}>
-                            ${PRICING.MONTHLY.price}/{t('mo')}
-                        </Text>
-                    </TouchableOpacity>
-
-                    {/* Lifetime */}
-                    <TouchableOpacity
-                        style={[styles.pricingCard]}
-                        onPress={() => handlePurchase(PRICING.LIFETIME.productId)}
-                        activeOpacity={0.8}
-                    >
-                        <Text style={[styles.pricingPeriod]}>
-                            {t('lifetime')}
-                        </Text>
-                        <Text style={[styles.pricingPrice]}>
-                            ${PRICING.LIFETIME.price}
-                        </Text>
-                        <Text style={[styles.pricingNote]}>
-                            {t('oneTimePayment')}
-                        </Text>
-                    </TouchableOpacity>
-                </View>
-
-                {/* Restore purchases */}
-                <TouchableOpacity onPress={handleRestore} style={styles.restoreButton}>
-                    <Text style={styles.restoreText}>
-                        {t('restorePurchases')}
+                    <Text style={[styles.headerSubtitle, { color: TRUST_THEME.textSecondary, marginTop: 8 }]}>
+                        {t('freeTrialEnded').replace('{count}', String(questionsAnsweredTotal))}
                     </Text>
-                </TouchableOpacity>
 
-                {/* Legal Links */}
-                <View style={[styles.legalContainer, { paddingHorizontal: spacing.lg }]}>
-                    <TouchableOpacity
-                        onPress={() => Linking.openURL('https://sites.google.com/view/cdlzeropermittest2026/home')}
-                        style={{ padding: 8 }}
-                    >
-                        <Text style={styles.legalLink}>{t('privacyPolicy')}</Text>
-                    </TouchableOpacity>
-                    <Text style={styles.legalDivider}>|</Text>
-                    <TouchableOpacity
-                        onPress={() => Linking.openURL('https://sites.google.com/view/cdlzerotos/home')}
-                        style={{ padding: 8 }}
-                    >
-                        <Text style={styles.legalLink}>{t('termsOfService')}</Text>
-                    </TouchableOpacity>
+                    {/* Features Grid - Centered & Contained */}
+                    <View style={styles.featuresCenterWrapper}>
+                        <View style={styles.featuresContainer}>
+                            {features.map((feature, index) => (
+                                <View key={index} style={styles.featureRow}>
+                                    <FontAwesome name={feature.icon as any} size={20} color={TRUST_THEME.primary} style={{ marginRight: 12 }} />
+                                    <Text style={[styles.featureText, { color: TRUST_THEME.text }]}>
+                                        {feature.text}
+                                    </Text>
+                                </View>
+                            ))}
+                        </View>
+                    </View>
                 </View>
 
-                {/* Terms */}
-                <Text style={[styles.termsText, { color: colors.textSecondary, paddingHorizontal: spacing.lg }]}>
-                    {t('subscriptionTerms')}
-                </Text>
+                {/* Pricing Cards */}
+                <View style={[styles.pricingContainer, { paddingHorizontal: isWideScreen ? 100 : 20, maxWidth: 800, alignSelf: 'center', width: '100%' }]}>
+                    {sortedPackages.map((pkg) => {
+                        const best = isBestValue(pkg);
+                        return (
+                            <TouchableOpacity
+                                key={pkg.identifier}
+                                style={[
+                                    styles.pricingCard,
+                                    {
+                                        borderColor: best ? TRUST_THEME.primary : TRUST_THEME.border,
+                                        backgroundColor: best ? '#F0F9FF' : '#FFFFFF',
+                                        shadowColor: '#000',
+                                    },
+                                    best && styles.pricingCardBest
+                                ]}
+                                onPress={() => handlePurchase(pkg)}
+                                activeOpacity={0.9}
+                            >
+                                {best && (
+                                    <View style={[styles.bestBadge, { backgroundColor: TRUST_THEME.primary }]}>
+                                        <Text style={styles.bestBadgeText}>{t('bestValue')}</Text>
+                                    </View>
+                                )}
+
+                                <View style={{ alignItems: 'center' }}>
+                                    <Text style={[styles.periodText, { color: best ? TRUST_THEME.primary : TRUST_THEME.textSecondary }]}>
+                                        {getPackageTitle(pkg)}
+                                    </Text>
+                                    <Text style={[styles.priceText, { color: TRUST_THEME.text }]}>
+                                        {getPriceString(pkg)}
+                                    </Text>
+                                    {pkg.identifier.toLowerCase().includes('lifetime') && (
+                                        <Text style={[styles.noteText, { color: TRUST_THEME.textSecondary }]}>{t('oneTimePayment')}</Text>
+                                    )}
+                                    {best && (
+                                        <Text style={{ fontSize: 12, color: TRUST_THEME.success, marginTop: 4, fontWeight: '600' }}>
+                                            {t('save')} 50%
+                                        </Text>
+                                    )}
+                                </View>
+                            </TouchableOpacity>
+                        );
+                    })}
+                </View>
+
+                <View style={{ marginTop: 24, paddingHorizontal: 24 }}>
+                    <View style={styles.trustRow}>
+                        <FontAwesome name="lock" size={14} color={TRUST_THEME.textSecondary} />
+                        <Text style={{ color: TRUST_THEME.textSecondary, fontSize: 12, marginLeft: 6 }}>
+                            Secure payment processed by Apple/Google
+                        </Text>
+                    </View>
+                    <View style={[styles.trustRow, { marginTop: 4 }]}>
+                        <FontAwesome name="check" size={14} color={TRUST_THEME.textSecondary} />
+                        <Text style={{ color: TRUST_THEME.textSecondary, fontSize: 12, marginLeft: 6 }}>
+                            Cancel anytime in settings
+                        </Text>
+                    </View>
+
+                    <TouchableOpacity onPress={handleRestore} style={{ alignSelf: 'center', marginTop: 24, padding: 10 }}>
+                        <Text style={{ color: TRUST_THEME.primary, fontSize: 14, fontWeight: '600' }}>
+                            {t('restorePurchases')}
+                        </Text>
+                    </TouchableOpacity>
+
+                    <View style={styles.legalRow}>
+                        <Text
+                            style={styles.legalText}
+                            onPress={() => Linking.openURL('https://sites.google.com/view/cdlzeropermittest2026/home')}
+                        >
+                            {t('privacyPolicy')}
+                        </Text>
+                        <Text style={styles.legalText}> • </Text>
+                        <Text
+                            style={styles.legalText}
+                            onPress={() => Linking.openURL('https://sites.google.com/view/cdlzerotos/home')}
+                        >
+                            {t('termsOfService')}
+                        </Text>
+                    </View>
+                </View>
+
             </ScrollView>
         </View>
     );
@@ -252,177 +323,129 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     header: {
-        paddingBottom: 10,
         paddingHorizontal: 20,
+        alignItems: 'flex-end',
     },
     closeButton: {
-        position: 'absolute',
-        top: Platform.OS === 'ios' ? 50 : 30, // Adjusted for new padding
-        right: 20,
         padding: 8,
-        zIndex: 10,
+        backgroundColor: '#F1F5F9', // light gray circle
+        borderRadius: 20,
     },
-    headerContent: {
+    iconCircle: {
+        width: 80,
+        height: 80,
+        borderRadius: 40,
+        justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 0,
+        marginBottom: 0,
     },
     headerTitle: {
-        fontSize: 24,
+        fontSize: 28,
         fontWeight: 'bold',
-        color: 'white',
-        marginTop: 5,
         textAlign: 'center',
     },
     headerSubtitle: {
-        fontSize: 13,
-        color: 'rgba(255,255,255,0.9)',
-        marginTop: 5,
+        fontSize: 16,
         textAlign: 'center',
+        paddingHorizontal: 20,
+        lineHeight: 24,
     },
-    scrollView: {
-        flex: 1,
-    },
-    scrollContent: {
-        paddingTop: 10,
+    featuresCenterWrapper: {
+        width: '100%',
+        alignItems: 'center', // Centers the container itself
+        marginTop: 32,
     },
     featuresContainer: {
-        marginTop: 10,
-    },
-    featuresTitle: {
-        fontSize: 16,
-        fontWeight: '800',
-        marginBottom: 8,
-        color: '#FFFFFF',
-        textAlign: 'center',
+        width: 'auto', // Takes only needed width
+        alignItems: 'flex-start', // Left aligns items inside
+        minWidth: 200, // Minimum width so it's not too squeezed
     },
     featureRow: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 10,
-        backgroundColor: 'rgba(255,255,255,0.05)',
-        padding: 6,
-        borderRadius: 12,
-    },
-    featureIcon: {
-        width: 32,
-        height: 32,
-        borderRadius: 16,
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginRight: 10,
-        backgroundColor: 'rgba(56, 189, 248, 0.15)', // Light blue bg
+        marginBottom: 16,
+        // No full width here, so it hugs content or minWidth
     },
     featureText: {
-        fontSize: 14,
-        color: '#e2e8f0', // Slate-200
+        fontSize: 16,
         fontWeight: '500',
-        flex: 1,
     },
     pricingContainer: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        gap: 8,
-        marginTop: 10,
+        marginTop: 32,
+        gap: 12,
     },
     pricingCard: {
-        flex: 1,
-        borderRadius: 12,
-        padding: 8,
-        alignItems: 'center',
-        justifyContent: 'center',
-        minHeight: 100,
-        backgroundColor: 'rgba(255,255,255,0.1)',
+        borderRadius: 16,
+        paddingVertical: 20,
+        paddingHorizontal: 16,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.1)',
-        // Glass effect
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 8,
+        // Shadow for "Card" feel
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 4,
+        elevation: 2,
     },
     pricingCardBest: {
         borderWidth: 2,
-        borderColor: '#38bdf8', // Aquamarine border for best value
-        backgroundColor: 'rgba(56, 189, 248, 0.1)',
-        transform: [{ scale: 1.05 }], // Slightly emphasized
-        zIndex: 10,
+        shadowOpacity: 0.1,
+        elevation: 4,
     },
-    bestValueBadge: {
+    bestBadge: {
         position: 'absolute',
-        top: -12,
-        backgroundColor: '#38bdf8',
-        paddingHorizontal: 10,
+        top: -10,
+        alignSelf: 'center',
+        paddingHorizontal: 12,
         paddingVertical: 4,
         borderRadius: 12,
-        shadowColor: "#38bdf8",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.5,
-        shadowRadius: 4,
     },
-    bestValueText: {
-        color: 'white',
+    bestBadgeText: {
+        color: '#fff',
         fontSize: 10,
         fontWeight: 'bold',
         textTransform: 'uppercase',
     },
-    pricingPeriod: {
-        fontSize: 14,
+    periodText: {
+        fontSize: 16,
         fontWeight: '600',
-        color: '#FFFFFF',
-        marginTop: 10,
+        marginBottom: 4,
     },
-    pricingPrice: {
-        fontSize: 18,
+    priceText: {
+        fontSize: 24,
         fontWeight: 'bold',
-        color: '#FFFFFF',
-        marginTop: 4,
     },
-    pricingSavings: {
+    noteText: {
         fontSize: 12,
-        fontWeight: '700',
-        color: '#4ade80', // Green-400
         marginTop: 4,
     },
-    pricingNote: {
-        fontSize: 11,
-        color: 'rgba(255,255,255,0.6)',
-        marginTop: 4,
-    },
-    restoreButton: {
-        alignItems: 'center',
-        marginTop: 20,
-        padding: 10,
-        borderRadius: 20,
-        backgroundColor: 'rgba(255,255,255,0.05)',
-        alignSelf: 'center',
-        width: 200,
-    },
-    restoreText: {
-        fontSize: 14,
-        fontWeight: '600',
-        color: 'rgba(255,255,255,0.8)',
-    },
-    legalContainer: {
-        flexDirection: 'row',
+    primaryButton: {
+        width: '100%',
+        height: 56,
+        borderRadius: 16,
         justifyContent: 'center',
         alignItems: 'center',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    primaryButtonText: {
+        color: '#fff',
+        fontSize: 18,
+        fontWeight: 'bold',
+    },
+    trustRow: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    legalRow: {
+        flexDirection: 'row',
+        justifyContent: 'center',
         marginTop: 20,
+        marginBottom: 20,
     },
-    legalLink: {
-        fontSize: 11,
-        color: 'rgba(255,255,255,0.6)',
-        textDecorationLine: 'underline',
-    },
-    legalDivider: {
+    legalText: {
         fontSize: 12,
-        color: 'rgba(255,255,255,0.4)',
-        marginHorizontal: 4,
-    },
-    termsText: {
-        fontSize: 10,
-        textAlign: 'center',
-        lineHeight: 14,
-        marginTop: 8,
-        color: 'rgba(255,255,255,0.4)',
-    },
+        color: '#94A3B8',
+    }
 });

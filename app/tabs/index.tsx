@@ -14,6 +14,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { useFocusEffect } from 'expo-router';
 import { useTheme } from '../../context/ThemeContext';
 import { useLocalization } from '../../context/LocalizationContext';
+import { useAuth } from '../../context/AuthContext';
 import Button from '../../components/ui/Button';
 import Card from '../../components/ui/Card';
 import Badge from '../../components/ui/Badge';
@@ -32,6 +33,7 @@ export default function TopicsScreen() {
     const insets = useSafeAreaInsets();
     const { theme, toggleTheme, isDark, colors, spacing, typography, radius } = useTheme();
     const { t, locale, setLocale } = useLocalization();
+    const auth = useAuth();
     const { topics, isLoading } = useQuestions();
     const { checkCanAccessQuiz } = useSubscription();
     const [selectedTopic, setSelectedTopic] = useState<Topic | null>(null);
@@ -72,7 +74,7 @@ export default function TopicsScreen() {
     // Load stats and check subscription status whenever the screen comes into focus
     useFocusEffect(
         useCallback(() => {
-            loadStats().then(setStats);
+            loadStats(auth?.userId).then(setStats);
 
             // Check if we should show email opt-in popup (with 5 second delay)
             let timeoutId: NodeJS.Timeout | null = null;
@@ -164,7 +166,7 @@ export default function TopicsScreen() {
 
     const handleResetProgress = () => {
         const performReset = async () => {
-            const freshStats = await resetStats();
+            const freshStats = await resetStats(auth?.userId);
             setStats(freshStats);
             setIsMenuOpen(false);
         };
