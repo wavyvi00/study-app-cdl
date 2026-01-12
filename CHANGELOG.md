@@ -24,6 +24,10 @@ All notable changes to this project will be documented in this file.
 - **Profile Wizard**:
     - New onboarding flow for users to set **Username**, **Avatar**, and **CDL Class**.
     - Integrated into new user signup and initial onboarding.
+- **Paywall Redesign**:
+    - Switched to a cleaner **White/Light "Trust" Theme** to increase user confidence.
+    - Updated typography (`#0F172A`), brand colors (`#0067b3`), and layout for better readability on all devices.
+    - Added explicit security and cancellation trust signals.
 - **User Scoped Data**: Refactored local storage to support multiple users on the same device without data leakage.
 
 ### Changed
