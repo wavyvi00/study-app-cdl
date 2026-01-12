@@ -7,17 +7,19 @@ import { loadStats, UserStats, INITIAL_STATS } from '../data/stats';
 import { ACHIEVEMENTS } from '../data/achievements';
 import { useLocalization } from '../context/LocalizationContext';
 import { useTheme } from '../context/ThemeContext';
+import { useAuth } from '../context/AuthContext';
 
 export default function AchievementsScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
     const { t } = useLocalization();
     const { isDark } = useTheme();
+    const auth = useAuth();
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
 
     useEffect(() => {
-        loadStats().then(setStats);
-    }, []);
+        loadStats(auth?.userId).then(setStats);
+    }, [auth?.userId]);
 
     return (
         <View style={[styles.container, isDark && styles.darkContainer, { paddingTop: insets.top }]}>

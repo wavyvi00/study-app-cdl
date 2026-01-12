@@ -39,6 +39,7 @@ export type TranslationKey =
     | 'confirmResetMessage'
     | 'cancel'
     | 'reset'
+    | 'error'
     // New Keys
     | 'officialCDLPreparation'
     | 'yourProgress'
@@ -79,6 +80,11 @@ export type TranslationKey =
     | 'setupProfileBannerTitle'
     | 'setupProfileBannerDesc'
     | 'setupProfile'
+    | 'setupProfileSubtitle'
+    | 'pleaseEnterUsername'
+    | 'usernameTooShort'
+    | 'saving'
+    | 'continue'
     // Achievement Keys
     | 'achievement_first_steps_title' | 'achievement_first_steps_desc'
     | 'achievement_dedicated_learner_title' | 'achievement_dedicated_learner_desc'
@@ -234,6 +240,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         confirmResetMessage: 'Are you sure you want to reset all your progress? Achievements will not be cleared.',
         cancel: 'Cancel',
         reset: 'Reset',
+        error: 'Error',
         // New Keys
         officialCDLPreparation: 'OFFICIAL CDL PREPARATION',
         yourProgress: 'Your Progress',
@@ -273,6 +280,11 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         setupProfileBannerTitle: 'Customize Your Study Path',
         setupProfileBannerDesc: 'Select your CDL Class to get personalized recommendations.',
         setupProfile: 'Setup Profile',
+        setupProfileSubtitle: 'Let\'s set up your profile to track your progress.',
+        pleaseEnterUsername: 'Please enter a username.',
+        usernameTooShort: 'Username must be at least 3 characters.',
+        saving: 'Saving...',
+        continue: 'Continue',
         // Achievement Translations
         achievement_first_steps_title: 'First Steps',
         achievement_first_steps_desc: 'Answer 10 questions',
@@ -439,6 +451,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         confirmResetMessage: '¿Estás seguro de que quieres reiniciar todo tu progreso? Los logros no se borrarán.',
         cancel: 'Cancelar',
         reset: 'Reiniciar',
+        error: 'Error',
         // New Keys
         officialCDLPreparation: 'PREPARACIÓN OFICIAL CDL',
         yourProgress: 'Tu Progreso',
@@ -478,6 +491,11 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         setupProfileBannerTitle: 'Personaliza tu Ruta de Estudio',
         setupProfileBannerDesc: 'Selecciona tu Clase CDL para obtener recomendaciones personalizadas.',
         setupProfile: 'Crear Perfil',
+        setupProfileSubtitle: 'Configuremos tu perfil para seguir tu progreso.',
+        pleaseEnterUsername: 'Por favor ingresa un nombre de usuario.',
+        usernameTooShort: 'El nombre de usuario debe tener al menos 3 caracteres.',
+        saving: 'Guardando...',
+        continue: 'Continuar',
         // Achievement Translations
         achievement_first_steps_title: 'Primeros Pasos',
         achievement_first_steps_desc: 'Responde 10 preguntas',
@@ -644,6 +662,7 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         confirmResetMessage: 'Вы уверены, что хотите сбросить весь прогресс? Достижения не будут удалены.',
         cancel: 'Отмена',
         reset: 'Сброс',
+        error: 'Ошибка',
         // New Keys
         officialCDLPreparation: 'ОФИЦИАЛЬНАЯ ПОДГОТОВКА',
         yourProgress: 'Ваш прогресс',
@@ -683,6 +702,11 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         setupProfileBannerTitle: 'Настройте свой план обучения',
         setupProfileBannerDesc: 'Выберите класс CDL для персональных рекомендаций.',
         setupProfile: 'Создать профиль',
+        setupProfileSubtitle: 'Давайте настроим ваш профиль для отслеживания прогресса.',
+        pleaseEnterUsername: 'Пожалуйста, введите имя пользователя.',
+        usernameTooShort: 'Имя пользователя должно содержать не менее 3 символов.',
+        saving: 'Сохранение...',
+        continue: 'Продолжить',
         // Achievement Translations
         achievement_first_steps_title: 'Первые шаги',
         achievement_first_steps_desc: 'Ответьте на 10 вопросов',

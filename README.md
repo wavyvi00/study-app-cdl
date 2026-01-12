@@ -18,11 +18,18 @@ A comprehensive, cross-platform mobile application designed to help aspiring tru
   - **Practice Mode**: Learn at your own pace with immediate feedback and detailed explanations for every question.
   - **Exam Mode**: Simulate real test conditions with randomized questions and no hints until the end.
 
-- **Cross-Platform Sync**: Create an account to sync your progress and subscription across iOS, Android, and Web.
+- **Cloud & Local Sync**: Robust data synchronization powered by Supabase.
+  - **Guest Mode**: Start immediately without an account; progress is saved locally.
+  - **Account Sync**: Sign up to back up your stats, achievements, and profile to the cloud.
+  - **Smart Merging**: Seamlessly merges guest progress when you sign in.
 
-- **Offline-First**: Fully functional without an internet connection. All questions and user progress are stored locally on your device.
+- **Profile Wizard**: Personalize your learning experience.
+  - Choose a **username**.
+  - Select an **avatar** (Truck, Bus, etc.).
+  - Pick your **CDL Class** (Class A or Class B) for tailored recommendations.
 
 - **Progress Tracking**: Automatically tracks your stats, including average score, total questions answered, study time, exam attempts, and daily streaks.
+
 
 - **Dark Mode**: Seamlessly switch between light and dark themes for comfortable studying day or night.
 
@@ -47,6 +54,7 @@ A comprehensive, cross-platform mobile application designed to help aspiring tru
                     ┌─────────────────────────────────────┐
                     │         Supabase Auth               │
                     │   (User Identity - UUID)            │
+                    │   (Profiles & Stats Sync)           │
                     └──────────────┬──────────────────────┘
                                    │
                     ┌──────────────▼──────────────────────┐

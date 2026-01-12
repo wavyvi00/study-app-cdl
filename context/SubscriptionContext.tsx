@@ -213,7 +213,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
     const loadSubscriptionState = async () => {
         try {
             // Load stats to get questionsAnsweredTotal
-            const stats = await loadStats();
+            const stats = await loadStats(auth?.userId || null);
             const totalAnswered = stats.questionsAnsweredTotal || 0;
 
             // Get RevenueCat status - this is the SINGLE SOURCE OF TRUTH for entitlements
@@ -270,7 +270,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
             const status = await rcPurchasePackage(pack);
 
             // Update state with new status
-            const stats = await loadStats();
+            const stats = await loadStats(auth?.userId || null);
             const totalAnswered = stats.questionsAnsweredTotal || 0;
             const questionsRemaining = Math.max(0, APP_CONFIG.FREE_TRIAL_QUESTION_LIMIT - totalAnswered);
 
@@ -331,7 +331,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
                 });
             }
 
-            const stats = await loadStats();
+            const stats = await loadStats(auth?.userId || null);
             const totalAnswered = stats.questionsAnsweredTotal || 0;
             const questionsRemaining = Math.max(0, APP_CONFIG.FREE_TRIAL_QUESTION_LIMIT - totalAnswered);
 
@@ -378,12 +378,12 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
 
     const incrementQuestionsAnswered = useCallback(async (count: number = 1): Promise<void> => {
         // Persist immediately to enforce global limit even if app is killed
-        const currentStats = await loadStats();
+        const currentStats = await loadStats(auth?.userId || null);
         const newTotal = (currentStats.questionsAnsweredTotal || 0) + count;
 
         await updateStats({
             questionsAnsweredTotal: newTotal
-        });
+        }, auth?.userId || null);
 
         // Update local state
         const questionsRemaining = Math.max(0, APP_CONFIG.FREE_TRIAL_QUESTION_LIMIT - newTotal);
@@ -419,15 +419,15 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
         if (!__DEV__) return;
 
         try {
-            const stats = await loadStats();
+            const stats = await loadStats(auth?.userId || null);
             const { saveStats } = await import('../data/stats');
-            await saveStats({ ...stats, questionsAnsweredTotal: 0 });
+            await saveStats({ ...stats, questionsAnsweredTotal: 0 }, auth?.userId || null);
             await loadSubscriptionState();
             if (__DEV__) console.log('[Subscription] Trial count reset');
         } catch (error) {
             console.error('[Subscription] Failed to reset trial:', error);
         }
-    }, []);
+    }, [auth?.userId]);
 
     /**
      * Check if user has the "CDL ZERO Pro" entitlement.

@@ -82,7 +82,7 @@ export default function SignupScreen() {
                 }
             } else {
                 // Success - redirect to home
-                router.replace('/tabs');
+                router.replace('/setup-profile');
             }
         } catch (err: any) {
             setError(err.message || 'Signup failed');

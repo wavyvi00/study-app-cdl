@@ -3,7 +3,7 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platfo
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useCallback, useEffect } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { loadStats, updateStats, resetAllAppData, UserStats, INITIAL_STATS } from '../../data/stats';
+import { loadStats, updateStats, resetStats, UserStats, INITIAL_STATS } from '../../data/stats';
 import { ACHIEVEMENTS, Achievement } from '../../data/achievements';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { restartApp } from '../../utils/restartApp';
@@ -43,7 +43,7 @@ export default function ProfileScreen() {
 
     useFocusEffect(
         useCallback(() => {
-            loadStats().then(s => {
+            loadStats(auth?.userId).then(s => {
                 setStats(s);
                 if (s.username) {
                     setUsername(s.username);
@@ -82,7 +82,7 @@ export default function ProfileScreen() {
             cdlClass: selectedClass,
         };
 
-        const updated = await updateStats(updates);
+        const updated = await updateStats(updates, auth?.userId);
         setStats(updated);
         setIsEditing(false);
     };
@@ -99,15 +99,18 @@ export default function ProfileScreen() {
     const handleResetProfile = async () => {
         const performReset = async () => {
             LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-            const cleared = await resetAllAppData();
+            // resetStats is safer for multi-user/cloud
+            const cleared = await resetStats(auth?.userId || null);
             setStats(cleared);
             setUsername('');
             setSelectedAvatar('truck');
             setSelectedClass('Class A');
             setIsEditing(false);
+
+            // Note: restartApp won't work perfectly on Expo Go/Client often, so we rely on state reset
             const restarted = await restartApp();
             if (!restarted && Platform.OS !== 'web') {
-                showAlert(t('resetProfileTitle'), "Local data cleared. Please restart the app if anything looks stale.");
+                showAlert(t('resetProfileTitle'), "Local data cleared.");
             }
         };
 

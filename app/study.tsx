@@ -4,6 +4,7 @@ import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useTheme } from '../context/ThemeContext';
 import { useQuestions } from '../context/QuestionsContext';
 import { useLocalization } from '../context/LocalizationContext'; // Added
+import { useAuth } from '../context/AuthContext';
 import { saveStudyProgress, loadStats, logActivityStart } from '../data/stats';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useState, useRef, useEffect } from 'react';
@@ -20,6 +21,7 @@ export default function StudyScreen() {
     const { colors, spacing, typography, radius, isDark } = useTheme();
     const { topics } = useQuestions();
     const { locale, t } = useLocalization(); // Added
+    const auth = useAuth();
     const insets = useSafeAreaInsets();
     const scrollViewRef = useRef<ScrollView>(null);
 
@@ -43,7 +45,7 @@ export default function StudyScreen() {
             setAnswers({});
             // Save progress whenever section changes
             if (topic) {
-                saveStudyProgress(topic.id, sectionIndex);
+                saveStudyProgress(topic.id, sectionIndex, auth?.userId);
             }
         }
     }, [sectionIndex, topic, isCompleted]);
@@ -51,15 +53,15 @@ export default function StudyScreen() {
     // Initial load of saved position
     useEffect(() => {
         if (topicId) {
-            logActivityStart(topicId as string, 'study');
-            loadStats().then(stats => {
+            logActivityStart(topicId as string, 'study', auth?.userId);
+            loadStats(auth?.userId).then(stats => {
                 const topicStats = stats.topicStats[topicId as string];
                 if (topicStats?.lastStudySectionIndex !== undefined) {
                     setSectionIndex(topicStats.lastStudySectionIndex);
                 }
             });
         }
-    }, [topicId]);
+    }, [topicId, auth?.userId]);
 
     if (!topic) {
         return (

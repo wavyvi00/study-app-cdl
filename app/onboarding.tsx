@@ -295,7 +295,7 @@ const Page = ({ item, index, x, width, t }: any) => {
 const Pagination = ({ data, x, width }: any) => {
     return (
         <View style={styles.paginationContainer}>
-            {data.map((_, index) => {
+            {data.map((_: any, index: number) => {
                 const rDotStyle = useAnimatedStyle(() => {
                     const inputRange = [(index - 1) * width, index * width, (index + 1) * width];
                     const widthAnim = interpolate(x.value, inputRange, [8, 24, 8], Extrapolation.CLAMP);
@@ -372,10 +372,10 @@ export default function OnboardingScreen() {
     const completeOnboarding = async () => {
         try {
             await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
-            router.replace('/tabs');
+            router.replace('/setup-profile');
         } catch (error) {
             console.error('Error saving onboarding status:', error);
-            router.replace('/tabs');
+            router.replace('/setup-profile');
         }
     };
 
@@ -481,7 +481,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgba(255,255,255,0.05)',
         borderWidth: 1,
         borderColor: 'rgba(255,255,255,0.1)',
-        backdropFilter: 'blur(10px)', // Web glass effect
+        // backdropFilter not supported in RN StyleSheet, handled by BlurView if needed or ignored
     },
     activeLangPill: {
         backgroundColor: 'rgba(56, 189, 248, 0.2)', // Light blue tint
