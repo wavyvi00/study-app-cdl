@@ -21,7 +21,7 @@ export default function TermsScreen() {
         <View style={[styles.container, isDark && styles.darkContainer]}>
             <SEO title="Terms of Service - CDL Zero" />
             <LinearGradient
-                colors={isDark ? ['#1f1c2c', '#928dab'] : ['#4c669f', '#3b5998', '#192f6a']}
+                colors={['#0000a3', '#0000a3']} // Solid Brand Blue
                 style={styles.header}
             >
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -109,7 +109,7 @@ export default function TermsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#ffffff', // Match index.tsx
     },
     header: {
         paddingTop: 60,
@@ -117,6 +117,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         flexDirection: 'row',
         alignItems: 'center',
+        backgroundColor: '#0000a3',
     },
     backButton: {
         marginRight: 15,
@@ -128,32 +129,32 @@ const styles = StyleSheet.create({
     },
     content: {
         padding: 20,
+        maxWidth: 800,
+        alignSelf: 'center',
+        width: '100%',
     },
     section: {
         backgroundColor: 'white',
         borderRadius: 12,
         padding: 20,
         marginBottom: 15,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 1 },
-        shadowOpacity: 0.1,
-        shadowRadius: 3,
-        elevation: 2,
+        borderWidth: 1,
+        borderColor: '#e2e8f0',
     },
     sectionTitle: {
         fontSize: 18,
-        fontWeight: '600',
-        color: '#333',
+        fontWeight: '700',
+        color: '#1e293b',
         marginBottom: 8,
     },
     text: {
         fontSize: 15,
-        color: '#555',
-        lineHeight: 22,
+        color: '#475569',
+        lineHeight: 24,
     },
     footer: {
         textAlign: 'center',
-        color: '#999',
+        color: '#94a3b8',
         fontSize: 13,
         marginTop: 20,
         marginBottom: 40,
@@ -162,7 +163,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#e8f0fe',
+        backgroundColor: '#eff6ff',
         borderRadius: 12,
         padding: 16,
         marginTop: 10,
@@ -172,7 +173,7 @@ const styles = StyleSheet.create({
     externalLinkText: {
         fontSize: 16,
         fontWeight: '600',
-        color: '#3b5998',
+        color: '#0000a3',
     },
     // Dark mode styles
     darkContainer: {

@@ -30,6 +30,7 @@ function RootNavigator() {
                 <Stack.Screen name="privacy" options={{ headerShown: false }} />
                 <Stack.Screen name="terms" options={{ headerShown: false }} />
                 <Stack.Screen name="onboarding" options={{ headerShown: false, gestureEnabled: false }} />
+                <Stack.Screen name="setup-profile" options={{ headerShown: false }} />
                 <Stack.Screen name="achievements" options={{ headerShown: false }} />
                 <Stack.Screen name="paywall" options={{ headerShown: false, presentation: 'modal' }} />
                 {/* Auth screens - now available on all platforms */}
