@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView, Image, ActivityIndicator, useWindowDimensions } from 'react-native';
 import { Redirect, useRouter, Link } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -49,6 +49,8 @@ function NativeAuthCheck() {
 function WebLandingPage() {
     const router = useRouter();
     const { t, locale, setLocale } = useLocalization();
+    const { width } = useWindowDimensions();
+    const isMobile = width < 768;
 
     const navigateToApp = () => {
         router.push('/onboarding');
@@ -60,7 +62,7 @@ function WebLandingPage() {
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 {/* Navbar */}
-                <View style={styles.navbar}>
+                <View style={[styles.navbar, isMobile && styles.navbarMobile]}>
                     <View style={styles.navLogo}>
                         {/* Brand Icon: Wrapped in white box for contrast */}
                         <View style={styles.navLogoBox}>
@@ -84,9 +86,12 @@ function WebLandingPage() {
                             </TouchableOpacity>
                         </View>
 
-                        <TouchableOpacity onPress={navigateToApp} style={styles.navLink}>
-                            <Text style={styles.navLinkText}>{t('navPracticeNow')}</Text>
-                        </TouchableOpacity>
+                        {!isMobile && (
+                            <TouchableOpacity onPress={navigateToApp} style={styles.navLink}>
+                                <Text style={styles.navLinkText}>{t('navPracticeNow')}</Text>
+                            </TouchableOpacity>
+                        )}
+
                         <TouchableOpacity onPress={() => router.push('/auth/login')} style={styles.loginButton}>
                             <Text style={styles.loginButtonText}>{t('logIn')}</Text>
                         </TouchableOpacity>
@@ -96,7 +101,7 @@ function WebLandingPage() {
                 {/* Hero Section - Solid Brand Blue */}
                 <View style={styles.heroSection}>
                     <View style={styles.heroContent}>
-                        <Text accessibilityRole="header" style={styles.heroTitle}>
+                        <Text accessibilityRole="header" style={[styles.heroTitle, isMobile && styles.heroTitleMobile]}>
                             {t('heroTitle')}
                         </Text>
                         <Text style={styles.heroSubtitle}>
@@ -278,6 +283,9 @@ const styles = StyleSheet.create({
         paddingVertical: 16,
         backgroundColor: '#0000a3', // Brand Primary Blue
     },
+    navbarMobile: {
+        paddingHorizontal: 16,
+    },
     navLogo: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -381,6 +389,10 @@ const styles = StyleSheet.create({
         marginBottom: 24,
         lineHeight: Platform.select({ web: 72, default: 46 }),
         letterSpacing: -1,
+    },
+    heroTitleMobile: {
+        fontSize: 36, // Reduced from 40
+        lineHeight: 42,
     },
     heroSubtitle: {
         fontSize: 20,
