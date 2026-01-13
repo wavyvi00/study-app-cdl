@@ -385,7 +385,9 @@ export default function OnboardingScreen() {
 
             {/* Deep premium background matching app theme */}
             <LinearGradient
-                colors={['#000020', '#0000a3']} // Deep Midnight to Brand Primary
+                colors={['#0a0a23', '#1a1a3a', '#0000a3']} // Deep Midnight Blue to Primary
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
                 style={StyleSheet.absoluteFill}
             />
 
@@ -436,8 +438,11 @@ export default function OnboardingScreen() {
                     onPress={handleNext}
                     activeOpacity={0.9}
                 >
-                    <View
-                        style={styles.mainButtonGradient} // Renamed for clarity, though it's solid now
+                    <LinearGradient
+                        colors={['#40b0df', '#0067b3']} // Aquamarine to Blue Grotto
+                        start={{ x: 0, y: 0 }}
+                        end={{ x: 1, y: 0 }}
+                        style={styles.mainButtonGradient}
                     >
                         <Text style={styles.mainButtonText}>
                             {currentIndex === slides.length - 1 ? t('getStarted') : t('next')}
@@ -445,9 +450,9 @@ export default function OnboardingScreen() {
                         <FontAwesome
                             name={currentIndex === slides.length - 1 ? "check" : "arrow-right"}
                             size={18}
-                            color="#0000a3"
+                            color="#fff"
                         />
-                    </View>
+                    </LinearGradient>
                 </TouchableOpacity>
             </View>
         </View>
@@ -457,7 +462,7 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0000a3',
+        backgroundColor: '#0f172a', // Fallback
     },
     header: {
         position: 'absolute',
@@ -479,8 +484,8 @@ const styles = StyleSheet.create({
         // backdropFilter not supported in RN StyleSheet, handled by BlurView if needed or ignored
     },
     activeLangPill: {
-        backgroundColor: 'rgba(255, 213, 61, 0.2)', // Yellow tint
-        borderColor: '#ffd53d',
+        backgroundColor: 'rgba(56, 189, 248, 0.2)', // Light blue tint
+        borderColor: '#38bdf8',
     },
     langText: {
         fontSize: 16,
@@ -513,7 +518,7 @@ const styles = StyleSheet.create({
     },
     description: {
         fontSize: 18,
-        color: '#e0e7ff', // Light indigo/white for better contrast on solid blue
+        color: '#94a3b8', // Slate-400
         textAlign: 'center',
         lineHeight: 28,
         maxWidth: 300,
@@ -544,18 +549,17 @@ const styles = StyleSheet.create({
     dot: {
         height: 8,
         borderRadius: 4,
-        backgroundColor: '#ffd53d', // Brand Yellow
+        backgroundColor: '#38bdf8',
     },
     mainButton: {
         width: '100%',
         height: 64,
         borderRadius: 24, // ios-style squircle-ish
-        shadowColor: "#000",
+        shadowColor: "#38bdf8",
         shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.2, // Reduced opacity for cleaner look vs glowing blue
+        shadowOpacity: 0.3,
         shadowRadius: 16,
         elevation: 12,
-        backgroundColor: '#ffd53d', // Brand Yellow
     },
     mainButtonGradient: {
         flex: 1,
@@ -568,7 +572,7 @@ const styles = StyleSheet.create({
     mainButtonText: {
         fontSize: 20,
         fontWeight: '700',
-        color: '#0000a3', // Deep Blue
+        color: '#ffffff',
         letterSpacing: 0.5,
     },
     bgShape: {

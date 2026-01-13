@@ -9,7 +9,7 @@ interface SeoProps {
 export default function SEO({
     title = 'CDL Zero: Free CDL Practice Tests 2025',
     description = 'Master your CDL Permit Test with 100% free practice questions. Covers Class A, Class B, Air Brakes, Hazmat, and more.',
-    image = '/assets/brand_logo.png'
+    image = '/assets/logo_custom.png'
 }: SeoProps) {
     return (
         <Head>

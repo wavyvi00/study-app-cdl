@@ -21,7 +21,7 @@ export default function TermsScreen() {
         <View style={[styles.container, isDark && styles.darkContainer]}>
             <SEO title="Terms of Service - CDL Zero" />
             <LinearGradient
-                colors={['#0000a3', '#0000a3']}
+                colors={isDark ? ['#1f1c2c', '#928dab'] : ['#4c669f', '#3b5998', '#192f6a']}
                 style={styles.header}
             >
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
@@ -109,7 +109,7 @@ export default function TermsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8fafc', // Slate-50
+        backgroundColor: '#f5f5f5',
     },
     header: {
         paddingTop: 60,

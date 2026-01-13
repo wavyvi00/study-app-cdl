@@ -158,6 +158,7 @@ export const onAuthStateChange = (
     const { data: { subscription } } = supabase.auth.onAuthStateChange(callback);
     return () => subscription.unsubscribe();
 };
+
 /**
  * Sign in with Google (OAuth)
  */

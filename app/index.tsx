@@ -60,10 +60,8 @@ function WebLandingPage() {
                 {/* Navbar */}
                 <View style={styles.navbar}>
                     <View style={styles.navLogo}>
-                        {/* Brand Icon: Wrapped in white box for contrast on dark header */}
-                        <View style={styles.navLogoBox}>
-                            <Image source={require('../assets/brand_logo.png')} style={styles.navLogoImg} />
-                        </View>
+                        {/* Brand Icon: White/Yellow on Dark, or Blue on light. we are using Dark Header */}
+                        <Image source={require('../assets/logo_custom.png')} style={styles.navLogoImg} />
                         <Text style={styles.navLogoText}>CDL ZERO</Text>
                     </View>
                     <View style={styles.navActions}>
@@ -184,7 +182,7 @@ function WebLandingPage() {
                         {/* Brand Column */}
                         <View style={styles.footerCol}>
                             <View style={styles.footerBrand}>
-                                <Image source={require('../assets/brand_logo.png')} style={styles.footerLogo} />
+                                <Image source={require('../assets/logo_custom.png')} style={styles.footerLogo} />
                                 <Text style={styles.footerBrandText}>CDL ZERO</Text>
                             </View>
                             <Text style={styles.footerTagline}>
@@ -267,18 +265,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 12,
     },
-    navLogoBox: {
+    navLogoImg: {
         width: 40,
         height: 40,
         borderRadius: 8,
-        backgroundColor: '#fff',
-        justifyContent: 'center',
-        alignItems: 'center',
-    },
-    navLogoImg: {
-        width: 32,
-        height: 32,
-        resizeMode: 'contain',
     },
     navLogoText: {
         color: '#fff',

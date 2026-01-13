@@ -15,18 +15,18 @@ import {
     ScrollView,
 } from 'react-native';
 import { useRouter } from 'expo-router';
-// import { LinearGradient } from 'expo-linear-gradient'; // Removed
+import { LinearGradient } from 'expo-linear-gradient';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useAuth } from '../../context/AuthContext';
-// import { BackgroundShapes } from '../../components/ui/BackgroundShapes'; // Removed
+import { BackgroundShapes } from '../../components/ui/BackgroundShapes';
 import { useWindowDimensions } from 'react-native';
 import SEO from '../../components/seo/Head';
 
 export default function LoginScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    const { width } = useWindowDimensions();
+    const { width, height } = useWindowDimensions();
     const auth = useAuth();
 
     const [email, setEmail] = useState('');
@@ -56,6 +56,7 @@ export default function LoginScreen() {
             if (result?.error) {
                 setError(result.error);
             } else {
+                // Success - redirect to home
                 router.replace('/tabs');
             }
         } catch (err: any) {
@@ -68,6 +69,13 @@ export default function LoginScreen() {
     return (
         <View style={styles.container}>
             <SEO title="Login - CDL Zero" description="Log in to your CDL Zero account to sync your progress." />
+            <LinearGradient
+                colors={['#0a0a23', '#1a1a3a', '#0000a3']}
+                start={{ x: 0, y: 0 }}
+                end={{ x: 1, y: 1 }}
+                style={StyleSheet.absoluteFill}
+            />
+            <BackgroundShapes width={width} height={height} />
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -82,9 +90,7 @@ export default function LoginScreen() {
                 >
                     {/* Header */}
                     <View style={styles.header}>
-                        <View style={styles.iconContainer}>
-                            <FontAwesome name="lock" size={32} color="#0000a3" />
-                        </View>
+                        <FontAwesome name="lock" size={48} color="#38bdf8" />
                         <Text style={styles.title} accessibilityRole="header">Welcome Back</Text>
                         <Text style={styles.subtitle}>Sign in to sync your progress</Text>
                     </View>
@@ -99,11 +105,11 @@ export default function LoginScreen() {
                         ) : null}
 
                         <View style={styles.inputContainer}>
-                            <FontAwesome name="envelope" size={18} color="#64748b" style={styles.inputIcon} />
+                            <FontAwesome name="envelope" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Email"
-                                placeholderTextColor="#94a3b8"
+                                placeholderTextColor="rgba(255,255,255,0.4)"
                                 value={email}
                                 onChangeText={setEmail}
                                 keyboardType="email-address"
@@ -115,11 +121,11 @@ export default function LoginScreen() {
                         </View>
 
                         <View style={styles.inputContainer}>
-                            <FontAwesome name="key" size={18} color="#64748b" style={styles.inputIcon} />
+                            <FontAwesome name="key" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Password"
-                                placeholderTextColor="#94a3b8"
+                                placeholderTextColor="rgba(255,255,255,0.4)"
                                 value={password}
                                 onChangeText={setPassword}
                                 secureTextEntry={!showPassword}
@@ -136,7 +142,7 @@ export default function LoginScreen() {
                                 <FontAwesome
                                     name={showPassword ? 'eye-slash' : 'eye'}
                                     size={18}
-                                    color="#64748b"
+                                    color="rgba(255,255,255,0.5)"
                                 />
                             </TouchableOpacity>
                         </View>
@@ -147,7 +153,7 @@ export default function LoginScreen() {
                             disabled={isSubmitting}
                         >
                             {isSubmitting ? (
-                                <ActivityIndicator color="#ffffff" />
+                                <ActivityIndicator color="#fff" />
                             ) : (
                                 <Text style={styles.buttonText}>Sign In</Text>
                             )}
@@ -177,7 +183,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8fafc', // Slate-50 (Light Theme)
+        backgroundColor: '#0f172a',
     },
     keyboardView: {
         flex: 1,
@@ -189,46 +195,30 @@ const styles = StyleSheet.create({
     },
     header: {
         alignItems: 'center',
-        marginBottom: 32,
-    },
-    iconContainer: {
-        width: 64,
-        height: 64,
-        borderRadius: 32,
-        backgroundColor: '#dbeafe', // Light Blue circle
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginBottom: 16,
+        marginBottom: 40,
     },
     title: {
         fontSize: 28,
         fontWeight: 'bold',
-        color: '#0000a3', // Brand Deep Blue
-        marginBottom: 8,
+        color: '#fff',
+        marginTop: 16,
     },
     subtitle: {
         fontSize: 16,
-        color: '#64748b', // Slate-500
+        color: 'rgba(255,255,255,0.7)',
+        marginTop: 8,
     },
     form: {
         width: '100%',
         maxWidth: 400,
         alignSelf: 'center',
-        backgroundColor: '#ffffff',
-        padding: 24,
-        borderRadius: 24,
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.05,
-        shadowRadius: 12,
-        elevation: 2,
     },
     errorContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#fef2f2',
+        backgroundColor: 'rgba(239, 68, 68, 0.1)',
         borderWidth: 1,
-        borderColor: '#fca5a5',
+        borderColor: 'rgba(239, 68, 68, 0.3)',
         borderRadius: 12,
         padding: 12,
         marginBottom: 16,
@@ -242,11 +232,11 @@ const styles = StyleSheet.create({
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#f8fafc',
+        backgroundColor: 'rgba(255,255,255,0.1)',
         borderRadius: 12,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: '#e2e8f0', // Slate-200
+        borderColor: 'rgba(255,255,255,0.1)',
     },
     inputIcon: {
         paddingLeft: 16,
@@ -255,76 +245,36 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 52,
         paddingHorizontal: 12,
-        color: '#1e293b', // Slate-800
+        color: '#fff',
         fontSize: 16,
     },
     eyeButton: {
         padding: 16,
     },
     button: {
-        backgroundColor: '#0000a3', // Brand Deep Blue
+        backgroundColor: '#38bdf8',
         height: 52,
         borderRadius: 12,
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 8,
-        shadowColor: '#0000a3',
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 8,
-        elevation: 4,
     },
     buttonDisabled: {
         opacity: 0.7,
     },
     buttonText: {
-        color: '#ffffff',
-        fontSize: 16,
-        fontWeight: '600',
-    },
-    dividerContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginVertical: 20,
-    },
-    dividerLine: {
-        flex: 1,
-        height: 1,
-        backgroundColor: '#e2e8f0',
-    },
-    dividerText: {
-        marginHorizontal: 12,
-        color: '#94a3b8',
-        fontSize: 14,
-    },
-    googleButton: {
-        backgroundColor: '#ffffff',
-        height: 52,
-        borderRadius: 12,
-        justifyContent: 'center',
-        alignItems: 'center',
-        flexDirection: 'row',
-        borderWidth: 1,
-        borderColor: '#e2e8f0',
-        shadowColor: '#000',
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 1,
-    },
-    googleButtonText: {
-        color: '#1e293b',
-        fontSize: 16,
+        color: '#fff',
+        fontSize: 18,
         fontWeight: '600',
     },
     linkButton: {
         alignItems: 'center',
-        marginTop: 20,
+        marginTop: 16,
+        padding: 8,
     },
     linkText: {
-        color: '#0000a3',
+        color: '#38bdf8',
         fontSize: 14,
-        fontWeight: '500',
     },
     footer: {
         flexDirection: 'row',
@@ -334,12 +284,12 @@ const styles = StyleSheet.create({
         gap: 8,
     },
     footerText: {
-        color: '#64748b',
+        color: 'rgba(255,255,255,0.6)',
         fontSize: 14,
     },
     footerLink: {
-        color: '#0000a3',
+        color: '#38bdf8',
         fontSize: 14,
-        fontWeight: '700',
+        fontWeight: '600',
     },
 });

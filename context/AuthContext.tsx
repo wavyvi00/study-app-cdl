@@ -83,7 +83,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
             // Debug logging removed for security audit
 
-
             setState({
                 user: session?.user || null,
                 session,
