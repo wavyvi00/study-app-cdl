@@ -198,7 +198,35 @@ export type TranslationKey =
     | 'avatar_truck'
     | 'avatar_bus'
     | 'avatar_road'
-    | 'avatar_user';
+    | 'avatar_user'
+    // Landing Page
+    | 'navPracticeNow'
+    | 'logIn'
+    | 'heroTitle'
+    | 'heroSubtitle'
+    | 'heroCta'
+    | 'heroTrust'
+    | 'statActiveUsers'
+    | 'statStatesCovered'
+    | 'statUpdatedQA'
+    | 'featuresTitle'
+    | 'featuresSubtitle'
+    | 'feature1Title'
+    | 'feature1Desc'
+    | 'feature2Title'
+    | 'feature2Desc'
+    | 'feature3Title'
+    | 'feature3Desc'
+    | 'ctaStripTitle'
+    | 'ctaStripSubtitle'
+    | 'ctaStripButton'
+    | 'footerTagline'
+    | 'footerCompany'
+    | 'footerSupport'
+    | 'footerConnect'
+    | 'footerAboutUs'
+    | 'footerHelpCenter'
+    | 'footerContactSupport';
 
 export const translations: Record<Locale, Record<TranslationKey, string>> = {
     en: {

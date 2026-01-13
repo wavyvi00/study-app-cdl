@@ -25,7 +25,6 @@
         "NSAppTransportSecurity": {
           "NSAllowsArbitraryLoads": true
         },
-        "NSUserTrackingUsageDescription": "This app uses data to improve the experience and provide personalized study recommendations.",
         "NSCameraUsageDescription": "Used for scanning documents and updating your profile picture.",
         "NSPhotoLibraryUsageDescription": "Used to select images for your profile or study notes.",
         "NSMicrophoneUsageDescription": "Used for voice commands and study features.",

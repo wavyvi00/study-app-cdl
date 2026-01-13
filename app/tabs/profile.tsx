@@ -286,44 +286,52 @@ export default function ProfileScreen() {
                 </View>
             </View>
 
-            {/* Web-Only Account Section */}
-            {Platform.OS === 'web' && (
-                <View style={styles.sectionContainer}>
-                    <Text style={styles.sectionTitle}>Account</Text>
-                    <View style={styles.accountCard}>
-                        {auth?.isAuthenticated ? (
-                            <>
-                                <View style={styles.accountRow}>
-                                    <FontAwesome name="envelope" size={18} color="#666" />
-                                    <Text style={styles.accountEmail}>{auth.user?.email}</Text>
-                                </View>
-                                <View style={styles.accountRow}>
-                                    <FontAwesome name="star" size={18} color={isPro ? '#FFC107' : '#ccc'} />
-                                    <Text style={[styles.accountStatus, isPro && styles.accountStatusPro]}>
-                                        {isPro ? 'CDL ZERO Pro Member' : 'Free Account'}
-                                    </Text>
-                                </View>
-                                <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
-                                    <FontAwesome name="sign-out" size={16} color="#C62828" />
-                                    <Text style={styles.signOutText}>Sign Out</Text>
-                                </TouchableOpacity>
-                            </>
-                        ) : (
-                            <>
-                                <Text style={styles.accountPromptText}>
-                                    Sign in to sync your purchases across devices
+            {/* Account Section - Available on All Platforms */}
+            <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>{t('profile')}</Text>
+                <View style={styles.accountCard}>
+                    {auth?.isAuthenticated ? (
+                        <>
+                            <View style={styles.accountRow}>
+                                <FontAwesome name="envelope" size={18} color="#666" />
+                                <Text style={styles.accountEmail}>{auth.user?.email}</Text>
+                            </View>
+                            <View style={styles.accountRow}>
+                                <FontAwesome name="star" size={18} color={isPro ? '#FFC107' : '#ccc'} />
+                                <Text style={[styles.accountStatus, isPro && styles.accountStatusPro]}>
+                                    {isPro ? 'CDL ZERO Pro Member' : 'Free Account'}
                                 </Text>
+                            </View>
+
+                            {!isPro && (
                                 <TouchableOpacity
-                                    style={styles.signInButton}
-                                    onPress={() => router.push('/auth/login')}
+                                    style={styles.subscribeButton}
+                                    onPress={() => router.push('/paywall')}
                                 >
-                                    <Text style={styles.signInButtonText}>Sign In</Text>
+                                    <Text style={styles.subscribeButtonText}>{t('unlockCDLZeroPro')}</Text>
                                 </TouchableOpacity>
-                            </>
-                        )}
-                    </View>
+                            )}
+
+                            <TouchableOpacity style={styles.signOutButton} onPress={handleSignOut}>
+                                <FontAwesome name="sign-out" size={16} color="#C62828" />
+                                <Text style={styles.signOutText}>Sign Out</Text>
+                            </TouchableOpacity>
+                        </>
+                    ) : (
+                        <>
+                            <Text style={styles.accountPromptText}>
+                                Sign in to sync your progress across devices
+                            </Text>
+                            <TouchableOpacity
+                                style={styles.signInButton}
+                                onPress={() => router.push('/auth/login')}
+                            >
+                                <Text style={styles.signInButtonText}>Sign In</Text>
+                            </TouchableOpacity>
+                        </>
+                    )}
                 </View>
-            )}
+            </View>
 
             {/* Global Progress */}
             <View style={styles.sectionContainer}>

@@ -34,6 +34,7 @@ export default function PaywallScreen() {
     const { questionsAnsweredTotal, purchase, restore, offerings, isLoading } = useSubscription();
     const auth = useAuth();
     const { from } = useLocalSearchParams();
+    const [viewPlans, setViewPlans] = React.useState(false);
 
     // CDL Zero Brand Palette (Matches ThemeContext)
     // Using 'blueGrotto' (#0067b3) as primary for Trust/Brand alignment
@@ -97,7 +98,7 @@ export default function PaywallScreen() {
     ];
 
     // Auth Gate
-    if (!auth?.isAuthenticated) {
+    if (!auth?.isAuthenticated && !viewPlans) {
         if (auth?.isLoading) {
             return (
                 <View style={[styles.container, { backgroundColor: TRUST_THEME.background, justifyContent: 'center', alignItems: 'center' }]}>
@@ -140,6 +141,15 @@ export default function PaywallScreen() {
                     >
                         <Text style={{ color: TRUST_THEME.primary, fontWeight: '600' }}>
                             Sign In
+                        </Text>
+                    </TouchableOpacity>
+
+                    <TouchableOpacity
+                        style={{ marginTop: 12, padding: 8 }}
+                        onPress={() => setViewPlans(true)}
+                    >
+                        <Text style={{ color: TRUST_THEME.textSecondary, fontSize: 14 }}>
+                            View Plans
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -320,6 +330,9 @@ export default function PaywallScreen() {
 
 const styles = StyleSheet.create({
     container: {
+        flex: 1,
+    },
+    scrollView: {
         flex: 1,
     },
     header: {
