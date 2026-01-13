@@ -4,6 +4,7 @@ import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
 import { useLocalization } from '../context/LocalizationContext';
+import SEO from '../components/seo/Head';
 
 const TERMS_URL = 'https://sites.google.com/view/cdlzerotos/home';
 
@@ -18,19 +19,20 @@ export default function TermsScreen() {
 
     return (
         <View style={[styles.container, isDark && styles.darkContainer]}>
+            <SEO title="Terms of Service - CDL Zero" />
             <LinearGradient
-                colors={isDark ? ['#1f1c2c', '#928dab'] : ['#4c669f', '#3b5998', '#192f6a']}
+                colors={['#0000a3', '#0000a3']}
                 style={styles.header}
             >
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <FontAwesome name="arrow-left" size={24} color="white" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>{t('termsTitle')}</Text>
+                <Text style={styles.headerTitle} accessibilityRole="header" aria-level="1">{t('termsTitle')}</Text>
             </LinearGradient>
 
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={[styles.section, isDark && styles.darkSection]}>
-                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>{t('termsAcceptanceTitle')}</Text>
+                    <Text style={[styles.sectionTitle, isDark && styles.darkText]} accessibilityRole="header" aria-level="2">{t('termsAcceptanceTitle')}</Text>
                     <Text style={[styles.text, isDark && styles.darkSubText]}>
                         {t('termsAcceptanceText')}
                     </Text>
@@ -107,7 +109,7 @@ export default function TermsScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#f8fafc', // Slate-50
     },
     header: {
         paddingTop: 60,

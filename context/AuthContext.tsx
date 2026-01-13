@@ -8,6 +8,7 @@ import type { User, Session } from '@supabase/supabase-js';
 import {
     signUpWithEmail,
     signInWithEmail,
+    signInWithGoogle as authSignInWithGoogle,
     signOut as authSignOut,
     resetPassword as authResetPassword,
     getCurrentSession,
@@ -30,6 +31,7 @@ interface AuthContextType extends AuthState {
     signIn: (email: string, password: string) => Promise<{ error: string | null }>;
     signOut: () => Promise<{ error: string | null }>;
     resetPassword: (email: string) => Promise<{ error: string | null }>;
+    signInWithGoogle: () => Promise<{ error: string | null }>;
     sync: () => Promise<void>;
 }
 
@@ -63,14 +65,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
                     isAuthenticated: !!session?.user,
                 });
 
-                if (__DEV__) {
-                    console.log('[Auth] Session initialized:', {
-                        hasUser: !!session?.user,
-                        userId: session?.user?.id?.slice(0, 8) + '...',
-                    });
-                }
+                // Debug logging removed for security audit
+
             } catch (error) {
-                console.error('[Auth] Init error:', error);
+                console.error('[Auth] Init error:', (error as any)?.message || 'Unknown init error');
                 if (isMounted) {
                     setState(prev => ({ ...prev, isLoading: false }));
                 }
@@ -83,12 +81,8 @@ export function AuthProvider({ children }: AuthProviderProps) {
         const unsubscribe = onAuthStateChange(async (event, session) => {
             if (!isMounted) return;
 
-            if (__DEV__) {
-                console.log('[Auth] Auth state changed:', event, {
-                    hasUser: !!session?.user,
-                    userId: session?.user?.id?.slice(0, 8) + '...',
-                });
-            }
+            // Debug logging removed for security audit
+
 
             setState({
                 user: session?.user || null,
@@ -125,7 +119,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 // 3. Push to Cloud (First sync)
                 await pushStatsToCloud(result.user.id, guestStats);
             } catch (err) {
-                console.error('[Auth] Sync error on signup:', err);
+                console.error('[Auth] Sync error on signup:', (err as any)?.message || 'Unknown sync error');
             }
         }
 
@@ -136,6 +130,23 @@ export function AuthProvider({ children }: AuthProviderProps) {
             isAuthenticated: !!result.user,
         });
 
+        return { error: null };
+    }, []);
+
+    // Implement signInWithGoogle
+    const signInWithGoogle = useCallback(async () => {
+        setState(prev => ({ ...prev, isLoading: true }));
+        const { error } = await authSignInWithGoogle();
+
+        // Note: OAuth sign-in usually redirects, so we might not reach here on web.
+        // For mobile, or if it returns, handle error.
+
+        if (error) {
+            setState(prev => ({ ...prev, isLoading: false }));
+            return { error };
+        }
+
+        // Success state will be handled by onAuthStateChange listener usually
         return { error: null };
     }, []);
 
@@ -171,7 +182,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 await pushStatsToCloud(result.user.id, finalStats);
 
             } catch (err) {
-                console.error('[Auth] Sync error on signin:', err);
+                console.error('[Auth] Sync error on signin:', (err as any)?.message || 'Unknown sync error');
             }
         }
 
@@ -196,7 +207,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 // Pulling might be risky if we are leaving, but merging is safe.
                 await pushStatsToCloud(state.user.id, current);
             } catch (e) {
-                console.warn('[Auth] Sync before signout failed', e);
+                console.warn('[Auth] Sync before signout failed', (e as any)?.message);
             }
         }
 
@@ -239,6 +250,7 @@ export function AuthProvider({ children }: AuthProviderProps) {
         userId: state.user?.id || null,
         signUp,
         signIn,
+        signInWithGoogle,
         signOut,
         resetPassword,
         sync: userSync

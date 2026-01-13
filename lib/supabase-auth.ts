@@ -158,3 +158,32 @@ export const onAuthStateChange = (
     const { data: { subscription } } = supabase.auth.onAuthStateChange(callback);
     return () => subscription.unsubscribe();
 };
+/**
+ * Sign in with Google (OAuth)
+ */
+export const signInWithGoogle = async (): Promise<{ data: any; error: string | null }> => {
+    if (!supabase) {
+        return { data: null, error: 'Supabase client not configured' };
+    }
+
+    try {
+        const { data, error } = await supabase.auth.signInWithOAuth({
+            provider: 'google',
+            options: {
+                // For mobile, you would typically use makeRedirectUri from expo-auth-session
+                // For now, we rely on Supabase's default behavior or configured redirect URLs
+                redirectTo: typeof window !== 'undefined'
+                    ? window.location.origin
+                    : undefined, // Add deep link scheme here for mobile later if needed
+            },
+        });
+
+        if (error) {
+            return { data: null, error: error.message };
+        }
+
+        return { data, error: null };
+    } catch (err: any) {
+        return { data: null, error: err.message || 'Google sign in failed' };
+    }
+};

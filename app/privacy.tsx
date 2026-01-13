@@ -3,6 +3,7 @@ import { useRouter } from 'expo-router';
 import { LinearGradient } from 'expo-linear-gradient';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useTheme } from '../context/ThemeContext';
+import SEO from '../components/seo/Head';
 
 const PRIVACY_POLICY_URL = 'https://sites.google.com/view/cdlzeropermittest2026/home';
 
@@ -16,40 +17,41 @@ export default function PrivacyScreen() {
 
     return (
         <View style={[styles.container, isDark && styles.darkContainer]}>
+            <SEO title="Privacy Policy - CDL Zero" />
             <LinearGradient
-                colors={isDark ? ['#1f1c2c', '#928dab'] : ['#4c669f', '#3b5998', '#192f6a']}
+                colors={['#0000a3', '#0000a3']}
                 style={styles.header}
             >
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <FontAwesome name="arrow-left" size={24} color="white" />
                 </TouchableOpacity>
-                <Text style={styles.headerTitle}>Privacy Policy</Text>
+                <Text style={styles.headerTitle} accessibilityRole="header" aria-level="1">Privacy Policy</Text>
             </LinearGradient>
 
             <ScrollView contentContainerStyle={styles.content}>
                 <View style={[styles.section, isDark && styles.darkSection]}>
-                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>1. Data Collection</Text>
+                    <Text style={[styles.sectionTitle, isDark && styles.darkText]} accessibilityRole="header" aria-level="2">1. Data Collection</Text>
                     <Text style={[styles.text, isDark && styles.darkSubText]}>
                         This CDL Study App is designed as a standalone educational tool. We do not collect, store, or transmit any personal data to external servers. All progress, scores, and statistics are stored locally on your device.
                     </Text>
                 </View>
 
                 <View style={[styles.section, isDark && styles.darkSection]}>
-                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>2. Usage</Text>
+                    <Text style={[styles.sectionTitle, isDark && styles.darkText]} accessibilityRole="header" aria-level="2">2. Usage</Text>
                     <Text style={[styles.text, isDark && styles.darkSubText]}>
                         The information provided in this app is for study purposes only. While we strive for accuracy based on official CDL manuals, we cannot guarantee that the questions will exactly match your state's official exam. Always refer to your local DMV handbook.
                     </Text>
                 </View>
 
                 <View style={[styles.section, isDark && styles.darkSection]}>
-                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>3. Permissions</Text>
+                    <Text style={[styles.sectionTitle, isDark && styles.darkText]} accessibilityRole="header" aria-level="2">3. Permissions</Text>
                     <Text style={[styles.text, isDark && styles.darkSubText]}>
                         This app requires no special permissions (such as camera, location, or contacts) to function.
                     </Text>
                 </View>
 
                 <View style={[styles.section, isDark && styles.darkSection]}>
-                    <Text style={[styles.sectionTitle, isDark && styles.darkText]}>4. Contact Us</Text>
+                    <Text style={[styles.sectionTitle, isDark && styles.darkText]} accessibilityRole="header" aria-level="2">4. Contact Us</Text>
                     <Text style={[styles.text, isDark && styles.darkSubText]}>
                         If you have any questions about this policy, please contact support.
                     </Text>
@@ -77,7 +79,7 @@ export default function PrivacyScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#f8fafc', // Slate-50
     },
     header: {
         paddingTop: 60,

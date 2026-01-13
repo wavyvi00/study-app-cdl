@@ -1,11 +1,14 @@
 import { useEffect, useState } from 'react';
-import { View, ActivityIndicator } from 'react-native';
-import { Redirect, useRouter } from 'expo-router';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView, Image, ActivityIndicator } from 'react-native';
+import { Redirect, useRouter, Link } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import FontAwesome from '@expo/vector-icons/FontAwesome';
+import SEO from '../components/seo/Head';
 
 const ONBOARDING_KEY = 'onboarding_completed';
 
-export default function Index() {
+// --- Native Auth Check Logic ---
+function NativeAuthCheck() {
     const [isLoading, setIsLoading] = useState(true);
     const [hasSeenOnboarding, setHasSeenOnboarding] = useState(false);
 
@@ -28,8 +31,8 @@ export default function Index() {
 
     if (isLoading) {
         return (
-            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
-                <ActivityIndicator size="large" color="#3b5998" />
+            <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center', backgroundColor: '#0f172a' }}>
+                <ActivityIndicator size="large" color="#38bdf8" />
             </View>
         );
     }
@@ -40,3 +43,547 @@ export default function Index() {
 
     return <Redirect href="/tabs" />;
 }
+
+// --- Web Landing Page ---
+function WebLandingPage() {
+    const router = useRouter();
+
+    const navigateToApp = () => {
+        router.push('/onboarding');
+    };
+
+    return (
+        <View style={styles.container}>
+            <SEO />
+
+            <ScrollView contentContainerStyle={styles.scrollContent}>
+                {/* Navbar */}
+                <View style={styles.navbar}>
+                    <View style={styles.navLogo}>
+                        {/* Brand Icon: Wrapped in white box for contrast on dark header */}
+                        <View style={styles.navLogoBox}>
+                            <Image source={require('../assets/brand_logo.png')} style={styles.navLogoImg} />
+                        </View>
+                        <Text style={styles.navLogoText}>CDL ZERO</Text>
+                    </View>
+                    <View style={styles.navActions}>
+                        <TouchableOpacity onPress={navigateToApp} style={styles.navLink}>
+                            <Text style={styles.navLinkText}>Practice Now</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity onPress={() => router.push('/auth/login')} style={styles.loginButton}>
+                            <Text style={styles.loginButtonText}>Log In</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                {/* Hero Section - Solid Brand Blue */}
+                <View style={styles.heroSection}>
+                    <View style={styles.heroContent}>
+                        <Text accessibilityRole="header" style={styles.heroTitle}>
+                            Pass Your CDL Permit Test.{'\n'}First Time.
+                        </Text>
+                        <Text style={styles.heroSubtitle}>
+                            100% Free CDL practice tests based on the 2025 official manual.
+                            Class A, Class B, Air Brakes, and more.
+                        </Text>
+
+                        <TouchableOpacity
+                            onPress={navigateToApp}
+                            style={styles.ctaButton}
+                            activeOpacity={0.9}
+                            accessibilityRole="button"
+                            accessibilityLabel="Start your free practice now"
+                        >
+                            <Text style={styles.ctaText}>Start Your Free Practice</Text>
+                            <FontAwesome name="arrow-right" size={18} color="#0000a3" />
+                        </TouchableOpacity>
+
+                        <Text style={styles.trustText}>
+                            <FontAwesome name="star" color="#ffd53d" /> No credit card required. No hidden fees.
+                        </Text>
+                    </View>
+                </View>
+
+                {/* Social Proof / Stats Strip */}
+                <View style={styles.statsStrip}>
+                    <View style={styles.statItem}>
+                        <Text style={styles.statNumber}>10k+</Text>
+                        <Text style={styles.statLabel}>Active Users</Text>
+                    </View>
+                    <View style={styles.statDivider} />
+                    <View style={styles.statItem}>
+                        <Text style={styles.statNumber}>50+</Text>
+                        <Text style={styles.statLabel}>States Covered</Text>
+                    </View>
+                    <View style={styles.statDivider} />
+                    <View style={styles.statItem}>
+                        <Text style={styles.statNumber}>2025</Text>
+                        <Text style={styles.statLabel}>Updated Q&A</Text>
+                    </View>
+                </View>
+
+                {/* Features Grid - Clean Gray/White */}
+                <View style={styles.featuresSection}>
+                    <View style={styles.sectionHeader}>
+                        <Text accessibilityRole="header" aria-level="2" style={styles.sectionTitle}>
+                            Why CDL Zero?
+                        </Text>
+                        <Text style={styles.sectionSubtitle}>Everything you need to ace the exam.</Text>
+                    </View>
+
+                    <View style={styles.gridContainer}>
+                        {/* Card 1 */}
+                        <View style={styles.featureCard}>
+                            <View style={[styles.iconBox, { backgroundColor: '#e3f2fd' }]}>
+                                <Image source={require('../assets/images/onboarding/study.png')} style={styles.featureIconImg} />
+                            </View>
+                            <Text style={styles.featureTitle}>Official Manual Based</Text>
+                            <Text style={styles.featureDesc}>
+                                Questions are identical to the real ones, derived directly from your state's CDL handbook.
+                            </Text>
+                        </View>
+
+                        {/* Card 2 */}
+                        <View style={styles.featureCard}>
+                            <View style={[styles.iconBox, { backgroundColor: '#fff8e1' }]}>
+                                <Image source={require('../assets/images/onboarding/license.png')} style={styles.featureIconImg} />
+                            </View>
+                            <Text style={styles.featureTitle}>Exam Mode Simulator</Text>
+                            <Text style={styles.featureDesc}>
+                                Practice under time pressure with the same structure as the actual DMV test.
+                            </Text>
+                        </View>
+
+                        {/* Card 3 */}
+                        <View style={styles.featureCard}>
+                            <View style={[styles.iconBox, { backgroundColor: '#e8f5e9' }]}>
+                                <Image source={require('../assets/images/onboarding/trophy.png')} style={styles.featureIconImg} />
+                            </View>
+                            <Text style={styles.featureTitle}>Smart Analytics</Text>
+                            <Text style={styles.featureDesc}>
+                                We track your weak spots and automatically suggest topics to review.
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+
+                {/* Call to Action Strip */}
+                <View style={styles.ctaStrip}>
+                    <View style={styles.ctaStripContent}>
+                        <Text style={styles.ctaStripTitle}>Ready to get on the road?</Text>
+                        <Text style={styles.ctaStripSubtitle}>Join thousands of drivers passing their permit test today.</Text>
+                        <TouchableOpacity onPress={navigateToApp} style={styles.secondaryCtaButton}>
+                            <Text style={styles.secondaryCtaText}>Start Practice Test</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>
+
+                {/* Footer */}
+                <View style={styles.footer}>
+                    <View style={styles.footerContent}>
+                        {/* Brand Column */}
+                        <View style={styles.footerCol}>
+                            <View style={styles.footerBrand}>
+                                <Image source={require('../assets/brand_logo.png')} style={styles.footerLogo} />
+                                <Text style={styles.footerBrandText}>CDL ZERO</Text>
+                            </View>
+                            <Text style={styles.footerTagline}>
+                                Your #1 partner for passing the CDL exam. 100% Free.
+                            </Text>
+                            <Text style={styles.copyright}>© 2025 CDL Zero. All rights reserved.</Text>
+                        </View>
+
+                        {/* Quick Links */}
+                        <View style={styles.footerCol}>
+                            <Text style={styles.footerHeading}>Company</Text>
+                            <Link href="/privacy" style={styles.footerLink}>Privacy Policy</Link>
+                            <Link href="/terms" style={styles.footerLink}>Terms of Service</Link>
+                            <TouchableOpacity style={styles.footerLinkWrapper}>
+                                <Text style={styles.footerLink}>About Us</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Support */}
+                        <View style={styles.footerCol}>
+                            <Text style={styles.footerHeading}>Support</Text>
+                            <TouchableOpacity style={styles.footerLinkWrapper}>
+                                <Text style={styles.footerLink}>Help Center</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.footerLinkWrapper}>
+                                <Text style={styles.footerLink}>Contact Support</Text>
+                            </TouchableOpacity>
+                        </View>
+
+                        {/* Socials */}
+                        <View style={styles.footerCol}>
+                            <Text style={styles.footerHeading}>Connect</Text>
+                            <View style={styles.socialRow}>
+                                <TouchableOpacity style={styles.socialBtn}>
+                                    <FontAwesome name="facebook-square" size={24} color="#64748b" />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.socialBtn}>
+                                    <FontAwesome name="twitter" size={24} color="#64748b" />
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.socialBtn}>
+                                    <FontAwesome name="instagram" size={24} color="#64748b" />
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </View>
+
+            </ScrollView>
+        </View>
+    );
+}
+
+export default function Index() {
+    if (Platform.OS === 'web') {
+        return <WebLandingPage />;
+    } else {
+        return <NativeAuthCheck />;
+    }
+}
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: '#ffffff', // Clean white background base
+    },
+    scrollContent: {
+        flexGrow: 1,
+    },
+    // Navbar
+    navbar: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        paddingHorizontal: Platform.select({ web: 40, default: 20 }),
+        paddingVertical: 16,
+        backgroundColor: '#0000a3', // Brand Primary Blue
+    },
+    navLogo: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+    },
+    navLogoBox: {
+        width: 40,
+        height: 40,
+        borderRadius: 8,
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    navLogoImg: {
+        width: 32,
+        height: 32,
+        resizeMode: 'contain',
+    },
+    navLogoText: {
+        color: '#fff',
+        fontSize: 22,
+        fontWeight: '800',
+        letterSpacing: 0.5,
+    },
+    navActions: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 20,
+    },
+    navLink: {
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+    },
+    navLinkText: {
+        color: 'rgba(255,255,255,0.9)',
+        fontWeight: '600',
+        fontSize: 15,
+    },
+    loginButton: {
+        backgroundColor: 'rgba(255,255,255,0.15)',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: 'rgba(255,255,255,0.3)',
+    },
+    loginButtonText: {
+        color: '#fff',
+        fontWeight: '700',
+        fontSize: 14,
+    },
+
+    // Hero - Solid Blue
+    heroSection: {
+        paddingVertical: 90,
+        paddingHorizontal: 24,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#0000a3', // Solid Brand Primary
+    },
+    heroContent: {
+        maxWidth: 900,
+        alignItems: 'center',
+    },
+    heroTitle: {
+        fontSize: Platform.select({ web: 64, default: 40 }),
+        fontWeight: '900',
+        color: '#fff',
+        textAlign: 'center',
+        marginBottom: 24,
+        lineHeight: Platform.select({ web: 72, default: 46 }),
+        letterSpacing: -1,
+    },
+    heroSubtitle: {
+        fontSize: 20,
+        color: '#e0e7ff', // Light indigo/blue tint
+        textAlign: 'center',
+        marginBottom: 48,
+        lineHeight: 30,
+        maxWidth: 600,
+    },
+    ctaButton: {
+        backgroundColor: '#ffd53d', // Brand Yellow
+        paddingVertical: 18,
+        paddingHorizontal: 40,
+        borderRadius: 50,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        marginBottom: 24,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 6,
+    },
+    ctaText: {
+        color: '#0000a3', // Contrast Text (Dark Blue)
+        fontSize: 18,
+        fontWeight: '800',
+        letterSpacing: 0.5,
+    },
+    trustText: {
+        color: 'rgba(255,255,255,0.7)',
+        fontSize: 14,
+        fontWeight: '500',
+    },
+
+    // Stats Strip
+    statsStrip: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        alignItems: 'center',
+        paddingVertical: 30,
+        backgroundColor: '#0067b3', // Blue Grotto (lighter)
+        gap: 40,
+        flexWrap: 'wrap',
+    },
+    statItem: {
+        alignItems: 'center',
+    },
+    statNumber: {
+        fontSize: 24,
+        fontWeight: '800',
+        color: '#fff',
+    },
+    statLabel: {
+        fontSize: 12,
+        color: 'rgba(255,255,255,0.8)',
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+        marginTop: 4,
+    },
+    statDivider: {
+        width: 1,
+        height: 30,
+        backgroundColor: 'rgba(255,255,255,0.2)',
+    },
+
+    // Features Section - Gray bg
+    featuresSection: {
+        paddingVertical: 80,
+        paddingHorizontal: 24,
+        backgroundColor: '#f8fafc', // Slate-50 Light Gray
+        alignItems: 'center',
+    },
+    sectionHeader: {
+        marginBottom: 60,
+        alignItems: 'center',
+    },
+    sectionTitle: {
+        fontSize: 36,
+        fontWeight: '800',
+        color: '#0f172a',
+        marginBottom: 12,
+        letterSpacing: -0.5,
+    },
+    sectionSubtitle: {
+        fontSize: 18,
+        color: '#64748b',
+        maxWidth: 500,
+        textAlign: 'center',
+    },
+    gridContainer: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'center',
+        gap: 30,
+        maxWidth: 1200,
+        width: '100%',
+    },
+    featureCard: {
+        backgroundColor: '#fff',
+        padding: 32,
+        borderRadius: 16,
+        width: '100%',
+        maxWidth: 350,
+        minWidth: 300,
+        alignItems: 'flex-start',
+        borderWidth: 1,
+        borderColor: '#e2e8f0', // Subtle border
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.05,
+        shadowRadius: 10,
+        elevation: 2,
+    },
+    iconBox: {
+        width: 64,
+        height: 64,
+        borderRadius: 20,
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 20,
+    },
+    featureIconImg: {
+        width: 32,
+        height: 32,
+        resizeMode: 'contain',
+    },
+    featureTitle: {
+        color: '#0f172a',
+        fontSize: 22,
+        fontWeight: '700',
+        marginBottom: 12,
+    },
+    featureDesc: {
+        color: '#475569',
+        fontSize: 16,
+        lineHeight: 26,
+    },
+
+    // CTA Strip
+    ctaStrip: {
+        backgroundColor: '#0000a3',
+        paddingVertical: 60,
+        paddingHorizontal: 24,
+        alignItems: 'center',
+    },
+    ctaStripContent: {
+        alignItems: 'center',
+        maxWidth: 700,
+    },
+    ctaStripTitle: {
+        fontSize: 32,
+        fontWeight: '800',
+        color: '#fff',
+        textAlign: 'center',
+        marginBottom: 16,
+    },
+    ctaStripSubtitle: {
+        fontSize: 18,
+        color: '#e0e7ff',
+        textAlign: 'center',
+        marginBottom: 32,
+    },
+    secondaryCtaButton: {
+        backgroundColor: '#fff',
+        paddingVertical: 16,
+        paddingHorizontal: 32,
+        borderRadius: 12,
+    },
+    secondaryCtaText: {
+        color: '#0000a3',
+        fontWeight: '700',
+        fontSize: 16,
+    },
+
+    // Footer
+    footer: {
+        paddingTop: 80,
+        paddingBottom: 40,
+        paddingHorizontal: 40,
+        backgroundColor: '#ffffff',
+        borderTopWidth: 1,
+        borderTopColor: '#f1f5f9',
+    },
+    footerContent: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        maxWidth: 1200,
+        alignSelf: 'center',
+        width: '100%',
+        gap: 40,
+    },
+    footerCol: {
+        flex: 1,
+        minWidth: 200,
+    },
+    footerBrand: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 12,
+        marginBottom: 16,
+    },
+    footerLogo: {
+        width: 40,
+        height: 40,
+        borderRadius: 10,
+    },
+    footerBrandText: {
+        fontSize: 20,
+        fontWeight: '800',
+        color: '#0f172a',
+    },
+    footerTagline: {
+        color: '#64748b',
+        fontSize: 14,
+        lineHeight: 22,
+        marginBottom: 24,
+    },
+    copyright: {
+        color: '#94a3b8',
+        fontSize: 13,
+    },
+    footerHeading: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#0f172a',
+        textTransform: 'uppercase',
+        letterSpacing: 1,
+        marginBottom: 20,
+    },
+    footerLink: {
+        color: '#64748b',
+        fontSize: 15,
+        marginBottom: 12,
+    },
+    footerLinkWrapper: {
+        marginBottom: 12,
+    },
+    socialRow: {
+        flexDirection: 'row',
+        gap: 16,
+    },
+    socialBtn: {
+        width: 40,
+        height: 40,
+        borderRadius: 20,
+        backgroundColor: '#f1f5f9',
+        justifyContent: 'center',
+        alignItems: 'center',
+    }
+});
