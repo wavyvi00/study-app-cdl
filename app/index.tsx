@@ -4,6 +4,7 @@ import { Redirect, useRouter, Link } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import SEO from '../components/seo/Head';
+import { useLocalization } from '../context/LocalizationContext';
 
 const ONBOARDING_KEY = 'onboarding_completed';
 
@@ -47,6 +48,7 @@ function NativeAuthCheck() {
 // --- Web Landing Page ---
 function WebLandingPage() {
     const router = useRouter();
+    const { t, locale, setLocale } = useLocalization();
 
     const navigateToApp = () => {
         router.push('/onboarding');
@@ -67,11 +69,26 @@ function WebLandingPage() {
                         <Text style={styles.navLogoText}>CDL ZERO</Text>
                     </View>
                     <View style={styles.navActions}>
+                        {/* Language Selector */}
+                        <View style={styles.langSelector}>
+                            <TouchableOpacity onPress={() => setLocale('en')} style={[styles.langBtn, locale === 'en' && styles.langBtnActive]}>
+                                <Text style={[styles.langText, locale === 'en' && styles.langTextActive]}>EN</Text>
+                            </TouchableOpacity>
+                            <View style={styles.langDivider} />
+                            <TouchableOpacity onPress={() => setLocale('es')} style={[styles.langBtn, locale === 'es' && styles.langBtnActive]}>
+                                <Text style={[styles.langText, locale === 'es' && styles.langTextActive]}>ES</Text>
+                            </TouchableOpacity>
+                            <View style={styles.langDivider} />
+                            <TouchableOpacity onPress={() => setLocale('ru')} style={[styles.langBtn, locale === 'ru' && styles.langBtnActive]}>
+                                <Text style={[styles.langText, locale === 'ru' && styles.langTextActive]}>RU</Text>
+                            </TouchableOpacity>
+                        </View>
+
                         <TouchableOpacity onPress={navigateToApp} style={styles.navLink}>
-                            <Text style={styles.navLinkText}>Practice Now</Text>
+                            <Text style={styles.navLinkText}>{t('navPracticeNow')}</Text>
                         </TouchableOpacity>
                         <TouchableOpacity onPress={() => router.push('/auth/login')} style={styles.loginButton}>
-                            <Text style={styles.loginButtonText}>Log In</Text>
+                            <Text style={styles.loginButtonText}>{t('logIn')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -80,11 +97,10 @@ function WebLandingPage() {
                 <View style={styles.heroSection}>
                     <View style={styles.heroContent}>
                         <Text accessibilityRole="header" style={styles.heroTitle}>
-                            Pass Your CDL Permit Test.{'\n'}First Time.
+                            {t('heroTitle')}
                         </Text>
                         <Text style={styles.heroSubtitle}>
-                            100% Free CDL practice tests based on the 2025 official manual.
-                            Class A, Class B, Air Brakes, and more.
+                            {t('heroSubtitle')}
                         </Text>
 
                         <TouchableOpacity
@@ -94,12 +110,12 @@ function WebLandingPage() {
                             accessibilityRole="button"
                             accessibilityLabel="Start your free practice now"
                         >
-                            <Text style={styles.ctaText}>Start Your Free Practice</Text>
+                            <Text style={styles.ctaText}>{t('heroCta')}</Text>
                             <FontAwesome name="arrow-right" size={18} color="#0000a3" />
                         </TouchableOpacity>
 
                         <Text style={styles.trustText}>
-                            <FontAwesome name="star" color="#ffd53d" /> No credit card required. No hidden fees.
+                            <FontAwesome name="star" color="#ffd53d" /> {t('heroTrust')}
                         </Text>
                     </View>
                 </View>
@@ -108,17 +124,17 @@ function WebLandingPage() {
                 <View style={styles.statsStrip}>
                     <View style={styles.statItem}>
                         <Text style={styles.statNumber}>10k+</Text>
-                        <Text style={styles.statLabel}>Active Users</Text>
+                        <Text style={styles.statLabel}>{t('statActiveUsers')}</Text>
                     </View>
                     <View style={styles.statDivider} />
                     <View style={styles.statItem}>
                         <Text style={styles.statNumber}>50+</Text>
-                        <Text style={styles.statLabel}>States Covered</Text>
+                        <Text style={styles.statLabel}>{t('statStatesCovered')}</Text>
                     </View>
                     <View style={styles.statDivider} />
                     <View style={styles.statItem}>
                         <Text style={styles.statNumber}>2025</Text>
-                        <Text style={styles.statLabel}>Updated Q&A</Text>
+                        <Text style={styles.statLabel}>{t('statUpdatedQA')}</Text>
                     </View>
                 </View>
 
@@ -126,9 +142,9 @@ function WebLandingPage() {
                 <View style={styles.featuresSection}>
                     <View style={styles.sectionHeader}>
                         <Text accessibilityRole="header" aria-level="2" style={styles.sectionTitle}>
-                            Why CDL Zero?
+                            {t('featuresTitle')}
                         </Text>
-                        <Text style={styles.sectionSubtitle}>Everything you need to ace the exam.</Text>
+                        <Text style={styles.sectionSubtitle}>{t('featuresSubtitle')}</Text>
                     </View>
 
                     <View style={styles.gridContainer}>
@@ -137,9 +153,9 @@ function WebLandingPage() {
                             <View style={[styles.iconBox, { backgroundColor: '#e3f2fd' }]}>
                                 <Image source={require('../assets/images/onboarding/study.png')} style={styles.featureIconImg} />
                             </View>
-                            <Text style={styles.featureTitle}>Official Manual Based</Text>
+                            <Text style={styles.featureTitle}>{t('feature1Title')}</Text>
                             <Text style={styles.featureDesc}>
-                                Questions are identical to the real ones, derived directly from your state's CDL handbook.
+                                {t('feature1Desc')}
                             </Text>
                         </View>
 
@@ -148,9 +164,9 @@ function WebLandingPage() {
                             <View style={[styles.iconBox, { backgroundColor: '#fff8e1' }]}>
                                 <Image source={require('../assets/images/onboarding/license.png')} style={styles.featureIconImg} />
                             </View>
-                            <Text style={styles.featureTitle}>Exam Mode Simulator</Text>
+                            <Text style={styles.featureTitle}>{t('feature2Title')}</Text>
                             <Text style={styles.featureDesc}>
-                                Practice under time pressure with the same structure as the actual DMV test.
+                                {t('feature2Desc')}
                             </Text>
                         </View>
 
@@ -159,9 +175,9 @@ function WebLandingPage() {
                             <View style={[styles.iconBox, { backgroundColor: '#e8f5e9' }]}>
                                 <Image source={require('../assets/images/onboarding/trophy.png')} style={styles.featureIconImg} />
                             </View>
-                            <Text style={styles.featureTitle}>Smart Analytics</Text>
+                            <Text style={styles.featureTitle}>{t('feature3Title')}</Text>
                             <Text style={styles.featureDesc}>
-                                We track your weak spots and automatically suggest topics to review.
+                                {t('feature3Desc')}
                             </Text>
                         </View>
                     </View>
@@ -170,10 +186,10 @@ function WebLandingPage() {
                 {/* Call to Action Strip */}
                 <View style={styles.ctaStrip}>
                     <View style={styles.ctaStripContent}>
-                        <Text style={styles.ctaStripTitle}>Ready to get on the road?</Text>
-                        <Text style={styles.ctaStripSubtitle}>Join thousands of drivers passing their permit test today.</Text>
+                        <Text style={styles.ctaStripTitle}>{t('ctaStripTitle')}</Text>
+                        <Text style={styles.ctaStripSubtitle}>{t('ctaStripSubtitle')}</Text>
                         <TouchableOpacity onPress={navigateToApp} style={styles.secondaryCtaButton}>
-                            <Text style={styles.secondaryCtaText}>Start Practice Test</Text>
+                            <Text style={styles.secondaryCtaText}>{t('ctaStripButton')}</Text>
                         </TouchableOpacity>
                     </View>
                 </View>
@@ -188,35 +204,35 @@ function WebLandingPage() {
                                 <Text style={styles.footerBrandText}>CDL ZERO</Text>
                             </View>
                             <Text style={styles.footerTagline}>
-                                Your #1 partner for passing the CDL exam. 100% Free.
+                                {t('footerTagline')}
                             </Text>
                             <Text style={styles.copyright}>© 2025 CDL Zero. All rights reserved.</Text>
                         </View>
 
                         {/* Quick Links */}
                         <View style={styles.footerCol}>
-                            <Text style={styles.footerHeading}>Company</Text>
-                            <Link href="/privacy" style={styles.footerLink}>Privacy Policy</Link>
-                            <Link href="/terms" style={styles.footerLink}>Terms of Service</Link>
+                            <Text style={styles.footerHeading}>{t('footerCompany')}</Text>
+                            <Link href="/privacy" style={styles.footerLink}>{t('privacyPolicy')}</Link>
+                            <Link href="/terms" style={styles.footerLink}>{t('termsOfService')}</Link>
                             <TouchableOpacity style={styles.footerLinkWrapper}>
-                                <Text style={styles.footerLink}>About Us</Text>
+                                <Text style={styles.footerLink}>{t('footerAboutUs')}</Text>
                             </TouchableOpacity>
                         </View>
 
                         {/* Support */}
                         <View style={styles.footerCol}>
-                            <Text style={styles.footerHeading}>Support</Text>
+                            <Text style={styles.footerHeading}>{t('footerSupport')}</Text>
                             <TouchableOpacity style={styles.footerLinkWrapper}>
-                                <Text style={styles.footerLink}>Help Center</Text>
+                                <Text style={styles.footerLink}>{t('footerHelpCenter')}</Text>
                             </TouchableOpacity>
                             <TouchableOpacity style={styles.footerLinkWrapper}>
-                                <Text style={styles.footerLink}>Contact Support</Text>
+                                <Text style={styles.footerLink}>{t('footerContactSupport')}</Text>
                             </TouchableOpacity>
                         </View>
 
                         {/* Socials */}
                         <View style={styles.footerCol}>
-                            <Text style={styles.footerHeading}>Connect</Text>
+                            <Text style={styles.footerHeading}>{t('footerConnect')}</Text>
                             <View style={styles.socialRow}>
                                 <TouchableOpacity style={styles.socialBtn}>
                                     <FontAwesome name="facebook-square" size={24} color="#64748b" />
@@ -299,6 +315,37 @@ const styles = StyleSheet.create({
         color: 'rgba(255,255,255,0.9)',
         fontWeight: '600',
         fontSize: 15,
+    },
+    // Language Selector
+    langSelector: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: 'rgba(255,255,255,0.1)',
+        padding: 4,
+        borderRadius: 8,
+        marginRight: 8,
+    },
+    langBtn: {
+        paddingVertical: 4,
+        paddingHorizontal: 8,
+        borderRadius: 6,
+    },
+    langBtnActive: {
+        backgroundColor: '#fff',
+    },
+    langText: {
+        color: 'rgba(255,255,255,0.7)',
+        fontSize: 12,
+        fontWeight: '700',
+    },
+    langTextActive: {
+        color: '#0000a3',
+        fontWeight: '800',
+    },
+    langDivider: {
+        width: 1,
+        height: 12,
+        backgroundColor: 'rgba(255,255,255,0.2)',
     },
     loginButton: {
         backgroundColor: 'rgba(255,255,255,0.15)',
