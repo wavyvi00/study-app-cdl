@@ -17,15 +17,12 @@ import { useLocalization } from '../context/LocalizationContext';
 
 const ONBOARDING_KEY = 'onboarding_completed';
 
-// --- Native Icon Components ---
+// --- Native Icon Components (Refactored for Light Mode) ---
 
 const LicenseIcon = () => (
     <View style={iconStyles.container}>
         {/* Card Body */}
-        <LinearGradient
-            colors={['rgba(255,255,255,0.2)', 'rgba(255,255,255,0.05)']}
-            style={iconStyles.licenseCard}
-        >
+        <View style={iconStyles.licenseCard}>
             {/* Header Strip */}
             <View style={iconStyles.licenseHeader}>
                 <Text style={iconStyles.headerText}>COMMERCIAL DRIVER</Text>
@@ -34,7 +31,7 @@ const LicenseIcon = () => (
             <View style={iconStyles.licenseContent}>
                 {/* Photo Placeholder */}
                 <View style={iconStyles.photoPlaceholder}>
-                    <FontAwesome name="user" size={30} color="rgba(255,255,255,0.5)" />
+                    <FontAwesome name="user" size={30} color="#CBD5E1" />
                 </View>
 
                 {/* Text Lines */}
@@ -47,9 +44,9 @@ const LicenseIcon = () => (
 
             {/* Truck Overlay */}
             <View style={iconStyles.truckIcon}>
-                <FontAwesome name="truck" size={32} color="#38bdf8" />
+                <FontAwesome name="truck" size={32} color="#1E3A8A" />
             </View>
-        </LinearGradient>
+        </View>
     </View>
 );
 
@@ -59,14 +56,14 @@ const StudyIcon = () => (
         <View style={[iconStyles.book, iconStyles.bookBottom]} />
         <View style={[iconStyles.book, iconStyles.bookMiddle]} />
         <LinearGradient
-            colors={['#38bdf8', '#0ea5e9']}
+            colors={['#1D4ED8', '#1E3A8A']}
             style={[iconStyles.book, iconStyles.bookTop]}
         >
             <FontAwesome name="book" size={50} color="#fff" />
         </LinearGradient>
         {/* Floating Cap */}
         <View style={iconStyles.capFloat}>
-            <FontAwesome name="graduation-cap" size={60} color="#fbbf24" style={{ textShadowColor: 'rgba(0,0,0,0.3)', textShadowRadius: 10 }} />
+            <FontAwesome name="graduation-cap" size={60} color="#FBBF24" style={{ textShadowColor: 'rgba(0,0,0,0.1)', textShadowRadius: 4 }} />
         </View>
     </View>
 );
@@ -78,14 +75,14 @@ const TrophyIcon = () => (
         <View style={iconStyles.glowInner} />
 
         {/* Trophy */}
-        <FontAwesome name="trophy" size={100} color="#fbbf24" style={iconStyles.trophyShadow} />
+        <FontAwesome name="trophy" size={100} color="#FBBF24" style={iconStyles.trophyShadow} />
 
         {/* Stars */}
         <View style={[iconStyles.star, { top: 0, right: 20 }]}>
-            <FontAwesome name="star" size={24} color="#fff" />
+            <FontAwesome name="star" size={24} color="#F59E0B" />
         </View>
         <View style={[iconStyles.star, { top: 40, left: 10 }]}>
-            <FontAwesome name="star" size={16} color="#fff" />
+            <FontAwesome name="star" size={16} color="#F59E0B" />
         </View>
     </View>
 );
@@ -102,14 +99,20 @@ const iconStyles = StyleSheet.create({
         width: 220,
         height: 140,
         borderRadius: 16,
+        backgroundColor: '#F1F5F9', // Slate 100
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.2)',
+        borderColor: '#E2E8F0',
         overflow: 'hidden',
         transform: [{ rotate: '-5deg' }],
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.1,
+        shadowRadius: 8,
+        elevation: 4,
     },
     licenseHeader: {
         height: 30,
-        backgroundColor: '#0067b3', // blueGrotto
+        backgroundColor: '#1E3A8A', // Navy 900
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -128,10 +131,12 @@ const iconStyles = StyleSheet.create({
     photoPlaceholder: {
         width: 50,
         height: 60,
-        backgroundColor: 'rgba(0,0,0,0.2)',
+        backgroundColor: '#fff',
         borderRadius: 6,
         justifyContent: 'center',
         alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
     },
     textLines: {
         flex: 1,
@@ -140,14 +145,14 @@ const iconStyles = StyleSheet.create({
     },
     line: {
         height: 6,
-        backgroundColor: 'rgba(255,255,255,0.3)',
+        backgroundColor: '#CBD5E1', // Slate 300
         borderRadius: 3,
     },
     truckIcon: {
         position: 'absolute',
         bottom: 10,
         right: 15,
-        opacity: 0.8,
+        opacity: 0.9,
     },
     // Study Styles
     book: {
@@ -159,17 +164,17 @@ const iconStyles = StyleSheet.create({
         alignItems: 'center',
     },
     bookBottom: {
-        backgroundColor: 'rgba(255,255,255,0.1)',
+        backgroundColor: '#E2E8F0', // Slate 200
         transform: [{ rotate: '-10deg' }, { translateX: -20 }],
     },
     bookMiddle: {
-        backgroundColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: '#CBD5E1', // Slate 300
         transform: [{ rotate: '5deg' }, { translateX: 10 }],
     },
     bookTop: {
-        shadowColor: "#000",
+        shadowColor: "#1E3A8A",
         shadowOffset: { width: 0, height: 10 },
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.25,
         shadowRadius: 20,
         elevation: 10,
     },
@@ -185,26 +190,23 @@ const iconStyles = StyleSheet.create({
         width: 180,
         height: 180,
         borderRadius: 90,
-        backgroundColor: 'rgba(255, 213, 61, 0.1)', // yellowAccent
+        backgroundColor: 'rgba(251, 191, 36, 0.1)', // Amber 400 (light)
     },
     glowInner: {
         position: 'absolute',
         width: 120,
         height: 120,
         borderRadius: 60,
-        backgroundColor: 'rgba(255, 213, 61, 0.2)',
+        backgroundColor: 'rgba(251, 191, 36, 0.2)',
     },
     trophyShadow: {
-        textShadowColor: 'rgba(255, 213, 61, 0.5)',
-        textShadowOffset: { width: 0, height: 0 },
-        textShadowRadius: 20,
+        textShadowColor: 'rgba(251, 191, 36, 0.3)',
+        textShadowOffset: { width: 0, height: 4 },
+        textShadowRadius: 12,
     },
     star: {
         position: 'absolute',
-        shadowColor: "#fff",
-        shadowOffset: { width: 0, height: 0 },
-        shadowOpacity: 1,
-        shadowRadius: 10,
+        // Note: Shadows on Fonts can be tricky, relying on color
     }
 });
 
@@ -372,26 +374,19 @@ export default function OnboardingScreen() {
     const completeOnboarding = async () => {
         try {
             await AsyncStorage.setItem(ONBOARDING_KEY, 'true');
-            router.replace('/setup-profile');
+            router.replace('/auth/signup'); // Redirect to Signup instead of straight to Profile setup for better flow
         } catch (error) {
             console.error('Error saving onboarding status:', error);
-            router.replace('/setup-profile');
+            router.replace('/auth/signup');
         }
     };
 
     return (
         <View style={styles.container}>
-            <StatusBar barStyle="light-content" />
+            <StatusBar barStyle="dark-content" />
 
-            {/* Deep premium background matching app theme */}
-            <LinearGradient
-                colors={['#0a0a23', '#1a1a3a', '#0000a3']} // Deep Midnight Blue to Primary
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={StyleSheet.absoluteFill}
-            />
-
-            <BackgroundShapes width={width} height={height} />
+            {/* Clean White Background */}
+            <View style={[StyleSheet.absoluteFill, { backgroundColor: '#ffffff' }]} />
 
             {/* Header / Language */}
             <View style={styles.header}>
@@ -438,12 +433,7 @@ export default function OnboardingScreen() {
                     onPress={handleNext}
                     activeOpacity={0.9}
                 >
-                    <LinearGradient
-                        colors={['#40b0df', '#0067b3']} // Aquamarine to Blue Grotto
-                        start={{ x: 0, y: 0 }}
-                        end={{ x: 1, y: 0 }}
-                        style={styles.mainButtonGradient}
-                    >
+                    <View style={styles.mainButtonInner}>
                         <Text style={styles.mainButtonText}>
                             {currentIndex === slides.length - 1 ? t('getStarted') : t('next')}
                         </Text>
@@ -452,7 +442,7 @@ export default function OnboardingScreen() {
                             size={18}
                             color="#fff"
                         />
-                    </LinearGradient>
+                    </View>
                 </TouchableOpacity>
             </View>
         </View>
@@ -462,7 +452,7 @@ export default function OnboardingScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a', // Fallback
+        backgroundColor: '#ffffff',
     },
     header: {
         position: 'absolute',
@@ -478,14 +468,19 @@ const styles = StyleSheet.create({
         paddingVertical: 6,
         paddingHorizontal: 12,
         borderRadius: 20,
-        backgroundColor: 'rgba(255,255,255,0.05)',
+        backgroundColor: '#F1F5F9', // Slate 100
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.1)',
+        borderColor: '#E2E8F0',
         // backdropFilter not supported in RN StyleSheet, handled by BlurView if needed or ignored
     },
     activeLangPill: {
-        backgroundColor: 'rgba(56, 189, 248, 0.2)', // Light blue tint
-        borderColor: '#38bdf8',
+        backgroundColor: '#fff',
+        borderColor: '#1E3A8A', // Navy 900
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 1,
     },
     langText: {
         fontSize: 16,
@@ -511,24 +506,25 @@ const styles = StyleSheet.create({
     title: {
         fontSize: 34,
         fontWeight: '800',
-        color: '#FFFFFF',
+        color: '#0F172A', // Slate 900
         marginBottom: 16,
         textAlign: 'center',
-        letterSpacing: 0.5,
+        letterSpacing: -0.5,
     },
     description: {
         fontSize: 18,
-        color: '#94a3b8', // Slate-400
+        color: '#64748B', // Slate 500
         textAlign: 'center',
         lineHeight: 28,
-        maxWidth: 300,
+        maxWidth: 320,
     },
     infoText: {
         fontSize: 14,
-        color: 'rgba(255,255,255,0.5)',
+        color: '#94A3B8', // Slate 400
         textAlign: 'center',
         marginTop: 16,
         fontStyle: 'italic',
+        fontWeight: '500',
     },
     footer: {
         position: 'absolute',
@@ -549,21 +545,22 @@ const styles = StyleSheet.create({
     dot: {
         height: 8,
         borderRadius: 4,
-        backgroundColor: '#38bdf8',
+        backgroundColor: '#1E3A8A', // Navy 900
     },
     mainButton: {
         width: '100%',
         height: 64,
-        borderRadius: 24, // ios-style squircle-ish
-        shadowColor: "#38bdf8",
+        backgroundColor: '#1E3A8A', // Navy 900
+        borderRadius: 20,
+        shadowColor: "#1E3A8A",
         shadowOffset: { width: 0, height: 8 },
-        shadowOpacity: 0.3,
+        shadowOpacity: 0.25,
         shadowRadius: 16,
-        elevation: 12,
+        elevation: 8,
+        justifyContent: 'center',
+        alignItems: 'center',
     },
-    mainButtonGradient: {
-        flex: 1,
-        borderRadius: 24,
+    mainButtonInner: {
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',

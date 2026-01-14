@@ -269,19 +269,21 @@ export default function Index() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#ffffff', // Clean white background base
+        backgroundColor: '#ffffff',
     },
     scrollContent: {
         flexGrow: 1,
     },
-    // Navbar
+    // Navbar - Now White with Blue Branding
     navbar: {
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
         paddingHorizontal: Platform.select({ web: 40, default: 20 }),
-        paddingVertical: 16,
-        backgroundColor: '#0000a3', // Brand Primary Blue
+        paddingVertical: 20,
+        backgroundColor: '#ffffff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#f1f5f9', // Slate-100
     },
     navbarMobile: {
         paddingHorizontal: 16,
@@ -294,8 +296,8 @@ const styles = StyleSheet.create({
     navLogoBox: {
         width: 40,
         height: 40,
+        backgroundColor: '#1E3A8A', // Navy 900
         borderRadius: 8,
-        backgroundColor: '#fff',
         justifyContent: 'center',
         alignItems: 'center',
     },
@@ -303,12 +305,13 @@ const styles = StyleSheet.create({
         width: '100%',
         height: '100%',
         resizeMode: 'contain',
+        tintColor: '#fff', // Make logo white
     },
     navLogoText: {
-        color: '#fff',
+        color: '#0F172A', // Slate-900
         fontSize: 22,
         fontWeight: '800',
-        letterSpacing: 0.5,
+        letterSpacing: -0.5,
     },
     navActions: {
         flexDirection: 'row',
@@ -320,7 +323,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 16,
     },
     navLinkText: {
-        color: 'rgba(255,255,255,0.9)',
+        color: '#475569', // Slate-600
         fontWeight: '600',
         fontSize: 15,
     },
@@ -328,7 +331,7 @@ const styles = StyleSheet.create({
     langSelector: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'rgba(255,255,255,0.1)',
+        backgroundColor: '#F1F5F9', // Slate-100
         padding: 4,
         borderRadius: 8,
         marginRight: 8,
@@ -340,181 +343,194 @@ const styles = StyleSheet.create({
     },
     langBtnActive: {
         backgroundColor: '#fff',
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.1,
+        shadowRadius: 2,
+        elevation: 1,
     },
     langText: {
-        color: 'rgba(255,255,255,0.7)',
+        color: '#94A3B8', // Slate-400
         fontSize: 12,
         fontWeight: '700',
     },
     langTextActive: {
-        color: '#0000a3',
+        color: '#0284C7', // Sky-600
         fontWeight: '800',
     },
     langDivider: {
         width: 1,
         height: 12,
-        backgroundColor: 'rgba(255,255,255,0.2)',
+        backgroundColor: '#CBD5E1', // Slate-300
     },
     loginButton: {
-        backgroundColor: 'rgba(255,255,255,0.15)',
+        backgroundColor: '#E0F2FE', // Sky-100
         paddingVertical: 10,
-        paddingHorizontal: 20,
-        borderRadius: 8,
+        paddingHorizontal: 24,
+        borderRadius: 10,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.3)',
+        borderColor: '#BAE6FD', // Sky-200
     },
     loginButtonText: {
-        color: '#fff',
+        color: '#0284C7', // Sky-600
         fontWeight: '700',
         fontSize: 14,
     },
 
-    // Hero - Solid Blue
+    // Hero - Light & Clean
     heroSection: {
-        paddingVertical: 90,
+        paddingVertical: 100,
         paddingHorizontal: 24,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#0000a3', // Solid Brand Primary
+        backgroundColor: '#F8FAFC', // Slate-50
     },
     heroContent: {
         maxWidth: 900,
         alignItems: 'center',
     },
     heroTitle: {
-        fontSize: Platform.select({ web: 64, default: 40 }),
+        fontSize: Platform.select({ web: 64, default: 42 }),
         fontWeight: '900',
-        color: '#fff',
+        color: '#0F172A', // Slate-900
         textAlign: 'center',
         marginBottom: 24,
-        lineHeight: Platform.select({ web: 72, default: 46 }),
-        letterSpacing: -1,
+        lineHeight: Platform.select({ web: 72, default: 50 }),
+        letterSpacing: -1.5,
     },
     heroTitleMobile: {
-        fontSize: 36, // Reduced from 40
-        lineHeight: 42,
+        fontSize: 36,
+        lineHeight: 44,
     },
     heroSubtitle: {
         fontSize: 20,
-        color: '#e0e7ff', // Light indigo/blue tint
+        color: '#334155', // Slate 700
         textAlign: 'center',
-        marginBottom: 48,
+        marginBottom: 40,
         lineHeight: 30,
         maxWidth: 600,
     },
     ctaButton: {
-        backgroundColor: '#ffd53d', // Brand Yellow
-        paddingVertical: 18,
-        paddingHorizontal: 40,
-        borderRadius: 50,
+        backgroundColor: '#1E3A8A', // Navy 900
+        paddingVertical: 16,
+        paddingHorizontal: 32,
+        borderRadius: 12,
         flexDirection: 'row',
         alignItems: 'center',
         gap: 12,
+        marginTop: 24,
         marginBottom: 24,
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 8,
-        elevation: 6,
+        shadowColor: "#1E3A8A", // Navy 900
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.25,
+        shadowRadius: 16,
+        elevation: 8,
     },
     ctaText: {
-        color: '#0000a3', // Contrast Text (Dark Blue)
+        color: '#ffffff',
         fontSize: 18,
-        fontWeight: '800',
+        fontWeight: '700',
         letterSpacing: 0.5,
     },
     trustText: {
-        color: 'rgba(255,255,255,0.7)',
+        color: '#64748B', // Slate-500
         fontSize: 14,
         fontWeight: '500',
     },
 
-    // Stats Strip
+    // Stats Strip - Clean White
     statsStrip: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        paddingVertical: 30,
-        backgroundColor: '#0067b3', // Blue Grotto (lighter)
-        gap: 40,
+        paddingVertical: 40,
+        backgroundColor: '#ffffff',
+        borderBottomWidth: 1,
+        borderBottomColor: '#f1f5f9',
+        gap: 60,
         flexWrap: 'wrap',
     },
     statItem: {
         alignItems: 'center',
     },
     statNumber: {
-        fontSize: 24,
+        fontSize: 48,
         fontWeight: '800',
-        color: '#fff',
+        color: '#1E3A8A', // Navy 900
+        marginBottom: 8,
+        letterSpacing: -1,
     },
     statLabel: {
-        fontSize: 12,
-        color: 'rgba(255,255,255,0.8)',
+        fontSize: 13,
+        color: '#64748B', // Slate-500
+        fontWeight: '600',
         textTransform: 'uppercase',
         letterSpacing: 1,
         marginTop: 4,
     },
     statDivider: {
         width: 1,
-        height: 30,
-        backgroundColor: 'rgba(255,255,255,0.2)',
+        height: 40,
+        backgroundColor: '#E2E8F0', // Slate-200
     },
 
-    // Features Section - Gray bg
+    // Features Section
     featuresSection: {
-        paddingVertical: 80,
+        paddingVertical: 100,
         paddingHorizontal: 24,
-        backgroundColor: '#f8fafc', // Slate-50 Light Gray
+        backgroundColor: '#ffffff',
         alignItems: 'center',
     },
     sectionHeader: {
-        marginBottom: 60,
+        marginBottom: 80,
         alignItems: 'center',
     },
     sectionTitle: {
         fontSize: 36,
         fontWeight: '800',
-        color: '#0f172a',
-        marginBottom: 12,
-        letterSpacing: -0.5,
+        color: '#0F172A',
+        marginBottom: 16,
+        letterSpacing: -1,
     },
     sectionSubtitle: {
         fontSize: 18,
-        color: '#64748b',
+        color: '#64748B',
         maxWidth: 500,
         textAlign: 'center',
+        lineHeight: 28,
     },
     gridContainer: {
         flexDirection: 'row',
         flexWrap: 'wrap',
         justifyContent: 'center',
-        gap: 30,
+        gap: 32,
         maxWidth: 1200,
         width: '100%',
     },
     featureCard: {
-        backgroundColor: '#fff',
-        padding: 32,
-        borderRadius: 16,
+        backgroundColor: '#ffffff',
+        padding: 40,
+        borderRadius: 24,
         width: '100%',
-        maxWidth: 350,
+        maxWidth: 360,
         minWidth: 300,
         alignItems: 'flex-start',
         borderWidth: 1,
-        borderColor: '#e2e8f0', // Subtle border
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 10,
-        elevation: 2,
+        borderColor: '#F1F5F9', // Very subtle border
+        shadowColor: "#64748B",
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.08,
+        shadowRadius: 24,
+        elevation: 4,
     },
     iconBox: {
         width: 64,
         height: 64,
-        borderRadius: 20,
+        borderRadius: 16,
+        backgroundColor: '#EFF6FF', // Blue 50
         justifyContent: 'center',
         alignItems: 'center',
-        marginBottom: 20,
+        marginBottom: 24,
     },
     featureIconImg: {
         width: 32,
@@ -522,21 +538,22 @@ const styles = StyleSheet.create({
         resizeMode: 'contain',
     },
     featureTitle: {
-        color: '#0f172a',
+        color: '#0F172A',
         fontSize: 22,
         fontWeight: '700',
         marginBottom: 12,
+        letterSpacing: -0.5,
     },
     featureDesc: {
-        color: '#475569',
+        color: '#64748B', // Slate-500
         fontSize: 16,
         lineHeight: 26,
     },
 
     // CTA Strip
     ctaStrip: {
-        backgroundColor: '#0000a3',
-        paddingVertical: 60,
+        backgroundColor: '#0F172A', // Slate-900 (High Contrast)
+        paddingVertical: 80,
         paddingHorizontal: 24,
         alignItems: 'center',
     },
@@ -545,31 +562,37 @@ const styles = StyleSheet.create({
         maxWidth: 700,
     },
     ctaStripTitle: {
-        fontSize: 32,
+        fontSize: 36,
         fontWeight: '800',
-        color: '#fff',
+        color: '#ffffff',
         textAlign: 'center',
         marginBottom: 16,
+        letterSpacing: -1,
     },
     ctaStripSubtitle: {
         fontSize: 18,
-        color: '#e0e7ff',
+        color: '#94A3B8', // Slate-400
         textAlign: 'center',
-        marginBottom: 32,
+        marginBottom: 40,
     },
     secondaryCtaButton: {
-        backgroundColor: '#fff',
-        paddingVertical: 16,
+        backgroundColor: '#1E3A8A', // Navy 900
+        paddingVertical: 18,
         paddingHorizontal: 32,
         borderRadius: 12,
+        shadowColor: "#1E3A8A", // Navy 900
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.4,
+        shadowRadius: 16,
+        elevation: 6,
     },
     secondaryCtaText: {
-        color: '#0000a3',
+        color: '#ffffff',
         fontWeight: '700',
         fontSize: 16,
     },
 
-    // Footer
+    // Footer - Clean White
     footer: {
         paddingTop: 80,
         paddingBottom: 40,
@@ -585,7 +608,7 @@ const styles = StyleSheet.create({
         maxWidth: 1200,
         alignSelf: 'center',
         width: '100%',
-        gap: 40,
+        gap: 48,
     },
     footerCol: {
         flex: 1,
@@ -605,33 +628,35 @@ const styles = StyleSheet.create({
     footerBrandText: {
         fontSize: 20,
         fontWeight: '800',
-        color: '#0f172a',
+        color: '#0F172A',
+        letterSpacing: -0.5,
     },
     footerTagline: {
-        color: '#64748b',
+        color: '#64748B',
         fontSize: 14,
         lineHeight: 22,
         marginBottom: 24,
     },
     copyright: {
-        color: '#94a3b8',
+        color: '#94A3B8',
         fontSize: 13,
     },
     footerHeading: {
-        fontSize: 14,
+        fontSize: 13,
         fontWeight: '700',
-        color: '#0f172a',
+        color: '#0F172A',
         textTransform: 'uppercase',
         letterSpacing: 1,
         marginBottom: 20,
     },
     footerLink: {
-        color: '#64748b',
+        color: '#64748B',
         fontSize: 15,
-        marginBottom: 12,
+        marginBottom: 14,
+        fontWeight: '500',
     },
     footerLinkWrapper: {
-        marginBottom: 12,
+        marginBottom: 0,
     },
     socialRow: {
         flexDirection: 'row',
@@ -641,8 +666,10 @@ const styles = StyleSheet.create({
         width: 40,
         height: 40,
         borderRadius: 20,
-        backgroundColor: '#f1f5f9',
+        backgroundColor: '#F1F5F9', // Slate-100
         justifyContent: 'center',
         alignItems: 'center',
+        borderWidth: 1,
+        borderColor: '#E2E8F0',
     }
 });

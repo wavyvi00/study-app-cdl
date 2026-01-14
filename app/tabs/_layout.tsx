@@ -4,7 +4,6 @@ import { useTheme } from '../../context/ThemeContext';
 import { useLocalization } from '../../context/LocalizationContext';
 import { View, Text, Platform, StyleSheet } from 'react-native';
 
-// Custom Tab Icon Component with "Pill" design
 function TabBarIcon({ name, focused, label }: { name: React.ComponentProps<typeof FontAwesome>['name']; focused: boolean; label: string }) {
     const { colors, typography } = useTheme();
 
@@ -12,7 +11,7 @@ function TabBarIcon({ name, focused, label }: { name: React.ComponentProps<typeo
         <View style={{
             alignItems: 'center',
             justifyContent: 'center',
-            top: 10, // Push down slightly
+            top: 10,
         }}>
             <View style={{
                 flexDirection: 'row',
@@ -20,14 +19,16 @@ function TabBarIcon({ name, focused, label }: { name: React.ComponentProps<typeo
                 justifyContent: 'center',
                 width: 60,
                 height: 60,
-                borderRadius: 30,
-                backgroundColor: colors.surface, // Individual card background
-                // Shadow for the button
-                shadowColor: '#000',
-                shadowOffset: { width: 0, height: 4 },
-                shadowOpacity: 0.15,
-                shadowRadius: 8,
-                elevation: 4,
+                borderRadius: 20, // Modern squircle
+                backgroundColor: focused ? colors.surfaceHighlight : colors.surface,
+                borderWidth: 1,
+                borderColor: focused ? colors.primary : colors.border,
+                // Shadow
+                shadowColor: colors.primary,
+                shadowOffset: { width: 0, height: 8 },
+                shadowOpacity: focused ? 0.25 : 0.05,
+                shadowRadius: 12,
+                elevation: focused ? 8 : 2,
             }}>
                 <FontAwesome
                     name={name}
@@ -35,7 +36,6 @@ function TabBarIcon({ name, focused, label }: { name: React.ComponentProps<typeo
                     color={focused ? colors.primary : colors.textSecondary}
                 />
             </View>
-            {/* Optional: Small label below the bubble if desired, or keep clean */}
         </View>
     );
 }

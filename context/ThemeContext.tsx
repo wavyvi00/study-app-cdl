@@ -1,20 +1,20 @@
 import React, { createContext, useContext, useState, useEffect } from 'react';
 import { useColorScheme } from 'react-native';
 
-// RAW PALETTE
+// RAW PALETTE (Modern Navy)
 const PALETTE = {
-    primaryBlue: '#0000a3',
-    blueGrotto: '#0067b3',
-    aquamarine: '#40b0df',
-    yellowAccent: '#ffd53d',
-    success: '#2E7D32',
-    error: '#C62828',
+    navy900: '#1E3A8A',   // Primary Brand (Modern Navy)
+    navy800: '#1E40AF',   // Primary Lighter
+    navy700: '#1D4ED8',   // Bright Blue Accent
+    blue50: '#EFF6FF',   // App Background
+    blue100: '#DBEAFE',   // Tint / Highlight
+    slate900: '#0F172A',  // Headings
+    slate700: '#334155',  // Body Text
+    slate500: '#64748B',  // Secondary Text
     white: '#FFFFFF',
-    black: '#000000',
-    gray100: '#F5F5F5',
-    gray200: '#EEEEEE',
-    gray800: '#1A1A1A',
-    gray900: '#121212',
+    amber400: '#FBBF24',  // Accent / Stars
+    emerald500: '#10B981', // Success
+    rose500: '#F43F5E',    // Error
 };
 
 // THEME CONFIG
@@ -42,6 +42,7 @@ export const TYPOGRAPHY = {
     lg: 18,
     xl: 24,
     xxl: 32,
+    display: 48,
 };
 
 type ThemeMode = 'light' | 'dark';
@@ -49,6 +50,7 @@ type ThemeMode = 'light' | 'dark';
 interface ThemeColors {
     background: string;
     surface: string;
+    surfaceHighlight: string;
     text: string;
     textSecondary: string;
     border: string;
@@ -72,33 +74,35 @@ interface ThemeContextType {
 }
 
 const LightColors: ThemeColors = {
-    background: '#F8F9FA',
-    surface: '#FFFFFF',
-    text: '#1A1A1A',
-    textSecondary: '#666666',
-    border: '#E0E0E0',
-    primary: PALETTE.primaryBlue,
-    secondary: PALETTE.blueGrotto,
-    accent: PALETTE.aquamarine,
-    highlight: PALETTE.yellowAccent,
-    success: PALETTE.success,
-    error: PALETTE.error,
-    headerGradient: [PALETTE.primaryBlue, PALETTE.blueGrotto],
+    background: PALETTE.blue50,
+    surface: PALETTE.white,
+    surfaceHighlight: PALETTE.blue100,
+    text: PALETTE.slate900,
+    textSecondary: PALETTE.slate500,
+    border: '#BFDBFE', // Blue 200 (Subtle)
+    primary: PALETTE.navy900,
+    secondary: PALETTE.navy700,
+    accent: PALETTE.amber400,
+    highlight: PALETTE.blue100,
+    success: PALETTE.emerald500,
+    error: PALETTE.rose500,
+    headerGradient: [PALETTE.navy900, PALETTE.navy800],
 };
 
 const DarkColors: ThemeColors = {
-    background: '#121212',
-    surface: '#1E1E1E',
-    text: '#E0E0E0',
-    textSecondary: '#AAAAAA',
-    border: '#333333',
-    primary: PALETTE.aquamarine, // Lighter for visibility on dark
-    secondary: PALETTE.blueGrotto,
-    accent: PALETTE.primaryBlue,
-    highlight: PALETTE.yellowAccent,
-    success: '#66BB6A', // Lighter green
-    error: '#EF5350', // Lighter red
-    headerGradient: ['#0a0a23', '#1a1a3a'], // Deep Midnight Blue
+    background: '#0B1120', // Very dark slate
+    surface: '#1E293B',    // Slate 800
+    surfaceHighlight: '#334155',
+    text: '#F1F5F9',       // Slate 100
+    textSecondary: '#94A3B8', // Slate 400
+    border: '#334155',     // Slate 700
+    primary: '#60A5FA',    // Blue 400 (Brighter for dark mode)
+    secondary: '#DBEAFE',
+    accent: PALETTE.amber400,
+    highlight: '#1E293B',
+    success: '#34D399',    // Emerald 400
+    error: '#FB7185',      // Rose 400
+    headerGradient: ['#0F172A', '#1E293B'], // Slate 900 -> 800
 };
 
 const ThemeContext = createContext<ThemeContextType>({

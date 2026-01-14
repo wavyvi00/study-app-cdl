@@ -69,13 +69,7 @@ export default function LoginScreen() {
     return (
         <View style={styles.container}>
             <SEO title="Login - CDL Zero" description="Log in to your CDL Zero account to sync your progress." />
-            <LinearGradient
-                colors={['#0a0a23', '#1a1a3a', '#0000a3']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={StyleSheet.absoluteFill}
-            />
-            <BackgroundShapes width={width} height={height} />
+            {/* Removed LinearGradient and BackgroundShapes for clean light theme */}
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -90,7 +84,9 @@ export default function LoginScreen() {
                 >
                     {/* Header */}
                     <View style={styles.header}>
-                        <FontAwesome name="lock" size={48} color="#38bdf8" />
+                        <View style={styles.iconCircle}>
+                            <FontAwesome name="lock" size={32} color="#1E3A8A" />
+                        </View>
                         <Text style={styles.title} accessibilityRole="header">Welcome Back</Text>
                         <Text style={styles.subtitle}>Sign in to sync your progress</Text>
                     </View>
@@ -105,11 +101,11 @@ export default function LoginScreen() {
                         ) : null}
 
                         <View style={styles.inputContainer}>
-                            <FontAwesome name="envelope" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
+                            <FontAwesome name="envelope" size={18} color="#64748B" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Email"
-                                placeholderTextColor="rgba(255,255,255,0.4)"
+                                placeholderTextColor="#94A3B8"
                                 value={email}
                                 onChangeText={setEmail}
                                 keyboardType="email-address"
@@ -121,11 +117,11 @@ export default function LoginScreen() {
                         </View>
 
                         <View style={styles.inputContainer}>
-                            <FontAwesome name="key" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
+                            <FontAwesome name="key" size={18} color="#64748B" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Password"
-                                placeholderTextColor="rgba(255,255,255,0.4)"
+                                placeholderTextColor="#94A3B8"
                                 value={password}
                                 onChangeText={setPassword}
                                 secureTextEntry={!showPassword}
@@ -142,7 +138,7 @@ export default function LoginScreen() {
                                 <FontAwesome
                                     name={showPassword ? 'eye-slash' : 'eye'}
                                     size={18}
-                                    color="rgba(255,255,255,0.5)"
+                                    color="#94A3B8"
                                 />
                             </TouchableOpacity>
                         </View>
@@ -183,7 +179,7 @@ export default function LoginScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: '#ffffff', // Clean White
     },
     keyboardView: {
         flex: 1,
@@ -197,16 +193,26 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         marginBottom: 40,
     },
+    iconCircle: {
+        width: 64,
+        height: 64,
+        borderRadius: 20,
+        backgroundColor: '#DBEAFE', // Blue 100
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 24,
+    },
     title: {
         fontSize: 28,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginTop: 16,
+        fontWeight: '800',
+        color: '#0F172A', // Slate 900
+        marginBottom: 8,
+        letterSpacing: -0.5,
     },
     subtitle: {
         fontSize: 16,
-        color: 'rgba(255,255,255,0.7)',
-        marginTop: 8,
+        color: '#64748B', // Slate 500
+        textAlign: 'center',
     },
     form: {
         width: '100%',
@@ -216,27 +222,28 @@ const styles = StyleSheet.create({
     errorContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+        backgroundColor: '#FEF2F2', // Red 50
         borderWidth: 1,
-        borderColor: 'rgba(239, 68, 68, 0.3)',
+        borderColor: '#FECACA', // Red 200
         borderRadius: 12,
         padding: 12,
-        marginBottom: 16,
+        marginBottom: 20,
         gap: 8,
     },
     errorText: {
-        color: '#ef4444',
+        color: '#EF4444', // Red 500
         fontSize: 14,
         flex: 1,
+        fontWeight: '500',
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'rgba(255,255,255,0.1)',
+        backgroundColor: '#EFF6FF', // Blue 50
         borderRadius: 12,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.1)',
+        borderColor: '#E2E8F0', // Slate 200
     },
     inputIcon: {
         paddingLeft: 16,
@@ -245,51 +252,58 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 52,
         paddingHorizontal: 12,
-        color: '#fff',
+        color: '#0F172A', // Slate 900
         fontSize: 16,
     },
     eyeButton: {
         padding: 16,
     },
     button: {
-        backgroundColor: '#38bdf8',
-        height: 52,
-        borderRadius: 12,
+        backgroundColor: '#1E3A8A', // Navy 900
+        height: 54,
+        borderRadius: 14,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 8,
+        marginTop: 12,
+        shadowColor: "#1E3A8A",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 4,
     },
     buttonDisabled: {
         opacity: 0.7,
+        backgroundColor: '#94A3B8',
     },
     buttonText: {
         color: '#fff',
-        fontSize: 18,
-        fontWeight: '600',
+        fontSize: 17,
+        fontWeight: '700',
     },
     linkButton: {
         alignItems: 'center',
-        marginTop: 16,
+        marginTop: 20,
         padding: 8,
     },
     linkText: {
-        color: '#38bdf8',
+        color: '#1E40AF', // Navy 800
         fontSize: 14,
+        fontWeight: '600',
     },
     footer: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 32,
-        gap: 8,
+        marginTop: 40,
+        gap: 6,
     },
     footerText: {
-        color: 'rgba(255,255,255,0.6)',
+        color: '#64748B', // Slate 500
         fontSize: 14,
     },
     footerLink: {
-        color: '#38bdf8',
+        color: '#1E40AF', // Navy 800
         fontSize: 14,
-        fontWeight: '600',
+        fontWeight: '700',
     },
 });
