@@ -180,6 +180,10 @@ export function AuthProvider({ children }: AuthProviderProps) {
                 // 5. Push Merged back to Cloud (to sync any new guest progress)
                 await pushStatsToCloud(result.user.id, finalStats);
 
+                // 6. Clear Guest Stats to prevent repeat merging on future logins
+                const { INITIAL_STATS } = await import('../data/stats');
+                await saveStats(INITIAL_STATS, null);
+
             } catch (err) {
                 console.error('[Auth] Sync error on signin:', (err as any)?.message || 'Unknown sync error');
             }

@@ -51,10 +51,15 @@ export default function ProfileScreen() {
                     const avatarExists = AVATARS.find(a => a.id === s.avatarId);
                     setSelectedAvatar(avatarExists ? s.avatarId! : 'truck');
                     setSelectedClass(s.cdlClass || 'Class A');
+                } else {
+                    // Reset form state for new/different user
+                    setUsername('');
+                    setSelectedAvatar('truck');
+                    setSelectedClass('Class A');
                 }
                 setIsLoading(false);
             });
-        }, [])
+        }, [auth?.userId])
     );
 
     // Reset form when entering edit mode from view mode
