@@ -3,11 +3,9 @@ import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platfo
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useCallback, useEffect } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
-import { loadStats, updateStats, resetStats, UserStats, INITIAL_STATS } from '../../data/stats';
-import { ACHIEVEMENTS, Achievement } from '../../data/achievements';
+import { loadStats, updateStats, UserStats, INITIAL_STATS } from '../../data/stats';
+import { ACHIEVEMENTS } from '../../data/achievements';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import { restartApp } from '../../utils/restartApp';
-import { showAlert, showConfirm } from '../../utils/alerts';
 import { useLocalization } from '../../context/LocalizationContext';
 import { useSubscription } from '../../context/SubscriptionContext';
 import { useAuth } from '../../context/AuthContext';
@@ -74,7 +72,7 @@ export default function ProfileScreen() {
 
     const handleSaveProfile = async () => {
         if (!username.trim()) {
-            showAlert(t('usernameRequired'), t('enterUsername'));
+            Alert.alert(t('usernameRequired'), t('enterUsername'));
             setUsernameError(true);
             return;
         }
@@ -99,34 +97,6 @@ export default function ProfileScreen() {
         } catch (error: any) {
             Alert.alert('Error', error.message || 'Restore failed');
         }
-    };
-
-    const handleResetProfile = async () => {
-        const performReset = async () => {
-            LayoutAnimation.configureNext(LayoutAnimation.Presets.easeInEaseOut);
-            // resetStats is safer for multi-user/cloud
-            const cleared = await resetStats(auth?.userId || null);
-            setStats(cleared);
-            setUsername('');
-            setSelectedAvatar('truck');
-            setSelectedClass('Class A');
-            setIsEditing(false);
-
-            // Note: restartApp won't work perfectly on Expo Go/Client often, so we rely on state reset
-            const restarted = await restartApp();
-            if (!restarted && Platform.OS !== 'web') {
-                showAlert(t('resetProfileTitle'), "Local data cleared.");
-            }
-        };
-
-        showConfirm({
-            title: t('resetProfileTitle'),
-            message: t('resetProfileMessage'),
-            confirmText: t('resetProfile'),
-            cancelText: t('cancel'),
-            isDestructive: true,
-            onConfirm: performReset,
-        });
     };
 
     // Sign out handler
@@ -429,37 +399,6 @@ export default function ProfileScreen() {
                 <TouchableOpacity style={styles.restoreButtonFooter} onPress={handleRestore}>
                     <Text style={styles.restoreTextFooter}>{t('restorePurchases')}</Text>
                 </TouchableOpacity>
-
-                <TouchableOpacity style={styles.resetProfileButton} onPress={handleResetProfile}>
-                    <Text style={styles.resetProfileText}>{t('resetProfile')}</Text>
-                </TouchableOpacity>
-
-                {/* Developer / Testing Option */}
-                <TouchableOpacity
-                    style={[styles.resetProfileButton, { marginTop: 12, backgroundColor: '#fee2e2' }]}
-                    onPress={async () => {
-                        Alert.alert(
-                            'Reset All App Data',
-                            'This will clear ALL local storage, including guest stats and login tokens. Efficient for testing fresh installs.',
-                            [
-                                { text: 'Cancel', style: 'cancel' },
-                                {
-                                    text: 'Reset Everything',
-                                    style: 'destructive',
-                                    onPress: async () => {
-                                        const { resetAllAppData } = require('../../data/stats'); // dynamic import to avoid circ dep if any
-                                        await resetAllAppData();
-                                        await restartApp();
-                                    }
-                                }
-                            ]
-                        );
-                    }}
-                >
-                    <Text style={[styles.resetProfileText, { color: '#dc2626' }]}>Reset All Data (Dev)</Text>
-                </TouchableOpacity>
-
-
             </View>
         </ScrollView>
     );

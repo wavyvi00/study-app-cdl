@@ -206,8 +206,6 @@ export function AuthProvider({ children }: AuthProviderProps) {
         if (state.user?.id) {
             try {
                 const current = await loadStats(state.user.id);
-                // We mainly want to push safe changes.
-                // Pulling might be risky if we are leaving, but merging is safe.
                 await pushStatsToCloud(state.user.id, current);
             } catch (e) {
                 console.warn('[Auth] Sync before signout failed', (e as any)?.message);
@@ -216,9 +214,14 @@ export function AuthProvider({ children }: AuthProviderProps) {
 
         const result = await authSignOut();
 
-        // Note: We don't need to manually clear 'user_stats_USERID' from storage.
-        // It stays as a device cache for that user.
-        // Switching 'user' to null will cause hooks to read from 'user_stats_guest' (or default).
+        // Clear guest stats to ensure clean slate for next login
+        // This prevents old guest data from polluting new account logins
+        try {
+            const { INITIAL_STATS } = await import('../data/stats');
+            await saveStats(INITIAL_STATS, null);
+        } catch (e) {
+            console.warn('[Auth] Failed to clear guest stats on signout', e);
+        }
 
         setState({
             user: null,
