@@ -125,20 +125,7 @@ export default function SignupScreen() {
                             </View>
                         ) : null}
 
-                        <View style={styles.inputContainer}>
-                            <FontAwesome name="user" size={18} color="#64748B" style={styles.inputIcon} />
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Full Name"
-                                placeholderTextColor="#94A3B8"
-                                value={name}
-                                onChangeText={setName}
-                                autoCapitalize="words"
-                                autoCorrect={false}
-                                editable={!isSubmitting}
-                                returnKeyType="next"
-                            />
-                        </View>
+
 
                         <View style={styles.inputContainer}>
                             <FontAwesome name="envelope" size={18} color="#64748B" style={styles.inputIcon} />

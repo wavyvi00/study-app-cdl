@@ -30,16 +30,17 @@ export default function ForgotPasswordScreen() {
 
     const [email, setEmail] = useState('');
     const [error, setError] = useState('');
-    const [success, setSuccess] = useState(false);
+    const [message, setMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
 
-    const handleResetPassword = async () => {
+    const handleReset = async () => {
         if (!email.trim()) {
             setError('Please enter your email');
             return;
         }
 
         setError('');
+        setMessage('');
         setIsSubmitting(true);
 
         try {
@@ -47,7 +48,7 @@ export default function ForgotPasswordScreen() {
             if (result?.error) {
                 setError(result.error);
             } else {
-                setSuccess(true);
+                setMessage(`We've sent a password reset link to ${email}`);
             }
         } catch (err: any) {
             setError(err.message || 'Password reset failed');

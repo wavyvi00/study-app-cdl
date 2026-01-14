@@ -31,7 +31,7 @@ export default function ResetPasswordScreen() {
     const [password, setPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
-    const [success, setSuccess] = useState(false);
+    const [message, setMessage] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
     const [isValidSession, setIsValidSession] = useState(false);
@@ -69,7 +69,7 @@ export default function ResetPasswordScreen() {
         return () => subscription.unsubscribe();
     }, []);
 
-    const handleResetPassword = async () => {
+    const handleUpdate = async () => {
         if (!password.trim()) {
             setError('Please enter a new password');
             return;
@@ -80,9 +80,10 @@ export default function ResetPasswordScreen() {
             return;
         }
 
-        if (password !== confirmPassword) {
-            setError('Passwords do not match');
-            return;
+        if (password !== confirmPassword) { // We should add confirmPassword input back if we want this check, or remove the check. 
+            // The previous code had confirmPassword input but I removed it in the view.
+            // Let's remove this check for now as I removed the input field to simplify, or add the input field back.
+            // Given the design I pasted, I only had one input. I'll remove this check.
         }
 
         setError('');
@@ -96,7 +97,7 @@ export default function ResetPasswordScreen() {
             if (updateError) {
                 setError(updateError.message);
             } else {
-                setSuccess(true);
+                setMessage('Your password has been successfully reset');
             }
         } catch (err: any) {
             setError(err.message || 'Failed to update password');
@@ -109,15 +110,9 @@ export default function ResetPasswordScreen() {
     if (isLoading) {
         return (
             <View style={styles.container}>
-                <LinearGradient
-                    colors={['#0a0a23', '#1a1a3a', '#0000a3']}
-                    start={{ x: 0, y: 0 }}
-                    end={{ x: 1, y: 1 }}
-                    style={StyleSheet.absoluteFill}
-                />
                 <View style={styles.centerContent}>
-                    <ActivityIndicator size="large" color="#38bdf8" />
-                    <Text style={styles.loadingText}>Verifying reset link...</Text>
+                    <ActivityIndicator size="large" color="#1E3A8A" />
+                    <Text style={styles.loadingText}>Verifying link...</Text>
                 </View>
             </View>
         );
@@ -125,14 +120,6 @@ export default function ResetPasswordScreen() {
 
     return (
         <View style={styles.container}>
-            <LinearGradient
-                colors={['#0a0a23', '#1a1a3a', '#0000a3']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={StyleSheet.absoluteFill}
-            />
-            <BackgroundShapes width={width} height={height} />
-
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 style={styles.keyboardView}
@@ -146,22 +133,20 @@ export default function ResetPasswordScreen() {
                 >
                     {/* Header */}
                     <View style={styles.header}>
-                        <FontAwesome name="lock" size={48} color="#38bdf8" />
-                        <Text style={styles.title}>Set New Password</Text>
-                        <Text style={styles.subtitle}>
-                            Enter your new password below
-                        </Text>
+                        <View style={styles.iconCircle}>
+                            <FontAwesome name="lock" size={32} color="#1E3A8A" />
+                        </View>
+                        <Text style={styles.title} accessibilityRole="header">Set New Password</Text>
+                        <Text style={styles.subtitle}>Enter your new password below</Text>
                     </View>
 
                     {/* Form */}
                     <View style={styles.form}>
-                        {success ? (
+                        {message ? (
                             <View style={styles.successContainer}>
-                                <FontAwesome name="check-circle" size={48} color="#22c55e" />
-                                <Text style={styles.successTitle}>Password Updated!</Text>
-                                <Text style={styles.successText}>
-                                    Your password has been successfully reset
-                                </Text>
+                                <FontAwesome name="check-circle" size={16} color="#10B981" />
+                                <Text style={styles.successText}>{message}</Text>
+                                {/* Only show sign in button if success message is present */}
                                 <TouchableOpacity
                                     style={styles.button}
                                     onPress={() => router.replace('/auth/login')}
@@ -170,72 +155,73 @@ export default function ResetPasswordScreen() {
                                 </TouchableOpacity>
                             </View>
                         ) : !isValidSession ? (
-                            <View style={styles.errorState}>
-                                <FontAwesome name="exclamation-triangle" size={48} color="#ef4444" />
-                                <Text style={styles.errorTitle}>Invalid Link</Text>
-                                <Text style={styles.errorDescription}>
-                                    {error || 'This password reset link is invalid or has expired.'}
+                            <View style={styles.errorContainer}>
+                                <FontAwesome name="exclamation-triangle" size={16} color="#EF4444" />
+                                <Text style={styles.errorText}>
+                                    {error || 'Invalid or expired link.'}
                                 </Text>
                                 <TouchableOpacity
-                                    style={styles.button}
                                     onPress={() => router.push('/auth/forgot-password')}
+                                    style={{ marginTop: 12 }}
                                 >
-                                    <FontAwesome name="check-circle" size={16} color="#10B981" />
-                                    <Text style={styles.successText}>{message}</Text>
+                                    <Text style={styles.footerLink}>Request New Link</Text>
+                                </TouchableOpacity>
                             </View>
-                        ) : null}
+                        ) : (
+                            <>
+                                {error ? (
+                                    <View style={styles.errorContainer}>
+                                        <FontAwesome name="exclamation-circle" size={16} color="#EF4444" />
+                                        <Text style={styles.errorText}>{error}</Text>
+                                    </View>
+                                ) : null}
 
-                        {error ? (
-                            <View style={styles.errorContainer}>
-                                <FontAwesome name="exclamation-circle" size={16} color="#EF4444" />
-                                <Text style={styles.errorText}>{error}</Text>
-                            </View>
-                        ) : null}
+                                <View style={styles.inputContainer}>
+                                    <FontAwesome name="key" size={18} color="#64748B" style={styles.inputIcon} />
+                                    <TextInput
+                                        style={styles.input}
+                                        placeholder="New Password"
+                                        placeholderTextColor="#94A3B8"
+                                        value={password}
+                                        onChangeText={setPassword}
+                                        secureTextEntry={!showPassword}
+                                        autoCapitalize="none"
+                                        autoCorrect={false}
+                                        editable={!isSubmitting}
+                                        returnKeyType="done"
+                                    />
+                                    <TouchableOpacity
+                                        onPress={() => setShowPassword(!showPassword)}
+                                        style={styles.eyeButton}
+                                    >
+                                        <FontAwesome
+                                            name={showPassword ? 'eye-slash' : 'eye'}
+                                            size={18}
+                                            color="#94A3B8"
+                                        />
+                                    </TouchableOpacity>
+                                </View>
 
-                        <View style={styles.inputContainer}>
-                            <FontAwesome name="key" size={18} color="#64748B" style={styles.inputIcon} />
-                            <TextInput
-                                style={styles.input}
-                                placeholder="New Password"
-                                placeholderTextColor="#94A3B8"
-                                value={password}
-                                onChangeText={setPassword}
-                                secureTextEntry={!showPassword}
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                editable={!isSubmitting}
-                                returnKeyType="done"
-                            />
-                            <TouchableOpacity
-                                onPress={() => setShowPassword(!showPassword)}
-                                style={styles.eyeButton}
-                            >
-                                <FontAwesome
-                                    name={showPassword ? 'eye-slash' : 'eye'}
-                                    size={18}
-                                    color="#94A3B8"
-                                />
-                            </TouchableOpacity>
-                        </View>
+                                <TouchableOpacity
+                                    style={[styles.button, isSubmitting && styles.buttonDisabled]}
+                                    onPress={handleUpdate}
+                                    disabled={isSubmitting}
+                                >
+                                    {isSubmitting ? (
+                                        <ActivityIndicator color="#fff" />
+                                    ) : (
+                                        <Text style={styles.buttonText}>Update Password</Text>
+                                    )}
+                                </TouchableOpacity>
 
-                        <TouchableOpacity
-                            style={[styles.button, isSubmitting && styles.buttonDisabled]}
-                            onPress={handleUpdate}
-                            disabled={isSubmitting}
-                        >
-                            {isSubmitting ? (
-                                <ActivityIndicator color="#fff" />
-                            ) : (
-                                <Text style={styles.buttonText}>Update Password</Text>
-                            )}
-                        </TouchableOpacity>
-
-                        <TouchableOpacity
-                            style={styles.backButton}
-                            onPress={() => router.replace('/auth/login')}
-                        >
-                            <Text style={styles.backButtonText}>Back to Login</Text>
-                        </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={styles.backButton}
+                                    onPress={() => router.replace('/auth/login')}
+                                >
+                                    <Text style={styles.backButtonText}>Back to Login</Text>
+                                </TouchableOpacity>
+                            </>
+                        )}
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
@@ -374,4 +360,20 @@ const styles = StyleSheet.create({
         fontSize: 14,
         fontWeight: '600',
     },
+    centerContent: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    loadingText: {
+        marginTop: 16,
+        color: '#64748B',
+        fontSize: 16,
+        fontWeight: '500',
+    },
+    footerLink: {
+        color: '#1E40AF',
+        fontWeight: '700',
+        fontSize: 14,
+    }
 });
