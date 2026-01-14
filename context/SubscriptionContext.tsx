@@ -13,6 +13,7 @@ import {
     logOut as rcLogOut,
 } from '../lib/revenuecat';
 import { useAuth } from './AuthContext';
+import { supabase } from '../lib/supabase';
 
 // Subscription status types
 export type SubscriptionTier = 'free' | 'monthly' | 'yearly' | 'lifetime';
@@ -377,10 +378,30 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
     }, [state.isPro, state.questionsRemaining]);
 
     const incrementQuestionsAnswered = useCallback(async (count: number = 1): Promise<void> => {
-        // Persist immediately to enforce global limit even if app is killed
+        // --- SERVER-FIRST SECURITY ---
+        // Call the secure RPC function to increment the counter on the server.
+        // This prevents client-side tampering of the JSON blob.
+        try {
+            const { error } = await supabase!.rpc('increment_questions_answered', { count_inc: count });
+
+            if (error) {
+                console.error('[Subscription] Failed to increment secure counter:', error);
+                // Fallback to local state update just for UI responsiveness, 
+                // but server is the authority now.
+            }
+        } catch (rpcError) {
+            console.error('[Subscription] RPC Exception:', rpcError);
+        }
+
+        // --- UI OPTIMISTIC UPDATE ---
+        // We still update local state immediately for best UX
+        // But the "Truth" is now in the DB column 'questions_answered_count'
+
         const currentStats = await loadStats(auth?.userId || null);
         const newTotal = (currentStats.questionsAnsweredTotal || 0) + count;
 
+        // We still sync the JSON blob for legacy compatibility / offline support
+        // but the RLS policy for accessing questions relies on the server-side check (or simply time/count limits logic on server if we moved that too)
         await updateStats({
             questionsAnsweredTotal: newTotal
         }, auth?.userId || null);
@@ -397,7 +418,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
         }));
 
         if (__DEV__) {
-            console.log('[Subscription] Questions incremented & saved:', { newTotal, questionsRemaining });
+            console.log('[Subscription] Questions incremented (Secure RPC + Local):', { newTotal, questionsRemaining });
         }
     }, [state.isPro]);
 

@@ -39,7 +39,10 @@ export async function fetchQuestions(topicId: string): Promise<DbQuestion[]> {
             .order('created_at', { ascending: true });
 
         if (error) {
-            console.error('[Supabase] Error fetching questions:', error);
+            // RLS Policy Violation (e.g. Free user trying to fetch premium questions)
+            // PostgREST typically returns an empty array [] if RLS hides rows, 
+            // but if we get an explicit permission error, handle it.
+            console.warn('[Supabase] Access denied or error fetching questions:', error.message);
             return [];
         }
 
