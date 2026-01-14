@@ -31,7 +31,6 @@ export default function SignupScreen() {
 
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const [confirmPassword, setConfirmPassword] = useState('');
     const [error, setError] = useState('');
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [showPassword, setShowPassword] = useState(false);
@@ -62,10 +61,6 @@ export default function SignupScreen() {
         }
         if (password.length < 6) {
             setError('Password must be at least 6 characters');
-            return;
-        }
-        if (password !== confirmPassword) {
-            setError('Passwords do not match');
             return;
         }
 
