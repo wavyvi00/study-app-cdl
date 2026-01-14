@@ -429,6 +429,31 @@ export default function ProfileScreen() {
                     <Text style={styles.resetProfileText}>{t('resetProfile')}</Text>
                 </TouchableOpacity>
 
+                {/* Developer / Testing Option */}
+                <TouchableOpacity
+                    style={[styles.resetProfileButton, { marginTop: 12, backgroundColor: '#fee2e2' }]}
+                    onPress={async () => {
+                        Alert.alert(
+                            'Reset All App Data',
+                            'This will clear ALL local storage, including guest stats and login tokens. Efficient for testing fresh installs.',
+                            [
+                                { text: 'Cancel', style: 'cancel' },
+                                {
+                                    text: 'Reset Everything',
+                                    style: 'destructive',
+                                    onPress: async () => {
+                                        const { resetAllAppData } = require('../../data/stats'); // dynamic import to avoid circ dep if any
+                                        await resetAllAppData();
+                                        await restartApp();
+                                    }
+                                }
+                            ]
+                        );
+                    }}
+                >
+                    <Text style={[styles.resetProfileText, { color: '#dc2626' }]}>Reset All Data (Dev)</Text>
+                </TouchableOpacity>
+
 
             </View>
         </ScrollView>
