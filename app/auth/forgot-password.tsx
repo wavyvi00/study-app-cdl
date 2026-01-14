@@ -77,85 +77,66 @@ export default function ForgotPasswordScreen() {
                     ]}
                     keyboardShouldPersistTaps="handled"
                 >
-                    {/* Back button */}
-                    <TouchableOpacity
-                        style={styles.backArrow}
-                        onPress={() => router.back()}
-                    >
-                        <FontAwesome name="arrow-left" size={20} color="rgba(255,255,255,0.7)" />
-                    </TouchableOpacity>
-
                     {/* Header */}
                     <View style={styles.header}>
-                        <FontAwesome name="unlock-alt" size={48} color="#38bdf8" />
-                        <Text style={styles.title}>Reset Password</Text>
-                        <Text style={styles.subtitle}>
-                            Enter your email and we'll send you a link to reset your password
-                        </Text>
+                        <View style={styles.iconCircle}>
+                            <FontAwesome name="unlock-alt" size={32} color="#1E3A8A" />
+                        </View>
+                        <Text style={styles.title} accessibilityRole="header">Reset Password</Text>
+                        <Text style={styles.subtitle}>Enter your email to receive reset code</Text>
                     </View>
 
                     {/* Form */}
                     <View style={styles.form}>
-                        {success ? (
+                        {message ? (
                             <View style={styles.successContainer}>
-                                <FontAwesome name="check-circle" size={48} color="#22c55e" />
-                                <Text style={styles.successTitle}>Check your email</Text>
-                                <Text style={styles.successText}>
-                                    We've sent a password reset link to {email}
-                                </Text>
-                                <TouchableOpacity
-                                    style={styles.button}
-                                    onPress={() => router.push('/auth/login')}
-                                >
-                                    <Text style={styles.buttonText}>Back to Login</Text>
-                                </TouchableOpacity>
+                                <FontAwesome name="check-circle" size={16} color="#10B981" />
+                                <Text style={styles.successText}>{message}</Text>
                             </View>
-                        ) : (
-                            <>
-                                {error ? (
-                                    <View style={styles.errorContainer}>
-                                        <FontAwesome name="exclamation-circle" size={16} color="#ef4444" />
-                                        <Text style={styles.errorText}>{error}</Text>
-                                    </View>
-                                ) : null}
+                        ) : null}
 
-                                <View style={styles.inputContainer}>
-                                    <FontAwesome name="envelope" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
-                                    <TextInput
-                                        style={styles.input}
-                                        placeholder="Email"
-                                        placeholderTextColor="rgba(255,255,255,0.4)"
-                                        value={email}
-                                        onChangeText={setEmail}
-                                        keyboardType="email-address"
-                                        autoCapitalize="none"
-                                        autoCorrect={false}
-                                        editable={!isSubmitting}
-                                        returnKeyType="done"
-                                        onSubmitEditing={handleResetPassword}
-                                    />
-                                </View>
+                        {error ? (
+                            <View style={styles.errorContainer}>
+                                <FontAwesome name="exclamation-circle" size={16} color="#EF4444" />
+                                <Text style={styles.errorText}>{error}</Text>
+                            </View>
+                        ) : null}
 
-                                <TouchableOpacity
-                                    style={[styles.button, isSubmitting && styles.buttonDisabled]}
-                                    onPress={handleResetPassword}
-                                    disabled={isSubmitting}
-                                >
-                                    {isSubmitting ? (
-                                        <ActivityIndicator color="#fff" />
-                                    ) : (
-                                        <Text style={styles.buttonText}>Send Reset Link</Text>
-                                    )}
-                                </TouchableOpacity>
+                        <View style={styles.inputContainer}>
+                            <FontAwesome name="envelope" size={18} color="#64748B" style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Email"
+                                placeholderTextColor="#94A3B8"
+                                value={email}
+                                onChangeText={setEmail}
+                                keyboardType="email-address"
+                                autoCapitalize="none"
+                                autoCorrect={false}
+                                editable={!isSubmitting}
+                                returnKeyType="done"
+                            />
+                        </View>
 
-                                <TouchableOpacity
-                                    style={styles.linkButton}
-                                    onPress={() => router.push('/auth/login')}
-                                >
-                                    <Text style={styles.linkText}>Back to Login</Text>
-                                </TouchableOpacity>
-                            </>
-                        )}
+                        <TouchableOpacity
+                            style={[styles.button, isSubmitting && styles.buttonDisabled]}
+                            onPress={handleReset}
+                            disabled={isSubmitting}
+                        >
+                            {isSubmitting ? (
+                                <ActivityIndicator color="#fff" />
+                            ) : (
+                                <Text style={styles.buttonText}>Send Reset Code</Text>
+                            )}
+                        </TouchableOpacity>
+
+                        <TouchableOpacity
+                            style={styles.backButton}
+                            onPress={() => router.back()}
+                        >
+                            <FontAwesome name="arrow-left" size={14} color="#64748B" />
+                            <Text style={styles.backButtonText}>Back to Login</Text>
+                        </TouchableOpacity>
                     </View>
                 </ScrollView>
             </KeyboardAvoidingView>
@@ -166,7 +147,7 @@ export default function ForgotPasswordScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: '#ffffff', // Clean whites
     },
     keyboardView: {
         flex: 1,
@@ -176,29 +157,30 @@ const styles = StyleSheet.create({
         paddingHorizontal: 24,
         justifyContent: 'center',
     },
-    backArrow: {
-        position: 'absolute',
-        top: 20,
-        left: 0,
-        padding: 8,
-        zIndex: 10,
-    },
     header: {
         alignItems: 'center',
         marginBottom: 40,
     },
+    iconCircle: {
+        width: 64,
+        height: 64,
+        borderRadius: 20,
+        backgroundColor: '#DBEAFE', // Blue 100
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 24,
+    },
     title: {
         fontSize: 28,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginTop: 16,
+        fontWeight: '800',
+        color: '#0F172A', // Slate 900
+        marginBottom: 8,
+        letterSpacing: -0.5,
     },
     subtitle: {
         fontSize: 16,
-        color: 'rgba(255,255,255,0.7)',
-        marginTop: 8,
+        color: '#64748B', // Slate 500
         textAlign: 'center',
-        maxWidth: 300,
     },
     form: {
         width: '100%',
@@ -206,45 +188,47 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
     },
     successContainer: {
+        flexDirection: 'row',
         alignItems: 'center',
-        padding: 24,
-    },
-    successTitle: {
-        fontSize: 24,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginTop: 16,
+        backgroundColor: '#ECFDF5', // Emerald 50
+        borderWidth: 1,
+        borderColor: '#A7F3D0', // Emerald 200
+        borderRadius: 12,
+        padding: 12,
+        marginBottom: 20,
+        gap: 8,
     },
     successText: {
-        fontSize: 16,
-        color: 'rgba(255,255,255,0.7)',
-        marginTop: 8,
-        textAlign: 'center',
+        color: '#10B981', // Emerald 500
+        fontSize: 14,
+        flex: 1,
+        fontWeight: '500',
     },
     errorContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+        backgroundColor: '#FEF2F2', // Red 50
         borderWidth: 1,
-        borderColor: 'rgba(239, 68, 68, 0.3)',
+        borderColor: '#FECACA', // Red 200
         borderRadius: 12,
         padding: 12,
-        marginBottom: 16,
+        marginBottom: 20,
         gap: 8,
     },
     errorText: {
-        color: '#ef4444',
+        color: '#EF4444', // Red 500
         fontSize: 14,
         flex: 1,
+        fontWeight: '500',
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'rgba(255,255,255,0.1)',
+        backgroundColor: '#EFF6FF', // Blue 50
         borderRadius: 12,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.1)',
+        borderColor: '#E2E8F0', // Slate 200
     },
     inputIcon: {
         paddingLeft: 16,
@@ -253,32 +237,42 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 52,
         paddingHorizontal: 12,
-        color: '#fff',
+        color: '#0F172A', // Slate 900
         fontSize: 16,
     },
     button: {
-        backgroundColor: '#38bdf8',
-        height: 52,
-        borderRadius: 12,
+        backgroundColor: '#1E3A8A', // Navy 900
+        height: 54,
+        borderRadius: 14,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 8,
+        marginTop: 12,
+        shadowColor: "#1E3A8A", // Navy 900
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 4,
     },
     buttonDisabled: {
         opacity: 0.7,
+        backgroundColor: '#94A3B8',
     },
     buttonText: {
         color: '#fff',
-        fontSize: 18,
-        fontWeight: '600',
+        fontSize: 17,
+        fontWeight: '700',
     },
-    linkButton: {
+    backButton: {
+        flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 16,
+        justifyContent: 'center',
+        marginTop: 24,
         padding: 8,
+        gap: 8,
     },
-    linkText: {
-        color: '#38bdf8',
+    backButtonText: {
+        color: '#64748B', // Slate 500
         fontSize: 14,
+        fontWeight: '600',
     },
 });

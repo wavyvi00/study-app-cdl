@@ -94,14 +94,7 @@ export default function SignupScreen() {
 
     return (
         <View style={styles.container}>
-            <SEO title="Sign Up - CDL Zero" description="Create a free CDL Zero account to save your practice test progress." />
-            <LinearGradient
-                colors={['#0a0a23', '#1a1a3a', '#0000a3']}
-                start={{ x: 0, y: 0 }}
-                end={{ x: 1, y: 1 }}
-                style={StyleSheet.absoluteFill}
-            />
-            <BackgroundShapes width={width} height={height} />
+            <SEO title="Sign Up - CDL Zero" description="Create your free CDL Zero account and start studying today." />
 
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
@@ -109,16 +102,18 @@ export default function SignupScreen() {
             >
                 <ScrollView
                     contentContainerStyle={[
-                        styles.scrollContent,
-                        { paddingTop: insets.top + 40, paddingBottom: insets.bottom + 20 }
+                        styles.content,
+                        { paddingTop: insets.top + 20, paddingBottom: insets.bottom + 20 }
                     ]}
                     keyboardShouldPersistTaps="handled"
                 >
                     {/* Header */}
                     <View style={styles.header}>
-                        <FontAwesome name="user-plus" size={48} color="#38bdf8" />
+                        <View style={styles.iconCircle}>
+                            <FontAwesome name="user-plus" size={32} color="#1E3A8A" />
+                        </View>
                         <Text style={styles.title} accessibilityRole="header">Create Account</Text>
-                        <Text style={styles.subtitle}>Sign up to sync your progress everywhere</Text>
+                        <Text style={styles.subtitle}>Start the journey to your CDL</Text>
                     </View>
 
                     {/* Form */}
@@ -131,11 +126,26 @@ export default function SignupScreen() {
                         ) : null}
 
                         <View style={styles.inputContainer}>
-                            <FontAwesome name="envelope" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
+                            <FontAwesome name="user" size={18} color="#64748B" style={styles.inputIcon} />
+                            <TextInput
+                                style={styles.input}
+                                placeholder="Full Name"
+                                placeholderTextColor="#94A3B8"
+                                value={name}
+                                onChangeText={setName}
+                                autoCapitalize="words"
+                                autoCorrect={false}
+                                editable={!isSubmitting}
+                                returnKeyType="next"
+                            />
+                        </View>
+
+                        <View style={styles.inputContainer}>
+                            <FontAwesome name="envelope" size={18} color="#64748B" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
                                 placeholder="Email"
-                                placeholderTextColor="rgba(255,255,255,0.4)"
+                                placeholderTextColor="#94A3B8"
                                 value={email}
                                 onChangeText={setEmail}
                                 keyboardType="email-address"
@@ -147,18 +157,18 @@ export default function SignupScreen() {
                         </View>
 
                         <View style={styles.inputContainer}>
-                            <FontAwesome name="key" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
+                            <FontAwesome name="key" size={18} color="#64748B" style={styles.inputIcon} />
                             <TextInput
                                 style={styles.input}
-                                placeholder="Password"
-                                placeholderTextColor="rgba(255,255,255,0.4)"
+                                placeholder="Password (min 6 chars)"
+                                placeholderTextColor="#94A3B8"
                                 value={password}
                                 onChangeText={setPassword}
                                 secureTextEntry={!showPassword}
                                 autoCapitalize="none"
                                 autoCorrect={false}
                                 editable={!isSubmitting}
-                                returnKeyType="next"
+                                returnKeyType="done"
                             />
                             <TouchableOpacity
                                 onPress={() => setShowPassword(!showPassword)}
@@ -167,43 +177,28 @@ export default function SignupScreen() {
                                 <FontAwesome
                                     name={showPassword ? 'eye-slash' : 'eye'}
                                     size={18}
-                                    color="rgba(255,255,255,0.5)"
+                                    color="#94A3B8"
                                 />
                             </TouchableOpacity>
                         </View>
 
-                        {/* Password strength indicator */}
-                        {password.length > 0 && (
-                            <View style={styles.strengthContainer}>
-                                <View style={styles.strengthBar}>
-                                    <View
-                                        style={[
-                                            styles.strengthFill,
-                                            { width: passwordStrength.width as any, backgroundColor: passwordStrength.color }
-                                        ]}
-                                    />
-                                </View>
-                                <Text style={[styles.strengthLabel, { color: passwordStrength.color }]}>
-                                    {passwordStrength.label}
+                        <View style={styles.termsContainer}>
+                            <Text style={styles.termsText}>
+                                By creating an account, you agree to our{' '}
+                                <Text
+                                    style={styles.termsLink}
+                                    onPress={() => router.push('/terms')}
+                                >
+                                    Terms of Service
                                 </Text>
-                            </View>
-                        )}
-
-                        <View style={styles.inputContainer}>
-                            <FontAwesome name="check" size={18} color="rgba(255,255,255,0.5)" style={styles.inputIcon} />
-                            <TextInput
-                                style={styles.input}
-                                placeholder="Confirm Password"
-                                placeholderTextColor="rgba(255,255,255,0.4)"
-                                value={confirmPassword}
-                                onChangeText={setConfirmPassword}
-                                secureTextEntry={!showPassword}
-                                autoCapitalize="none"
-                                autoCorrect={false}
-                                editable={!isSubmitting}
-                                returnKeyType="done"
-                                onSubmitEditing={handleSignup}
-                            />
+                                {' '}and{' '}
+                                <Text
+                                    style={styles.termsLink}
+                                    onPress={() => router.push('/privacy')}
+                                >
+                                    Privacy Policy
+                                </Text>.
+                            </Text>
                         </View>
 
                         <TouchableOpacity
@@ -214,16 +209,17 @@ export default function SignupScreen() {
                             {isSubmitting ? (
                                 <ActivityIndicator color="#fff" />
                             ) : (
-                                <Text style={styles.buttonText}>Create Account</Text>
+                                <Text style={styles.buttonText}>Sign Up</Text>
                             )}
                         </TouchableOpacity>
+
                     </View>
 
                     {/* Footer */}
                     <View style={styles.footer}>
                         <Text style={styles.footerText}>Already have an account?</Text>
                         <TouchableOpacity onPress={() => router.push('/auth/login')}>
-                            <Text style={styles.footerLink}>Sign in</Text>
+                            <Text style={styles.footerLink}>Log In</Text>
                         </TouchableOpacity>
                     </View>
                 </ScrollView>
@@ -235,30 +231,39 @@ export default function SignupScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#0f172a',
+        backgroundColor: '#ffffff', // Clean White
     },
     keyboardView: {
         flex: 1,
     },
-    scrollContent: {
+    content: {
         flexGrow: 1,
         paddingHorizontal: 24,
         justifyContent: 'center',
     },
     header: {
         alignItems: 'center',
-        marginBottom: 40,
+        marginBottom: 32,
+    },
+    iconCircle: {
+        width: 64,
+        height: 64,
+        borderRadius: 20,
+        backgroundColor: '#DBEAFE', // Blue 100
+        justifyContent: 'center',
+        alignItems: 'center',
+        marginBottom: 24,
     },
     title: {
         fontSize: 28,
-        fontWeight: 'bold',
-        color: '#fff',
-        marginTop: 16,
+        fontWeight: '800',
+        color: '#0F172A', // Slate 900
+        marginBottom: 8,
+        letterSpacing: -0.5,
     },
     subtitle: {
         fontSize: 16,
-        color: 'rgba(255,255,255,0.7)',
-        marginTop: 8,
+        color: '#64748B', // Slate 500
         textAlign: 'center',
     },
     form: {
@@ -269,27 +274,28 @@ const styles = StyleSheet.create({
     errorContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'rgba(239, 68, 68, 0.1)',
+        backgroundColor: '#FEF2F2', // Red 50
         borderWidth: 1,
-        borderColor: 'rgba(239, 68, 68, 0.3)',
+        borderColor: '#FECACA', // Red 200
         borderRadius: 12,
         padding: 12,
-        marginBottom: 16,
+        marginBottom: 20,
         gap: 8,
     },
     errorText: {
-        color: '#ef4444',
+        color: '#EF4444', // Red 500
         fontSize: 14,
         flex: 1,
+        fontWeight: '500',
     },
     inputContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: 'rgba(255,255,255,0.1)',
+        backgroundColor: '#EFF6FF', // Blue 50
         borderRadius: 12,
         marginBottom: 16,
         borderWidth: 1,
-        borderColor: 'rgba(255,255,255,0.1)',
+        borderColor: '#E2E8F0', // Slate 200
     },
     inputIcon: {
         paddingLeft: 16,
@@ -298,64 +304,62 @@ const styles = StyleSheet.create({
         flex: 1,
         height: 52,
         paddingHorizontal: 12,
-        color: '#fff',
+        color: '#0F172A', // Slate 900
         fontSize: 16,
     },
     eyeButton: {
         padding: 16,
     },
-    strengthContainer: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        marginBottom: 16,
-        marginTop: -8,
-        gap: 12,
+    termsContainer: {
+        marginBottom: 20,
+        paddingHorizontal: 4,
     },
-    strengthBar: {
-        flex: 1,
-        height: 4,
-        backgroundColor: 'rgba(255,255,255,0.1)',
-        borderRadius: 2,
-        overflow: 'hidden',
+    termsText: {
+        color: '#64748B', // Slate 500
+        fontSize: 13,
+        textAlign: 'center',
+        lineHeight: 20,
     },
-    strengthFill: {
-        height: '100%',
-        borderRadius: 2,
-    },
-    strengthLabel: {
-        fontSize: 12,
-        fontWeight: '500',
+    termsLink: {
+        color: '#1E40AF', // Navy 800
+        fontWeight: '600',
     },
     button: {
-        backgroundColor: '#38bdf8',
-        height: 52,
-        borderRadius: 12,
+        backgroundColor: '#1E3A8A', // Navy 900
+        height: 54,
+        borderRadius: 14,
         justifyContent: 'center',
         alignItems: 'center',
-        marginTop: 8,
+        marginTop: 4,
+        shadowColor: "#1E3A8A", // Navy 900
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 4,
     },
     buttonDisabled: {
         opacity: 0.7,
+        backgroundColor: '#94A3B8',
     },
     buttonText: {
         color: '#fff',
-        fontSize: 18,
-        fontWeight: '600',
+        fontSize: 17,
+        fontWeight: '700',
     },
     footer: {
         flexDirection: 'row',
         justifyContent: 'center',
         alignItems: 'center',
         marginTop: 32,
-        gap: 8,
+        gap: 6,
     },
     footerText: {
-        color: 'rgba(255,255,255,0.6)',
+        color: '#64748B', // Slate 500
         fontSize: 14,
     },
     footerLink: {
-        color: '#38bdf8',
+        color: '#1E40AF', // Navy 800
         fontSize: 14,
-        fontWeight: '600',
+        fontWeight: '700',
     },
 });
