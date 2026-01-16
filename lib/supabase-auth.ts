@@ -5,6 +5,7 @@
  */
 import { supabase } from './supabase';
 import type { User, Session, AuthChangeEvent } from '@supabase/supabase-js';
+import * as Linking from 'expo-linking';
 
 export interface AuthResult {
     user: User | null;
@@ -102,10 +103,12 @@ export const resetPassword = async (email: string): Promise<{ error: string | nu
     }
 
     try {
+        // Use Expo Linking to generate correct deep link for native/web
+        // This ensures the link opens the app at /auth/reset-password
+        const redirectTo = Linking.createURL('/auth/reset-password');
+
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
-            redirectTo: typeof window !== 'undefined'
-                ? `${window.location.origin}/auth/reset-password`
-                : undefined,
+            redirectTo,
         });
         return { error: error?.message || null };
     } catch (err: any) {
@@ -168,14 +171,11 @@ export const signInWithGoogle = async (): Promise<{ data: any; error: string | n
     }
 
     try {
+        const redirectTo = Linking.createURL('/');
         const { data, error } = await supabase.auth.signInWithOAuth({
             provider: 'google',
             options: {
-                // For mobile, you would typically use makeRedirectUri from expo-auth-session
-                // For now, we rely on Supabase's default behavior or configured redirect URLs
-                redirectTo: typeof window !== 'undefined'
-                    ? window.location.origin
-                    : undefined, // Add deep link scheme here for mobile later if needed
+                redirectTo,
             },
         });
 
