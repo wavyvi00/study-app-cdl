@@ -54,28 +54,32 @@ A comprehensive, cross-platform mobile application designed to help aspiring tru
                     ┌─────────────────────────────────────┐
                     │         Supabase Auth               │
                     │   (User Identity - UUID)            │
-                    │   (Profiles & Stats Sync)           │
                     └──────────────┬──────────────────────┘
                                    │
                     ┌──────────────▼──────────────────────┐
                     │         RevenueCat                  │
-                    │   (Entitlements - "CDL ZERO Pro")   │
-                    ├─────────┬───────────┬───────────────┤
-                    │  Apple  │  Google   │    Stripe     │
-                    │   IAP   │   Play    │    (Web)      │
-                    └────┬────┴─────┬─────┴───────┬───────┘
-                         │          │             │
-                    ┌────▼────┐ ┌───▼────┐ ┌──────▼─────┐
-                    │   iOS   │ │Android │ │    Web     │
-                    │   App   │ │  App   │ │    App     │
-                    └─────────┘ └────────┘ └────────────┘
+                    │   (Subscription Management)         │
+                    └──────────────┬──────────────────────┘
+                                   │ (Webhook)
+                                   ▼
+                    ┌─────────────────────────────────────┐
+                    │      Supabase Edge Function         │
+                    │       "revenuecat-webhook"          │
+                    └──────────────┬──────────────────────┘
+                                   │ (Updates Profile)
+                                   ▼
+                    ┌─────────────────────────────────────┐
+                    │      Supabase Database              │
+                    │   - profiles (is_pro flag)          │
+                    │   - questions (RLS protected)       │
+                    └─────────────────────────────────────┘
 ```
 
-**Key Design Principles:**
-- User identity flows from Supabase (single UUID across platforms)
-- RevenueCat manages all subscriptions using Supabase UUID as appUserID
-- Entitlements sync automatically when user logs in on any platform
-- Entitlement is the single source of truth for premium access
+**Key Design Principles (Server-First):**
+- **Identity**: Supabase Auth provides the User UUID.
+- **Entitlements**: RevenueCat is the source of truth for payments.
+- **Synchronization**: RevenueCat pushes status updates via **Edge Function** to the Supabase Database.
+- **Access Control**: RLS policies on the `questions` table check the `is_pro` flag in the database to grant/deny access.
 
 ## Getting Started
 
@@ -118,6 +122,17 @@ EXPO_PUBLIC_REVENUECAT_WEB_API_KEY=rcb_your_web_key
 ```
 
 > **Note**: The app will run without these variables but authentication and subscription features will be disabled.
+>
+> ### Backend Security (Server-First)
+>
+> This project uses a "Server-First" security model to prevent client-side tampering of entitlements and trial limits.
+>
+> 1.  **Row Level Security (RLS)**: The `questions` table is protected. Only users with `is_pro = true` in their profile can fetch all questions. Free users are restricted to `is_free = true` questions.
+> 2.  **Edge Functions**: A Supabase Edge Function (`revenuecat-webhook`) handles all subscription status updates.
+>     *   **Secret Required**: You must set `REVENUECAT_WEBHOOK_SECRET` in your Supabase Project Settings (Edge Functions > Secrets).
+>     *   **Webhook URL**: Configure RevenueCat to send webhooks to `https://<project-ref>.supabase.co/functions/v1/revenuecat-webhook` with the header `Authorization: Bearer <your-secret>`.
+> 3.  **Secure RPC**: Trial question counters are incremented via a secure PostgreSQL function `increment_questions_answered`, not client-side updates.
+
 
 ## Building for Production
 

@@ -2,7 +2,19 @@
 
 All notable changes to this project will be documented in this file.
 
-## [Unreleased] - 2025-12-21
+## [2.0.2] - 2026-01-15
+
+### Security Hardening (Server-First)
+- **Supabase RLS**: Implemented strict Row Level Security on the `questions` table.
+  - Pro users can access all questions.
+  - Free users are restricted to standard/free questions only.
+- **Secure RPC**: Created `increment_questions_answered` PostgreSQL function to enforce trial limits server-side, preventing client-side tampering.
+- **Edge Functions**: Deployed `revenuecat-webhook` to securely sync `is_pro` status from RevenueCat to Supabase `profiles` table.
+
+### Fixed
+- **Password Reset Loop**: Fixed Native Deep Linking issue where clicking a reset link would open the app but fail to route to the "New Password" screen. Now uses `cdlzero://auth/reset-password`.
+- **Expo Config**: Resolved "Expo Head" metadata error by adding `origin` to `expo-router` config.
+
 
 ### Added
 - **Email Subscription Feature**:
