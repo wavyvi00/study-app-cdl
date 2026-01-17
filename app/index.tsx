@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView, Image, ActivityIndicator, useWindowDimensions } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Platform, ScrollView, Image, ActivityIndicator, useWindowDimensions, Linking } from 'react-native';
 import { Redirect, useRouter, Link } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -122,6 +122,19 @@ function WebLandingPage() {
                         <Text style={styles.trustText}>
                             <FontAwesome name="star" color="#ffd53d" /> {t('heroTrust')}
                         </Text>
+
+                        <TouchableOpacity
+                            onPress={() => Linking.openURL('https://apps.apple.com/us/app/cdl-zero-permit-practice/id6757250472')}
+                            style={styles.appStoreButtonHero}
+                            accessibilityRole="link"
+                            accessibilityLabel="Download on the App Store"
+                        >
+                            <FontAwesome name="apple" size={24} color="#ffffff" />
+                            <View>
+                                <Text style={styles.appStoreSubtext}>Download on the</Text>
+                                <Text style={styles.appStoreText}>App Store</Text>
+                            </View>
+                        </TouchableOpacity>
                     </View>
                 </View>
 
@@ -229,6 +242,9 @@ function WebLandingPage() {
                             <Text style={styles.footerHeading}>{t('footerSupport')}</Text>
                             <Link href="/help" style={styles.footerLink}>{t('footerHelpCenter')}</Link>
                             <Link href="/contact" style={styles.footerLink}>{t('footerContactSupport')}</Link>
+                            <TouchableOpacity onPress={() => Linking.openURL('https://apps.apple.com/us/app/cdl-zero-permit-practice/id6757250472')} style={styles.footerLinkWrapper}>
+                                <Text style={styles.footerLink}>Download on App Store</Text>
+                            </TouchableOpacity>
                         </View>
 
                         {/* Socials */}
@@ -667,5 +683,32 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderWidth: 1,
         borderColor: '#E2E8F0',
+    },
+    // App Store Button Styles
+    appStoreButtonHero: {
+        backgroundColor: '#000000',
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 10,
+        paddingHorizontal: 20,
+        borderRadius: 12,
+        gap: 12,
+        marginTop: 32,
+        shadowColor: "#000",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 4,
+    },
+    appStoreSubtext: {
+        color: '#ffffff',
+        fontSize: 10,
+        fontWeight: '500',
+    },
+    appStoreText: {
+        color: '#ffffff',
+        fontSize: 18,
+        fontWeight: '700',
+        lineHeight: 20,
     }
 });
