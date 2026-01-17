@@ -17,15 +17,12 @@ export default function HelpScreen() {
         <View style={[styles.container, isDark && styles.darkContainer]}>
             <SEO title="Help Center - CDL Zero" description="Get help with CDL Zero. FAQs, support contact, and troubleshooting guides." />
 
-            <LinearGradient
-                colors={['#0000a3', '#0000a3']}
-                style={styles.header}
-            >
+            <View style={styles.header}>
                 <TouchableOpacity onPress={() => router.back()} style={styles.backButton}>
                     <FontAwesome name="arrow-left" size={24} color="white" />
                 </TouchableOpacity>
                 <Text style={styles.headerTitle} accessibilityRole="header" aria-level="1">Help Center</Text>
-            </LinearGradient>
+            </View>
 
             <ScrollView contentContainerStyle={styles.content}>
                 {/* Intro */}
@@ -104,20 +101,21 @@ export default function HelpScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f8fafc', // Light slate background for contrast
+        backgroundColor: '#f8fafc',
     },
+    // Header - Updated to match Landing Page Brand Blue
     header: {
         paddingTop: 60,
         paddingBottom: 20,
         paddingHorizontal: 20,
         flexDirection: 'row',
         alignItems: 'center',
-        backgroundColor: '#0000a3',
-        shadowColor: "#000",
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.1,
-        shadowRadius: 4,
-        elevation: 3,
+        backgroundColor: '#1E3A8A', // Navy 900
+        shadowColor: "#1E3A8A",
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.2,
+        shadowRadius: 8,
+        elevation: 4,
     },
     backButton: {
         marginRight: 15,
@@ -125,8 +123,9 @@ const styles = StyleSheet.create({
     },
     headerTitle: {
         fontSize: 24,
-        fontWeight: '700',
-        color: 'white',
+        fontWeight: '800', // Bolder font
+        color: '#ffffff',
+        letterSpacing: -0.5,
     },
     content: {
         padding: 24,
@@ -141,55 +140,57 @@ const styles = StyleSheet.create({
     introTitle: {
         fontSize: 32,
         fontWeight: '800',
-        color: '#0f172a',
+        color: '#0f172a', // Slate 900
         marginBottom: 8,
+        letterSpacing: -1,
     },
     introText: {
         fontSize: 18,
-        color: '#475569',
+        color: '#64748B', // Slate 500
         lineHeight: 28,
     },
     section: {
         backgroundColor: 'white',
-        borderRadius: 16,
-        padding: 24,
+        borderRadius: 24, // Rounded corners
+        padding: 32,
         marginBottom: 24,
         borderWidth: 1,
-        borderColor: '#e2e8f0',
+        borderColor: '#f1f5f9', // Light border
         shadowColor: "#64748b",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.05,
-        shadowRadius: 12,
+        shadowOffset: { width: 0, height: 12 },
+        shadowOpacity: 0.08,
+        shadowRadius: 24,
         elevation: 2,
     },
     sectionTitle: {
-        fontSize: 20,
-        fontWeight: '700',
-        color: '#1e293b',
-        marginBottom: 20,
+        fontSize: 22,
+        fontWeight: '800',
+        color: '#0f172a',
+        marginBottom: 24,
+        letterSpacing: -0.5,
     },
     faqItem: {
-        paddingVertical: 8,
+        paddingVertical: 12,
     },
     faqSeparator: {
         height: 1,
-        backgroundColor: '#e2e8f0',
+        backgroundColor: '#f1f5f9',
         marginVertical: 16,
     },
     question: {
-        fontSize: 17,
-        fontWeight: '600',
+        fontSize: 18,
+        fontWeight: '700',
         color: '#0f172a',
         marginBottom: 8,
     },
     answer: {
         fontSize: 16,
-        color: '#475569',
+        color: '#64748B', // Slate 500
         lineHeight: 26,
     },
     text: {
         fontSize: 16,
-        color: '#475569',
+        color: '#64748B',
         lineHeight: 26,
         marginBottom: 24,
     },
@@ -197,16 +198,16 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#0000a3',
+        backgroundColor: '#1E3A8A', // Navy 900
         borderRadius: 12,
         paddingVertical: 16,
         paddingHorizontal: 24,
         gap: 12,
-        shadowColor: "#0000a3",
-        shadowOffset: { width: 0, height: 4 },
-        shadowOpacity: 0.2,
-        shadowRadius: 8,
-        elevation: 4,
+        shadowColor: "#1E3A8A",
+        shadowOffset: { width: 0, height: 8 },
+        shadowOpacity: 0.3,
+        shadowRadius: 16,
+        elevation: 6,
     },
     contactButtonText: {
         fontSize: 16,
@@ -220,7 +221,7 @@ const styles = StyleSheet.create({
         marginTop: 12,
         marginBottom: 40,
     },
-    // Dark mode styles
+    // Dark mode styles (Kept simple for now, can be expanded)
     darkContainer: {
         backgroundColor: '#0f172a',
     },
@@ -238,6 +239,6 @@ const styles = StyleSheet.create({
         color: '#64748b',
     },
     darkContactButton: {
-        backgroundColor: '#3b82f6', // Brighter blue for dark mode
+        backgroundColor: '#3b82f6',
     },
 });
