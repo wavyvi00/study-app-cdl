@@ -227,9 +227,7 @@ function WebLandingPage() {
                         {/* Support */}
                         <View style={styles.footerCol}>
                             <Text style={styles.footerHeading}>{t('footerSupport')}</Text>
-                            <TouchableOpacity style={styles.footerLinkWrapper}>
-                                <Text style={styles.footerLink}>{t('footerHelpCenter')}</Text>
-                            </TouchableOpacity>
+                            <Link href="/help" style={styles.footerLink}>{t('footerHelpCenter')}</Link>
                             <TouchableOpacity style={styles.footerLinkWrapper}>
                                 <Text style={styles.footerLink}>{t('footerContactSupport')}</Text>
                             </TouchableOpacity>
