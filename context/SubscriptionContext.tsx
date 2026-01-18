@@ -16,7 +16,7 @@ import { useAuth } from './AuthContext';
 import { supabase } from '../lib/supabase';
 
 // Subscription status types
-export type SubscriptionTier = 'free' | 'monthly' | 'yearly' | 'lifetime';
+export type SubscriptionTier = 'free' | 'lifetime'; // 'lifetime' represents the one-time pass
 
 interface SubscriptionState {
     // Trial tracking
@@ -246,7 +246,7 @@ export function SubscriptionProvider({ children }: SubscriptionProviderProps) {
                 isTrialActive,
                 questionsRemaining,
                 isPro,
-                subscriptionTier: isPro ? 'yearly' : 'free',
+                subscriptionTier: isPro ? 'lifetime' : 'free',
                 expirationDate,
                 offerings: offerings || prev.offerings,
                 isLoading: false,

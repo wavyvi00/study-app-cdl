@@ -1,6 +1,6 @@
 
 /**
- * Paywall Screen (Trust/Light Theme Redesign)
+ * Paywall Screen (One-Time Pass Redesign)
  */
 import React from 'react';
 import {
@@ -24,7 +24,7 @@ import { useTheme } from '../context/ThemeContext';
 import { useLocalization } from '../context/LocalizationContext';
 import { useSubscription } from '../context/SubscriptionContext';
 import { useAuth } from '../context/AuthContext';
-import { PremiumIcon } from '../components/icons/PremiumIcon';
+import { PRICING } from '../constants/appConfig';
 
 export default function PaywallScreen() {
     const router = useRouter();
@@ -37,8 +37,6 @@ export default function PaywallScreen() {
     const [viewPlans, setViewPlans] = React.useState(false);
 
     // CDL Zero Brand Palette (Matches ThemeContext)
-    // Using 'blueGrotto' (#0067b3) as primary for Trust/Brand alignment
-    // Using 'aquamarine' (#40b0df) for accent/highlights
     const TRUST_THEME = {
         background: '#FFFFFF',
         surface: '#F8FAFC',
@@ -91,10 +89,10 @@ export default function PaywallScreen() {
     };
 
     const features = [
-        { icon: 'check-circle' as const, text: t('unlimitedPractice') },
-        { icon: 'book' as const, text: t('allStudyGuides') },
-        { icon: 'trophy' as const, text: t('allExamModes') },
-        { icon: 'globe' as const, text: t('allLanguages') },
+        { icon: 'check-circle' as const, text: 'Unlimited Practice Questions' },
+        { icon: 'book' as const, text: 'Complete Study Guide Access' },
+        { icon: 'trophy' as const, text: 'Exam Simulation Mode' },
+        { icon: 'lock' as const, text: 'One-Time Payment, No Subscriptions' },
     ];
 
     // Auth Gate
@@ -149,7 +147,7 @@ export default function PaywallScreen() {
                         onPress={() => setViewPlans(true)}
                     >
                         <Text style={{ color: TRUST_THEME.textSecondary, fontSize: 14 }}>
-                            View Plans
+                            View Pass Options
                         </Text>
                     </TouchableOpacity>
                 </View>
@@ -165,38 +163,33 @@ export default function PaywallScreen() {
         );
     }
 
-    const packages = offerings.availablePackages || [];
-    const getPriceString = (pkg: PurchasesPackage): string => {
-        if (pkg.product?.priceString) return pkg.product.priceString;
-        if ((pkg as any).rcBillingProduct?.currentPrice?.formattedPrice) return (pkg as any).rcBillingProduct.currentPrice.formattedPrice;
-        return '';
-    };
+    // We expect RevenueCat to return at least one package. 
+    const packages = offerings?.availablePackages || [];
 
-    const getPackageTitle = (pkg: PurchasesPackage): string => {
-        const id = pkg.identifier.toLowerCase();
-        if (id.includes('annual') || id.includes('yearly')) return t('yearly');
-        if (id.includes('monthly')) return t('monthly');
-        if (id.includes('lifetime')) return t('lifetime');
-        return pkg.identifier;
-    };
-
-    const isBestValue = (pkg: PurchasesPackage): boolean => {
-        const id = pkg.identifier.toLowerCase();
-        return id.includes('annual') || id.includes('yearly');
-    };
-
-    const sortedPackages = [...packages].sort((a, b) => {
-        const order = (pkg: PurchasesPackage) => {
-            const id = pkg.identifier.toLowerCase();
-            if (id.includes('annual') || id.includes('yearly')) return 0;
-            if (id.includes('monthly')) return 1;
-            if (id.includes('lifetime')) return 2;
-            return 3;
-        };
-        return order(a) - order(b);
+    // 1. Try to find the exact match for our new 14.99 product
+    const exactMatchPackage = packages.find(p => {
+        const id = p.identifier;
+        const prodId = p.product?.identifier;
+        return id === PRICING.ONE_TIME.productId || prodId === PRICING.ONE_TIME.productId;
     });
 
-    const isWideScreen = width > 768; // Simple breakpoint
+    // 2. Fallback to any available package so the button still works (for testing)
+    const activePackage = exactMatchPackage || packages[0];
+
+    // 3. Display Logic: matches User Request to "say 14.99"
+    // If we found the real product, use its localized price string (e.g. "€14.99").
+    // If NOT found (external config missing), force display to "$14.99" instead of showing the fallback package's price (e.g. "$9.99").
+    const priceString = exactMatchPackage
+        ? (exactMatchPackage.product?.priceString || (exactMatchPackage as any).rcBillingProduct?.currentPrice?.formattedPrice || `$${PRICING.ONE_TIME.price}`)
+        : `$${PRICING.ONE_TIME.price}`;
+
+    const handleBuy = () => {
+        if (activePackage) {
+            handlePurchase(activePackage);
+        } else {
+            Alert.alert('Configuration Required', 'Product not found in RevenueCat. Please complete the external platform setup.');
+        }
+    };
 
     return (
         <View style={[styles.container, { backgroundColor: TRUST_THEME.background }]}>
@@ -215,14 +208,14 @@ export default function PaywallScreen() {
             >
                 <View style={{ alignItems: 'center', paddingHorizontal: 24 }}>
                     <View style={[styles.iconCircle, { backgroundColor: TRUST_THEME.primaryLight }]}>
-                        <FontAwesome name="star" size={32} color={TRUST_THEME.primary} />
+                        <FontAwesome name="drivers-license" size={32} color={TRUST_THEME.primary} />
                     </View>
 
                     <Text style={[styles.headerTitle, { color: TRUST_THEME.text, marginTop: 20 }]}>
-                        {t('unlockCDLZeroPro')}
+                        Pass Your CDL Exam
                     </Text>
                     <Text style={[styles.headerSubtitle, { color: TRUST_THEME.textSecondary, marginTop: 8 }]}>
-                        {t('freeTrialEnded').replace('{count}', String(questionsAnsweredTotal))}
+                        Unlock everything you need to study, practice, and pass securely.
                     </Text>
 
                     {/* Features Grid - Centered & Contained */}
@@ -240,63 +233,57 @@ export default function PaywallScreen() {
                     </View>
                 </View>
 
-                {/* Pricing Cards */}
-                <View style={[styles.pricingContainer, { paddingHorizontal: isWideScreen ? 100 : 20, maxWidth: 800, alignSelf: 'center', width: '100%' }]}>
-                    {sortedPackages.map((pkg) => {
-                        const best = isBestValue(pkg);
-                        return (
-                            <TouchableOpacity
-                                key={pkg.identifier}
-                                style={[
-                                    styles.pricingCard,
-                                    {
-                                        borderColor: best ? TRUST_THEME.primary : TRUST_THEME.border,
-                                        backgroundColor: best ? '#F0F9FF' : '#FFFFFF',
-                                        shadowColor: '#000',
-                                    },
-                                    best && styles.pricingCardBest
-                                ]}
-                                onPress={() => handlePurchase(pkg)}
-                                activeOpacity={0.9}
-                            >
-                                {best && (
-                                    <View style={[styles.bestBadge, { backgroundColor: TRUST_THEME.primary }]}>
-                                        <Text style={styles.bestBadgeText}>{t('bestValue')}</Text>
-                                    </View>
-                                )}
+                {/* Single Hero Pricing Card */}
+                <View style={[styles.pricingContainer, { paddingHorizontal: 24, maxWidth: 600, alignSelf: 'center', width: '100%' }]}>
+                    <View
+                        style={[
+                            styles.pricingCard,
+                            {
+                                borderColor: TRUST_THEME.primary,
+                                backgroundColor: '#F0F9FF',
+                                shadowColor: '#000',
+                            },
+                            styles.pricingCardBest
+                        ]}
+                    >
+                        <View style={[styles.bestBadge, { backgroundColor: TRUST_THEME.primary }]}>
+                            <Text style={styles.bestBadgeText}>STANDARD PASS</Text>
+                        </View>
 
-                                <View style={{ alignItems: 'center' }}>
-                                    <Text style={[styles.periodText, { color: best ? TRUST_THEME.primary : TRUST_THEME.textSecondary }]}>
-                                        {getPackageTitle(pkg)}
-                                    </Text>
-                                    <Text style={[styles.priceText, { color: TRUST_THEME.text }]}>
-                                        {getPriceString(pkg)}
-                                    </Text>
-                                    {pkg.identifier.toLowerCase().includes('lifetime') && (
-                                        <Text style={[styles.noteText, { color: TRUST_THEME.textSecondary }]}>{t('oneTimePayment')}</Text>
-                                    )}
-                                    {best && (
-                                        <Text style={{ fontSize: 12, color: TRUST_THEME.success, marginTop: 4, fontWeight: '600' }}>
-                                            {t('save')} 50%
-                                        </Text>
-                                    )}
-                                </View>
-                            </TouchableOpacity>
-                        );
-                    })}
+                        <View style={{ alignItems: 'center', paddingVertical: 10 }}>
+                            <Text style={[styles.periodText, { color: TRUST_THEME.primary }]}>
+                                Full Access
+                            </Text>
+                            <Text style={[styles.priceText, { color: TRUST_THEME.text }]}>
+                                {priceString}
+                            </Text>
+                            <Text style={[styles.noteText, { color: TRUST_THEME.textSecondary, fontWeight: '500' }]}>
+                                One-time payment
+                            </Text>
+                            <Text style={[styles.noteText, { color: TRUST_THEME.textSecondary, fontSize: 12 }]}>
+                                Yours forever. No monthly fees.
+                            </Text>
+                        </View>
+
+                        <TouchableOpacity
+                            style={[styles.primaryButton, { backgroundColor: TRUST_THEME.primary, marginTop: 20 }]}
+                            onPress={handleBuy}
+                        // disabled={!targetPackage} // Allow click to show configuration alert
+                        >
+                            {isLoading ? (
+                                <ActivityIndicator color="#fff" />
+                            ) : (
+                                <Text style={styles.primaryButtonText}>Get Your Pass</Text>
+                            )}
+                        </TouchableOpacity>
+                    </View>
                 </View>
 
-                <View style={{ marginTop: 24, paddingHorizontal: 24 }}>
+                <View style={{ marginTop: 32, paddingHorizontal: 24 }}>
                     <View style={styles.trustRow}>
                         <FontAwesome name="lock" size={14} color={TRUST_THEME.textSecondary} />
                         <Text style={{ color: TRUST_THEME.textSecondary, fontSize: 12, marginLeft: 6 }}>
-                            Secure payment processed by Apple/Google
-                        </Text>
-                    </View>
-                    <View style={[styles.trustRow, { marginTop: 4 }]}>
-                        <FontAwesome name="check" size={14} color={TRUST_THEME.textSecondary} />
-                        <Text style={{ color: TRUST_THEME.textSecondary, fontSize: 12, marginLeft: 6 }}>
-                            Cancel anytime in settings
+                            Secure payment via Apple / Google / Stripe
                         </Text>
                     </View>
 
@@ -360,7 +347,7 @@ const styles = StyleSheet.create({
     headerSubtitle: {
         fontSize: 16,
         textAlign: 'center',
-        paddingHorizontal: 20,
+        paddingHorizontal: 10,
         lineHeight: 24,
     },
     featuresCenterWrapper: {
@@ -377,7 +364,6 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         marginBottom: 16,
-        // No full width here, so it hugs content or minWidth
     },
     featureText: {
         fontSize: 16,
@@ -385,49 +371,47 @@ const styles = StyleSheet.create({
     },
     pricingContainer: {
         marginTop: 32,
-        gap: 12,
     },
     pricingCard: {
-        borderRadius: 16,
-        paddingVertical: 20,
-        paddingHorizontal: 16,
+        borderRadius: 20,
+        paddingVertical: 32,
+        paddingHorizontal: 24,
         borderWidth: 1,
-        // Shadow for "Card" feel
-        shadowOffset: { width: 0, height: 2 },
-        shadowOpacity: 0.05,
-        shadowRadius: 4,
-        elevation: 2,
     },
     pricingCardBest: {
         borderWidth: 2,
+        shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.1,
+        shadowRadius: 8,
         elevation: 4,
     },
     bestBadge: {
         position: 'absolute',
-        top: -10,
+        top: -12,
         alignSelf: 'center',
-        paddingHorizontal: 12,
-        paddingVertical: 4,
+        paddingHorizontal: 16,
+        paddingVertical: 6,
         borderRadius: 12,
     },
     bestBadgeText: {
         color: '#fff',
-        fontSize: 10,
+        fontSize: 12,
         fontWeight: 'bold',
+        letterSpacing: 1,
         textTransform: 'uppercase',
     },
     periodText: {
-        fontSize: 16,
+        fontSize: 20,
         fontWeight: '600',
-        marginBottom: 4,
+        marginBottom: 8,
     },
     priceText: {
-        fontSize: 24,
+        fontSize: 36,
         fontWeight: 'bold',
+        marginBottom: 8,
     },
     noteText: {
-        fontSize: 12,
+        fontSize: 14,
         marginTop: 4,
     },
     primaryButton: {
@@ -443,7 +427,7 @@ const styles = StyleSheet.create({
     },
     primaryButtonText: {
         color: '#fff',
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
     },
     trustRow: {

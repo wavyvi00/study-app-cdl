@@ -1,21 +1,10 @@
 export const FREE_TRIAL_QUESTION_LIMIT = 50;
 
 export const PRICING = {
-    MONTHLY: {
-        price: 9.99,
-        period: 'month',
-        productId: '$rc_monthly', // RevenueCat standard package identifier
-    },
-    YEARLY: {
-        price: 29.99,
-        period: 'year',
-        productId: '$rc_annual', // RevenueCat standard package identifier
-        savingsPercent: 75,
-    },
-    LIFETIME: {
-        price: 49.99,
+    ONE_TIME: {
+        price: 14.99,
         period: 'lifetime',
-        productId: '$rc_lifetime', // RevenueCat standard package identifier
+        productId: 'cdl_1499_1m_pass', // Single consumable/non-renewing product
     },
 };
 
