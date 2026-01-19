@@ -52,6 +52,19 @@ function AppContent({ fontsLoaded }: { fontsLoaded: boolean }) {
         }
     }, [fontsLoaded]);
 
+    // Web: Detect Supabase auth tokens in URL hash and redirect to reset-password
+    useEffect(() => {
+        if (Platform.OS === 'web' && typeof window !== 'undefined') {
+            const hash = window.location.hash;
+            // Check for password recovery token (e.g., #access_token=...&type=recovery)
+            if (hash && hash.includes('type=recovery')) {
+                // Supabase will handle the token automatically, just navigate to reset page
+                // Keep the hash so Supabase can read the token
+                window.location.href = '/auth/reset-password' + hash;
+            }
+        }
+    }, []);
+
     if (!fontsLoaded) {
         return null;
     }

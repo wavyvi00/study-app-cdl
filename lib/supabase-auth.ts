@@ -103,9 +103,9 @@ export const resetPassword = async (email: string): Promise<{ error: string | nu
     }
 
     try {
-        // Use Expo Linking to generate correct deep link for native/web
-        // This ensures the link opens the app at /auth/reset-password
-        const redirectTo = Linking.createURL('/auth/reset-password');
+        // Use web app URL for password reset (most reliable cross-platform)
+        // This ensures the reset link works regardless of which platform (iOS/Android/Web) sent it
+        const redirectTo = 'https://study-app-cdl.vercel.app/auth/reset-password';
 
         const { error } = await supabase.auth.resetPasswordForEmail(email, {
             redirectTo,
