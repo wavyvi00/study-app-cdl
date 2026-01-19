@@ -305,7 +305,7 @@ export default function TopicsScreen() {
                 )}
 
                 <StatsOverview
-                    stats={selectedTopic ? (stats.topicStats[selectedTopic.id] || INITIAL_TOPIC_STATS) : stats}
+                    stats={selectedTopic ? (stats.topicStats?.[selectedTopic.id] || INITIAL_TOPIC_STATS) : stats}
                     title={selectedTopic ? `${selectedTopic.title} - ${t('yourProgress')}` : t('yourProgress')}
                 />
 

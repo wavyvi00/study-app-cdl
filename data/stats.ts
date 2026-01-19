@@ -69,9 +69,13 @@ export const loadStats = async (userId?: string | null): Promise<UserStats> => {
         const jsonValue = await AsyncStorage.getItem(key);
         if (jsonValue != null) {
             const parsed = JSON.parse(jsonValue);
-            // Ensure unlockedAchievements exists for older data
+            // Ensure required fields exist for older data
             if (!parsed.unlockedAchievements) {
                 parsed.unlockedAchievements = [];
+            }
+            // Ensure topicStats is always an object (fixes crash for older data)
+            if (!parsed.topicStats || typeof parsed.topicStats !== 'object') {
+                parsed.topicStats = {};
             }
             return parsed;
         }

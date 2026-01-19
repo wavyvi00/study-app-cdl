@@ -4,7 +4,7 @@ A comprehensive, cross-platform mobile application designed to help aspiring tru
 
 ## Features
 
-- **Extensive Question Bank**: Over 600 verified questions covering 8 major CDL topics:
+- **Extensive Question Bank**: 600+ verified questions covering 8 major CDL topics:
   - General Knowledge
   - Air Brakes
   - Combination Vehicles
@@ -15,139 +15,121 @@ A comprehensive, cross-platform mobile application designed to help aspiring tru
   - School Bus
 
 - **Two Study Modes**:
-  - **Practice Mode**: Learn at your own pace with immediate feedback and detailed explanations for every question.
-  - **Exam Mode**: Simulate real test conditions with randomized questions and no hints until the end.
+  - **Practice Mode**: Learn at your own pace with immediate feedback and detailed explanations.
+  - **Exam Mode**: Simulate real test conditions with randomized questions and timed sessions.
 
-- **Cloud & Local Sync**: Robust data synchronization powered by Supabase.
-  - **Guest Mode**: Start immediately without an account; progress is saved locally.
-  - **Account Sync**: Sign up to back up your stats, achievements, and profile to the cloud.
-  - **Smart Merging**: Seamlessly merges guest progress when you sign in.
+- **One-Time Purchase**: $14.99 unlocks all content forever. No subscriptions or recurring fees.
 
-- **Profile Wizard**: Personalize your learning experience.
-  - Choose a **username**.
-  - Select an **avatar** (Truck, Bus, etc.).
-  - Pick your **CDL Class** (Class A or Class B) for tailored recommendations.
+- **Free Tier**: Try before you buy with 50 free questions.
 
-- **Progress Tracking**: Automatically tracks your stats, including average score, total questions answered, study time, exam attempts, and daily streaks.
+- **Cloud & Local Sync**: Supabase-powered data synchronization.
+  - **Guest Mode**: Start immediately; progress saved locally.
+  - **Account Sync**: Sign up to back up stats, achievements, and profile.
+  - **Smart Merging**: Seamlessly merges guest progress when signing in.
 
+- **Profile Wizard**: Personalize your experience with username, avatar, and CDL Class selection.
 
-- **Dark Mode**: Seamlessly switch between light and dark themes for comfortable studying day or night.
+- **Progress Tracking**: Stats including average score, questions answered, study time, and streaks.
 
-- **Multi-Language Support**: Available in English, Spanish, and Russian.
+- **Dark Mode**: Light and dark themes for comfortable studying.
+
+- **Multi-Language**: English, Spanish, and Russian.
 
 ## Tech Stack
 
 | Category | Technology |
-|----------|-----------|
+|----------|------------|
 | Framework | Expo (React Native) |
 | Language | TypeScript |
 | Navigation | Expo Router |
 | Authentication | Supabase Auth |
-| Subscriptions | RevenueCat |
-| Payments | Apple IAP, Google Play, Stripe |
-| Storage | AsyncStorage |
-| Database | Supabase PostgreSQL |
+| Payments | RevenueCat (iOS/Android) + Stripe (Web) |
+| Storage | AsyncStorage (local) + Supabase PostgreSQL (cloud) |
 
 ## Architecture
 
+See [ARCHITECTURE.md](./ARCHITECTURE.md) for detailed system diagrams.
+
 ```
-                    ┌─────────────────────────────────────┐
-                    │         Supabase Auth               │
-                    │   (User Identity - UUID)            │
-                    └──────────────┬──────────────────────┘
-                                   │
-                    ┌──────────────▼──────────────────────┐
-                    │         RevenueCat                  │
-                    │   (Subscription Management)         │
-                    └──────────────┬──────────────────────┘
-                                   │ (Webhook)
-                                   ▼
-                    ┌─────────────────────────────────────┐
-                    │      Supabase Edge Function         │
-                    │       "revenuecat-webhook"          │
-                    └──────────────┬──────────────────────┘
-                                   │ (Updates Profile)
-                                   ▼
-                    ┌─────────────────────────────────────┐
-                    │      Supabase Database              │
-                    │   - profiles (is_pro flag)          │
-                    │   - questions (RLS protected)       │
-                    └─────────────────────────────────────┘
+┌─────────────────┐     ┌─────────────────┐     ┌─────────────────┐
+│   iOS App       │     │   Android App   │     │   Web App       │
+│  (Apple IAP)    │     │  (Google Play)  │     │   (Stripe)      │
+└────────┬────────┘     └────────┬────────┘     └────────┬────────┘
+         │                       │                       │
+         └───────────────────────┼───────────────────────┘
+                                 │
+                    ┌────────────▼────────────┐
+                    │      RevenueCat         │
+                    │  (Unified Entitlements) │
+                    └────────────┬────────────┘
+                                 │ webhook
+                    ┌────────────▼────────────┐
+                    │   Supabase Edge Func    │
+                    │  (revenuecat-webhook)   │
+                    └────────────┬────────────┘
+                                 │
+                    ┌────────────▼────────────┐
+                    │   Supabase Database     │
+                    │  • profiles (is_pro)    │
+                    │  • questions (RLS)      │
+                    │  • Auth (users)         │
+                    └─────────────────────────┘
 ```
 
-**Key Design Principles (Server-First):**
-- **Identity**: Supabase Auth provides the User UUID.
-- **Entitlements**: RevenueCat is the source of truth for payments.
-- **Synchronization**: RevenueCat pushes status updates via **Edge Function** to the Supabase Database.
-- **Access Control**: RLS policies on the `questions` table check the `is_pro` flag in the database to grant/deny access.
+**Key Principles:**
+- **Identity**: Supabase Auth provides user UUID
+- **Entitlements**: RevenueCat is source of truth for purchases
+- **Sync**: RevenueCat webhooks update Supabase `is_pro` flag
+- **Access Control**: RLS policies gate premium content
 
 ## Getting Started
 
 ### Prerequisites
-
-- Node.js (LTS version recommended)
+- Node.js (LTS)
 - npm or yarn
 
 ### Installation
-
 ```bash
 git clone <repository-url>
 cd study-app-cdl
 npm install
 ```
 
-### Running the App
-
+### Running Locally
 ```bash
 npx expo start
 ```
-
-- **iOS Simulator**: Press `i` (requires Xcode on macOS)
+- **iOS Simulator**: Press `i` (requires Xcode)
 - **Android Emulator**: Press `a` (requires Android Studio)
 - **Web**: Press `w`
-- **Physical Device**: Download "Expo Go" app and scan the QR code
 
-## Environment Setup
+## Environment Variables
 
-Create a `.env` file in the root directory. All environment variables are required for full functionality:
+Create `.env` in root (optional - credentials are hardcoded for reliability):
 
 ```env
-# Supabase (Required)
 EXPO_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-EXPO_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
-
-# RevenueCat (Required for subscriptions)
-EXPO_PUBLIC_REVENUECAT_API_KEY=appl_your_revenuecat_key
-EXPO_PUBLIC_REVENUECAT_WEB_API_KEY=rcb_your_web_key
+EXPO_PUBLIC_SUPABASE_ANON_KEY=your_anon_key
+EXPO_PUBLIC_REVENUECAT_API_KEY=appl_your_key
+EXPO_PUBLIC_REVENUECAT_WEB_API_KEY=rcb_your_key
 ```
 
-> **Note**: The app will run without these variables but authentication and subscription features will be disabled.
->
-> ### Backend Security (Server-First)
->
-> This project uses a "Server-First" security model to prevent client-side tampering of entitlements and trial limits.
->
-> 1.  **Row Level Security (RLS)**: The `questions` table is protected. Only users with `is_pro = true` in their profile can fetch all questions. Free users are restricted to `is_free = true` questions.
-> 2.  **Edge Functions**: A Supabase Edge Function (`revenuecat-webhook`) handles all subscription status updates.
->     *   **Secret Required**: You must set `REVENUECAT_WEBHOOK_SECRET` in your Supabase Project Settings (Edge Functions > Secrets).
->     *   **Webhook URL**: Configure RevenueCat to send webhooks to `https://<project-ref>.supabase.co/functions/v1/revenuecat-webhook` with the header `Authorization: Bearer <your-secret>`.
-> 3.  **Secure RPC**: Trial question counters are incremented via a secure PostgreSQL function `increment_questions_answered`, not client-side updates.
-
+> **Note**: Supabase and RevenueCat public keys are hardcoded in `constants/SupabaseCredentials.ts` and `lib/revenuecat.ts` for production reliability.
 
 ## Building for Production
 
-This project uses **EAS Build**.
-
+### iOS (Local Build)
 ```bash
-# Install EAS CLI
-npm install -g eas-cli
+eas build --platform ios --profile production --local --non-interactive
+```
 
-# Login to Expo
-eas login
+### Android
+```bash
+eas build --platform android --profile production
+```
 
-# Build for platforms
-eas build --platform android
-eas build --platform ios
+### Web
+```bash
 npm run build:web
 ```
 
@@ -155,78 +137,56 @@ npm run build:web
 
 ```
 study-app-cdl/
-├── app/                    # Screens & Navigation (Expo Router)
-│   ├── _layout.tsx         # Root layout with providers
-│   ├── tabs/               # Bottom tab screens
-│   ├── auth/               # Auth screens (all platforms)
-│   ├── quiz.tsx            # Quiz gameplay
-│   ├── paywall.tsx         # Subscription paywall
-│   └── onboarding.tsx      # First-time flow
-├── components/             # Reusable UI components
-├── context/                # React Context providers
-│   ├── AuthContext.tsx     # Cross-platform auth
-│   ├── SubscriptionContext.tsx  # RevenueCat state
-│   ├── ThemeContext.tsx    # Light/Dark mode
-│   └── LocalizationContext.tsx  # i18n
-├── lib/                    # External service integrations
-│   ├── supabase.ts         # Supabase client
-│   ├── revenuecat.ts       # RevenueCat iOS/Android
-│   └── revenuecat-web.ts   # RevenueCat Web + Stripe
-└── data/                   # Questions & translations
+├── app/                      # Screens (Expo Router)
+│   ├── _layout.tsx           # Root layout with providers
+│   ├── tabs/                 # Bottom tab screens
+│   ├── auth/                 # Auth screens
+│   ├── quiz.tsx              # Quiz gameplay
+│   ├── paywall.tsx           # Purchase screen
+│   └── onboarding.tsx        # First-time flow
+├── components/               # Reusable UI components
+├── context/                  # React Context providers
+│   ├── AuthContext.tsx       # Authentication state
+│   ├── SubscriptionContext.tsx   # Purchase/entitlement state
+│   ├── QuestionsContext.tsx  # Question data
+│   ├── ThemeContext.tsx      # Light/Dark mode
+│   └── LocalizationContext.tsx   # i18n
+├── lib/                      # External integrations
+│   ├── supabase.ts           # Supabase client
+│   ├── revenuecat.ts         # RevenueCat iOS/Android
+│   └── revenuecat-web.ts     # RevenueCat Web + Stripe
+├── data/                     # Questions, stats, translations
+├── constants/                # App config, hardcoded credentials
+└── utils/                    # Helper functions
 ```
 
-## Subscription System
+## Monetization
 
-### How It Works
-
-1. **Authentication Required**: Users must create an account before purchasing
-2. **Unified Identity**: Supabase user UUID is used as RevenueCat appUserID
-3. **Platform-Specific Payments**:
-   - iOS: Apple In-App Purchase
-   - Android: Google Play Billing
-   - Web: Stripe via RevenueCat
-4. **Entitlement Sync**: Login on any platform fetches entitlements from RevenueCat
-5. **Restore Purchases**: Syncs with app stores to recover owned purchases
+### Pricing
+- **Free Tier**: 50 questions, limited topics
+- **Pro (One-Time)**: $14.99 unlocks everything forever
 
 ### Entitlement
+Single entitlement: `CDL ZERO Pro`
 
-The app uses a single entitlement: `CDL ZERO Pro`
+### Platform Payments
+| Platform | Payment Method |
+|----------|----------------|
+| iOS | Apple In-App Purchase |
+| Android | Google Play Billing |
+| Web | Stripe via RevenueCat |
 
-Access is granted when `customerInfo.entitlements.active["CDL ZERO Pro"]` exists.
-
-## App Store Submission
-
-### Required Links
-
-For iOS App Store submission, include these links in your App Store description:
+## App Store Links
 
 - **Privacy Policy**: https://sites.google.com/view/cdlzeropermittest2026/home
 - **Terms of Use**: https://sites.google.com/view/cdlzerotos/home
 
-These links are also displayed in the in-app paywall.
-
-### Subscription Requirements
-
-The paywall includes all Apple-required subscription information:
-- Subscription title and duration
-- Price (fetched from RevenueCat/App Store)
-- Auto-renewal terms
-- Links to Privacy Policy and Terms of Use
-
 ## Localization
 
-Supports 3 languages with custom translation scripts:
+Supports `en` (English), `es` (Spanish), `ru` (Russian).
 
-```bash
-# Translate using OpenAI
-OPENAI_API_KEY=your_key node scripts/translate-openai.js --lang=es --source=questions_hazmat.ts
-
-# Translate using local LLM (Ollama)
-node scripts/translate-local.js --lang=ru --source=questions_hazmat.ts
-```
-
-Supported: `en` (English), `es` (Spanish), `ru` (Russian)
+Translation scripts available in `/scripts/`.
 
 ## License
 
-This project is proprietary and intended for educational purposes.
+Proprietary - intended for educational purposes.

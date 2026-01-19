@@ -44,10 +44,8 @@ export const initRevenueCat = async (): Promise<void> => {
         return;
     }
 
-    const apiKey = Platform.select({
-        ios: KEYS.ios,
-        android: KEYS.android,
-    });
+    // HARDCODED FOR PRODUCTION DEBUGGING
+    const apiKey = 'appl_XwmESjMGGitTsGiLHyFtksOFufO'; // Safe to be public
 
     if (!apiKey) {
         console.error('[RevenueCat] API key not found for this platform');
@@ -57,7 +55,11 @@ export const initRevenueCat = async (): Promise<void> => {
     try {
         await Purchases.configure({ apiKey });
         isConfigured = true;
-        if (__DEV__) console.log('[RevenueCat] SDK configured successfully');
+
+        // Force log level to Verbose for debugging
+        await Purchases.setLogLevel(Purchases.LOG_LEVEL.VERBOSE);
+
+        console.log('[RevenueCat] SDK configured successfully (HARDCODED KEY)');
     } catch (error) {
         console.error('[RevenueCat] Failed to configure:', error);
     }

@@ -1,14 +1,16 @@
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
+import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../constants/SupabaseCredentials';
+
 // Safely get environment variables with fallbacks to prevent crashes
-const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL || '';
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY || '';
+const supabaseUrl = SUPABASE_URL;
+const supabaseAnonKey = SUPABASE_ANON_KEY;
 
 // Validate config before creating client to prevent crashes
 const isValidConfig = Boolean(supabaseUrl && supabaseAnonKey && supabaseUrl.length > 0 && supabaseAnonKey.length > 0);
 
 if (!isValidConfig) {
-    console.warn('[Supabase] Credentials missing from environment variables - some features will be disabled');
+    console.warn('[Supabase] Credentials missing - check constants/SupabaseCredentials.ts');
 }
 
 // Create client only if valid config, otherwise null
