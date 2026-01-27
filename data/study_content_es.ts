@@ -831,9 +831,943 @@ export const GeneralKnowledgeStudyGuide_ES: StudyGuide = {
         }
     ]
 };
-export const DoublesTriplesStudyGuide_ES = {};
-export const TankVehiclesStudyGuide_ES = {};
-export const SchoolBusStudyGuide_ES = {};
+export const PassengerStudyGuide_ES: StudyGuide = {
+    topicId: 'passenger',
+    sections: [
+        {
+            id: 'pass-inspection',
+            title: 'Inspección del Vehículo',
+            cdlReference: 'Manual CDL §4.1',
+            content: [
+                "La seguridad de los vehículos de pasajeros requiere inspeccionar el interior y el exterior. En el interior, verifique: Pasamanos y barandillas, revestimiento del piso, dispositivos de señalización y salidas de emergencia.",
+                "Salidas de emergencia: Deben estar claramente marcadas y funcionar correctamente. Las ventanas deben manejarse con facilidad. Las escotillas del techo (si están equipadas) deben cerrarse herméticamente.",
+                "Asientos: Deben ser seguros para los pasajeros. Sujetados firmemente al piso.",
+                "Puertas de acceso: Verifique que las puertas de entrada funcionen suavemente y cierren de manera segura."
+            ],
+            keyPoints: [
+                "Verifique pasamanos, barandillas y revestimiento del piso.",
+                "Las salidas de emergencia deben representar un camino despejado y funcionar correctamente.",
+                "Los asientos deben estar firmemente sujetos."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'pass-q1',
+                    text: "¿Qué elementos interiores deben revisarse durante una inspección del vehículo?",
+                    options: [
+                        "Radio y aire acondicionado",
+                        "Pasamanos, barandillas, revestimiento del piso, dispositivos de señalización y salidas de emergencia",
+                        "Portavasos y asientos reclinables",
+                        "GPS y cámaras"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Debe verificar los pasamanos, las barandillas, el revestimiento del piso, los dispositivos de señalización y las salidas de emergencia por seguridad."
+                }
+            ]
+        },
+        {
+            id: 'pass-loading',
+            title: 'Carga y Descarga',
+            cdlReference: 'Manual CDL §4.2',
+            content: [
+                "No permita que los pasajeros dejen equipaje en el pasillo o cerca del conductor. El equipaje y la carga deben estar asegurados para que no puedan caerse ni moverse.",
+                "Materiales peligrosos: La mayoría de los materiales peligrosos no se pueden transportar en un autobús. Las excepciones incluyen municiones de armas pequeñas (etiquetadas ORM-D), suministros hospitalarios de emergencia y pequeñas cantidades de medicamentos.",
+                "Materiales peligrosos prohibidos: División 2.3 (Gas venenoso), líquido Clase 6 (Venenos), gas lacrimógeno, explosivos (Clase 1) y más de 100 libras de sólidos Clase 6.",
+                "Línea de pasajeros de pie: Ningún pasajero puede estar de pie delante de la parte trasera del asiento del conductor. Los autobuses diseñados para permitir estar de pie deben tener una línea de 2 pulgadas en el piso. Los pasajeros deben permanecer detrás de ella."
+            ],
+            keyPoints: [
+                "Los pasillos deben mantenerse libres de equipaje.",
+                "La mayoría de los materiales peligrosos están prohibidos.",
+                "Los pasajeros deben pararse detrás de la línea de pasajeros de pie (línea de 2 pulgadas)."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'pass-q2',
+                    text: "¿Dónde deben pararse los pasajeros mientras el autobús está en movimiento?",
+                    options: [
+                        "Donde quieran",
+                        "Detrás de la línea de pasajeros de pie",
+                        "Junto al conductor",
+                        "En los escalones"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Los pasajeros deben permanecer detrás de la línea de pasajeros de pie (una línea de 2 pulgadas en el piso) por seguridad/visibilidad."
+                }
+            ]
+        },
+        {
+            id: 'pass-road',
+            title: 'En el Camino',
+            cdlReference: 'Manual CDL §4.3',
+            content: [
+                "Supervisión de pasajeros: Usted es responsable de la seguridad de los pasajeros. No permita que los pasajeros lo distraigan. Si un pasajero está ebrio o es perturbador, descárguelo en el próximo lugar seguro y bien iluminado.",
+                "Cruces de ferrocarril: Detenga su autobús entre 15 y 50 pies antes de los cruces de ferrocarril. Escuche y mire en ambas direcciones. Normalmente no tiene que detenerse en los cruces de tranvías o donde un policía/banderero dirige el tráfico.",
+                "Puentes levadizos: Deténgase en los puentes levadizos que no tengan luz de señalización o asistente de control de tráfico. Deténgase al menos 50 pies antes del tramo levadizo del puente.",
+                "Curvas: Los accidentes en curvas ocurren por velocidad excesiva. Reduzca la velocidad antes de la curva."
+            ],
+            keyPoints: [
+                "Deténgase 15-50 pies antes de los cruces de ferrocarril.",
+                "Deténgase al menos 50 pies antes de los puentes levadizos (a menos que haya señalización).",
+                "Descargue a los pasajeros perturbadores en un lugar SEGURO.",
+                "Reduzca la velocidad antes de las curvas."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'pass-q3',
+                    text: "¿A qué distancia debe detenerse antes de un cruce de ferrocarril?",
+                    options: [
+                        "5 a 10 pies",
+                        "15 a 50 pies",
+                        "100 pies",
+                        "No necesita detenerse si está vacío"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Debe detenerse entre 15 y 50 pies antes del riel más cercano en los cruces de ferrocarril."
+                }
+            ]
+        },
+        {
+            id: 'pass-after-trip',
+            title: 'Inspección del Vehículo Posterior al Viaje',
+            cdlReference: 'Manual CDL §4.4',
+            content: [
+                "Inspeccione su autobús al final de cada turno. Reporte cualquier daño o defecto.",
+                "Verifique el interior en busca de: Artículos olvidados (equipaje, libros), ventanas/puertas abiertas y pasajeros olvidados (dormidos/escondidos).",
+                "Cierre el autobús cuando lo deje para evitar la entrada no autorizada."
+            ],
+            keyPoints: [
+                "Inspeccione el autobús al final de cada turno.",
+                "Busque pasajeros dormidos o escondidos.",
+                "Verifique si hay artículos olvidados."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'pass-q4',
+                    text: "¿Qué debe verificar durante la inspección posterior al viaje?",
+                    options: [
+                        "Solo aceite del motor",
+                        "Solo presión de los neumáticos",
+                        "Pasajeros o artículos olvidados",
+                        "Estaciones de radio"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Verifique si hay artículos olvidados y pasajeros que puedan estar durmiendo o escondiéndose."
+                }
+            ]
+        },
+        {
+            id: 'pass-prohibited',
+            title: 'Prácticas Prohibidas',
+            cdlReference: 'Manual CDL §4.5',
+            content: [
+                "Reabastecimiento de combustible: Nunca reabastezca combustible con pasajeros a bordo a menos que sea absolutamente necesario. Nunca reabastezca en un edificio cerrado con pasajeros a bordo.",
+                "Hablar: No hable con los pasajeros, ni permita que le hablen, mientras conduce. Es una distracción.",
+                "Remolque: No remolque ni empuje un autobús averiado con pasajeros a bordo del vehículo, a menos que bajarse no sea seguro. Solo remolque hasta el lugar seguro más cercano para descargar a los pasajeros."
+            ],
+            keyPoints: [
+                "Evite reabastecer combustible con pasajeros a bordo.",
+                "No hable con los pasajeros mientras conduce.",
+                "No remolque un autobús con pasajeros (a menos que no sea seguro descargar)."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'pass-q5',
+                    text: "¿Cuándo es aceptable reabastecer combustible con pasajeros a bordo?",
+                    options: [
+                        "Siempre",
+                        "Solo si es absolutamente necesario",
+                        "Siempre que tenga poco combustible",
+                        "Nunca"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Evite cargar combustible con pasajeros. Solo hágalo si es absolutamente necesario y nunca en un edificio cerrado."
+                }
+            ]
+        },
+        {
+            id: 'pass-interlocks',
+            title: 'Uso de Interbloqueo de Frenos y Puertas',
+            cdlReference: 'Manual CDL §4.6',
+            content: [
+                "Los interbloqueos de frenos y puertas aplican los frenos y mantienen el acelerador en posición de ralentí cuando la puerta trasera está abierta.",
+                "Regla de seguridad: El interbloqueo se libera cuando cierra la puerta. No utilice esta característica de seguridad en lugar del freno de estacionamiento."
+            ],
+            keyPoints: [
+                "Los interbloqueos aplican los frenos cuando la puerta está abierta.",
+                "NO utilice los interbloqueos como freno de estacionamiento."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'pass-q6',
+                    text: "¿Puede utilizar el interbloqueo de frenos y puertas como freno de estacionamiento?",
+                    options: [
+                        "Sí, siempre",
+                        "Sí, pero solo para paradas cortas",
+                        "No, nunca",
+                        "Solo en colinas"
+                    ],
+                    correctIndex: 2,
+                    explanation: "No utilice el interbloqueo de frenos y puertas en lugar del freno de estacionamiento."
+                }
+            ]
+        }
+    ]
+};
+
+export const CombinationsStudyGuide_ES: StudyGuide = {
+    topicId: 'combinations',
+    sections: [
+        {
+            id: 'comb-intro',
+            title: 'Introducción a los Vehículos Combinados',
+            cdlReference: 'Manual CDL §6.1',
+            content: [
+                "Los vehículos combinados son más pesados, más largos y requieren más habilidad de conducción que los vehículos comerciales individuales. Esto incluye tractocamiones, dobles, triples y camiones que remolcan remolques.",
+                "Conducir combinaciones de manera segura requiere comprender sus diferencias de manejo: son más propensos a volcar, hacer la tijera (jackknife) y tienen distancias de frenado más largas.",
+                "Necesita una CDL Clase A para operar la mayoría de los vehículos combinados. La prueba de Vehículos Combinados es necesaria para la CDL Clase A."
+            ],
+            keyPoints: [
+                "Los vehículos combinados son más pesados y largos que los individuales.",
+                "Mayor riesgo de vuelco y efecto tijera.",
+                "Se requiere CDL Clase A para la mayoría de las combinaciones."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q1',
+                    text: "¿Por qué los vehículos combinados requieren más habilidad de conducción?",
+                    options: [
+                        "Son más cómodos",
+                        "Son más pesados, más largos y tienen características de manejo diferentes",
+                        "Tienen mejores frenos",
+                        "Son más fáciles de estacionar"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Los vehículos combinados son más pesados, más largos y requieren comprensión de los riesgos de vuelco, efecto tijera y distancias de frenado más largas."
+                }
+            ]
+        },
+        {
+            id: 'comb-rollover',
+            title: 'Riesgos de Vuelco',
+            cdlReference: 'Manual CDL §6.1.1',
+            content: [
+                "Los vuelcos son más comunes en vehículos combinados debido a su centro de gravedad más alto. Más de la mitad de las muertes de conductores de camiones en choques son por vuelcos.",
+                "Los factores principales que causan vuelcos son: Velocidad (tomar curvas o giros demasiado rápido), Carga (carga pesada en la parte superior o cargada incorrectamente) y Dirección (movimientos repentinos de dirección).",
+                "Mantenga la carga lo más baja posible. Los equipos completamente cargados tienen 10 veces más probabilidades de volcar que los vacíos.",
+                "Reduzca la velocidad antes de las curvas. El límite de velocidad indicado puede ser demasiado rápido para un camión cargado. Si la señal dice 35 mph, debe reducir la velocidad a alrededor de 30 mph o menos.",
+                "Gire suavemente. Hacer cambios rápidos de carril o virar para evitar un peligro puede causar un vuelco. A menudo es más seguro golpear algo que volcar."
+            ],
+            keyPoints: [
+                "Los vuelcos causan más de la mitad de las muertes de conductores de camiones.",
+                "Reduzca la velocidad antes de las curvas: la velocidad indicada puede ser demasiado rápida.",
+                "Los camiones llenos tienen 10 veces más probabilidades de volcar que los vacíos.",
+                "Gire suavemente para evitar el vuelco."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q2',
+                    text: "¿Qué causa la mayoría de los vuelcos de camiones?",
+                    options: [
+                        "Reventones de neumáticos",
+                        "Tomar curvas demasiado rápido, cargas pesadas en la parte superior o dirección repentina",
+                        "Falla del motor",
+                        "Mal tiempo solamente"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Las causas principales son la velocidad (curvas demasiado rápidas), la carga (carga pesada en la parte superior) y la dirección (movimientos repentinos)."
+                }
+            ]
+        },
+        {
+            id: 'comb-steering',
+            title: 'Dirección y Desviación (Off-Tracking)',
+            cdlReference: 'Manual CDL §6.1.2',
+            content: [
+                "Cuando un vehículo dobla una esquina, las ruedas traseras siguen un camino diferente al de las ruedas delanteras. Esto se llama desviación o 'hacer trampa' (cheating).",
+                "Cuanto más largo sea el vehículo, más se desviará. Es por eso que debe abrirse para hacer giros, especialmente giros a la derecha.",
+                "Los remolques pueden golpear otros vehículos, peatones u objetos fijos durante los giros debido a la desviación.",
+                "El efecto látigo (crack-the-whip): Al cambiar de carril, la parte trasera del remolque tiende a balancearse. Las combinaciones más largas tienen más balanceo."
+            ],
+            keyPoints: [
+                "Las ruedas traseras siguen un camino más corto que las delanteras (desviación).",
+                "Los vehículos más largos se desvían más.",
+                "Ábrase en los giros para evitar golpear objetos.",
+                "Cuidado con el efecto 'látigo' en los cambios de carril."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q3',
+                    text: "¿Qué es la desviación (off-tracking)?",
+                    options: [
+                        "Cuando el camión se sale de la carretera",
+                        "Cuando las ruedas traseras siguen un camino más corto que las ruedas delanteras",
+                        "Cuando el GPS pierde señal",
+                        "Cuando el remolque se desconecta"
+                    ],
+                    correctIndex: 1,
+                    explanation: "La desviación (hacer trampa) es cuando las ruedas traseras siguen un camino diferente y más corto que las ruedas delanteras en las curvas."
+                }
+            ]
+        },
+        {
+            id: 'comb-jackknife',
+            title: 'Prevención del Efecto Tijera (Jackknife)',
+            cdlReference: 'Manual CDL §6.1.6',
+            content: [
+                "Un efecto tijera es cuando el remolque empuja al tractor, haciendo que gire y potencialmente se vuelque. Esto sucede cuando las ruedas motrices pierden tracción.",
+                "Causas comunes: Frenado excesivo, especialmente sin ABS. Velocidad excesiva en curvas. Carreteras resbaladizas con poca tracción.",
+                "Para prevenir el efecto tijera: No frene demasiado fuerte o repentinamente. Use el freno motor y el frenado controlado (snub braking) en pendientes. Reduzca la velocidad en las curvas.",
+                "Si comienza a hacer tijera: Suelte los frenos para permitir que las ruedas motrices recuperen tracción, luego enderece.",
+                "Los efectos tijera son más probables cuando el remolque está vacío (ligero) porque hay menos peso sobre las ruedas motrices."
+            ],
+            keyPoints: [
+                "Efecto tijera = el remolque empuja al tractor hacia los lados.",
+                "Causado por frenado excesivo o pérdida de tracción.",
+                "Si hace tijera, suelte los frenos para recuperar tracción.",
+                "Los remolques vacíos son más propensos a hacer tijera."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q4',
+                    text: "¿Qué debe hacer si comienza a hacer tijera?",
+                    options: [
+                        "Frenar más fuerte",
+                        "Acelerar rápidamente",
+                        "Soltar los frenos para recuperar tracción",
+                        "Girar el volante bruscamente"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Suelte los frenos para permitir que las ruedas motrices recuperen la tracción y se enderecen."
+                }
+            ]
+        },
+        {
+            id: 'comb-braking',
+            title: 'Frenado y Distancia de Parada',
+            cdlReference: 'Manual CDL §6.1.3',
+            content: [
+                "Los vehículos combinados tardan más en detenerse que los vehículos individuales debido a su mayor peso. La distancia de parada aumenta significativamente con la velocidad.",
+                "Los camiones vacíos pueden ser más difíciles de detener que los camiones cargados porque menos peso presiona los neumáticos contra la carretera, reduciendo la tracción.",
+                "Frene temprano y gradualmente. Evite el frenado repentino que puede causar efecto tijera o pérdida de control.",
+                "En carreteras mojadas o heladas, la distancia de parada puede duplicarse o triplicarse. Reduzca la velocidad y aumente la distancia de seguimiento.",
+                "Use el frenado controlado (snub braking) en pendientes largas: Aplique los frenos firmemente para reducir la velocidad en 5 mph, luego suelte. Repita según sea necesario."
+            ],
+            keyPoints: [
+                "Los vehículos más pesados necesitan más distancia para detenerse.",
+                "Los camiones vacíos pueden ser más difíciles de detener (menos tracción).",
+                "Frene temprano y gradualmente para evitar el efecto tijera.",
+                "Las carreteras mojadas/heladas aumentan drásticamente la distancia de parada."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q5',
+                    text: "¿Por qué los camiones vacíos pueden ser más difíciles de detener que los cargados?",
+                    options: [
+                        "Tienen frenos más débiles",
+                        "Menos peso significa menos tracción en los neumáticos",
+                        "El motor es menos potente",
+                        "El conductor tiene menos experiencia"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Los camiones vacíos tienen menos peso presionando los neumáticos contra la carretera, lo que reduce la tracción y dificulta la parada."
+                }
+            ]
+        },
+        {
+            id: 'comb-coupling',
+            title: 'Acoplamiento de Tractores-Remolques',
+            cdlReference: 'Manual CDL §6.4',
+            content: [
+                "El acoplamiento es conectar el tractor al remolque. El acoplamiento adecuado es crítico para la seguridad.",
+                "Paso 1: Inspeccione la Quinta Rueda. Verifique que se incline hacia el remolque, las mordazas estén abiertas, la manija de liberación esté en la posición de bloqueo automático y esté debidamente engrasada.",
+                "Paso 2: Inspeccione el Remolque. Verifique el perno rey (kingpin), el delantal (placa debajo del frente del remolque) y las líneas de aire/eléctricas.",
+                "Paso 3: Posicione el Tractor. Retroceda lentamente debajo del remolque, manteniendo el perno rey del remolque alineado con la quinta rueda.",
+                "Paso 4: Conecte. Retroceda hasta que la quinta rueda se bloquee alrededor del perno rey. Debería escuchar un clic o chasquido. Pruebe tirando hacia adelante suavemente.",
+                "Paso 5: Asegure. Conecte las líneas de aire (emergencia primero, luego servicio). Conecte el cable eléctrico. Levante completamente el tren de aterrizaje. Haga una verificación visual de que el perno rey esté bloqueado en las mordazas."
+            ],
+            keyPoints: [
+                "Inspeccione la quinta rueda y el perno rey antes de acoplar.",
+                "Retroceda lentamente y alinee el perno rey con la quinta rueda.",
+                "Conecte la línea de aire de emergencia PRIMERO.",
+                "Pruebe el acoplamiento tirando hacia adelante suavemente."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q6',
+                    text: "Al acoplar, ¿qué línea de aire debe conectar primero?",
+                    options: [
+                        "Línea de servicio",
+                        "Línea de emergencia",
+                        "Cualquiera está bien",
+                        "Ninguna, conéctelas juntas"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Siempre conecte la línea de aire de emergencia primero. Esto carga los tanques de aire del remolque y le permite probar los frenos."
+                }
+            ]
+        },
+        {
+            id: 'comb-uncoupling',
+            title: 'Desacoplamiento de Tractores-Remolques',
+            cdlReference: 'Manual CDL §6.4',
+            content: [
+                "El desacoplamiento es desconectar el tractor del remolque. El desacoplamiento inadecuado puede causar lesiones y daños.",
+                "Paso 1: Posicione el equipo. Estacione en terreno firme y nivelado. Calce las ruedas del remolque o use frenos de resorte.",
+                "Paso 2: Baje el tren de aterrizaje. Bájelo hasta que toque firmemente el suelo y soporte el remolque. Si está en terreno blando, use tablas debajo de las patas.",
+                "Paso 3: Desconecte las líneas de aire y eléctricas. Guárdelas adecuadamente para evitar daños.",
+                "Paso 4: Desbloquee la quinta rueda. Tire de la manija de liberación para desbloquear las mordazas.",
+                "Paso 5: Tire del tractor hacia adelante. Tire del tractor parcialmente fuera de debajo del remolque. Deténgase con el marco del tractor todavía debajo del remolque para evitar que se caiga.",
+                "Paso 6: Asegure el tractor. Cuando el tractor esté libre, aléjese completamente y asegúrelo para estacionar."
+            ],
+            keyPoints: [
+                "Estacione en terreno firme y nivelado.",
+                "Baje el tren de aterrizaje completamente antes de desconectar.",
+                "Guarde las líneas de aire/eléctricas de forma segura.",
+                "Tire del tractor hacia adelante lentamente para liberar el remolque."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q7',
+                    text: "Al desacoplar, ¿por qué debe bajar el tren de aterrizaje antes de desconectar?",
+                    options: [
+                        "Para hacer el remolque más ligero",
+                        "Para soportar el remolque para que no se caiga cuando el tractor se aleje",
+                        "Para revisar los neumáticos",
+                        "Para ahorrar tiempo"
+                    ],
+                    correctIndex: 1,
+                    explanation: "El tren de aterrizaje debe soportar el peso del remolque cuando se retira el tractor, evitando que el remolque se caiga."
+                }
+            ]
+        },
+        {
+            id: 'comb-inspect',
+            title: 'Inspección de Vehículos Combinados',
+            cdlReference: 'Manual CDL §6.5',
+            content: [
+                "Además de los elementos regulares de inspección previa al viaje, los vehículos combinados requieren inspeccionar el sistema de acoplamiento.",
+                "Verificación de la Quinta Rueda: Busque daños o piezas faltantes. Verifique los pernos de montaje. Las mordazas de bloqueo deben estar alrededor del vástago del perno rey, no de la cabeza. El brazo de liberación debe estar en la posición bloqueada.",
+                "Verificación de Líneas de Aire: Busque fugas, cortes u otros daños. Los acoplamientos (manos de glad) deben estar limpios y conectados correctamente. Las líneas de aire deben tener suficiente holgura para los giros.",
+                "Verificación del Cable Eléctrico: Busque daños. Asegúrese de que esté correctamente conectado y asegurado.",
+                "Verificación de la Quinta Rueda Deslizante: Si está equipada, verifique que el deslizador esté bloqueado en su posición. Busque pasadores faltantes, soldaduras agrietadas o componentes dañados."
+            ],
+            keyPoints: [
+                "Inspeccione el sistema de acoplamiento cuidadosamente.",
+                "Las mordazas de bloqueo deben estar alrededor del vástago del perno rey, no de la cabeza.",
+                "Verifique las líneas de aire en busca de fugas y conexión adecuada.",
+                "Verifique que la quinta rueda deslizante esté bloqueada."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q8',
+                    text: "¿Dónde deben colocarse las mordazas de bloqueo de la quinta rueda en el perno rey?",
+                    options: [
+                        "Alrededor de la cabeza del perno rey",
+                        "Alrededor del vástago (parte estrecha) del perno rey",
+                        "Encima del perno rey",
+                        "Debajo del perno rey"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Las mordazas deben estar alrededor del vástago (parte estrecha) del perno rey, no de la cabeza. Si están alrededor de la cabeza, el remolque puede soltarse."
+                }
+            ]
+        },
+        {
+            id: 'comb-trailerbrakes',
+            title: 'Frenos de Aire del Remolque',
+            cdlReference: 'Manual CDL §6.2',
+            content: [
+                "Los vehículos combinados usan frenos de aire. Los frenos del remolque funcionan a través de líneas de aire que se conectan al tractor.",
+                "Línea de Emergencia (Línea de Suministro): La línea de emergencia suministra aire a los tanques de aire del remolque. También controla los frenos de emergencia en el remolque. La pérdida de presión de aire hará que los frenos del remolque se activen.",
+                "Línea de Servicio (Línea de Control): La línea de servicio transporta aire controlado por el freno de pie o la válvula manual del remolque. Esta línea le dice a los frenos del remolque qué tan fuerte deben aplicarse.",
+                "Válvula Manual del Remolque (Trolley Valve): Se usa para aplicar solo los frenos del remolque. Solo debe usarse para probar los frenos del remolque. Nunca la use para estacionar (los frenos pueden soltarse y el vehículo rodará).",
+                "Separación (Breakaway): Si el remolque se separa del tractor, la línea de emergencia pierde presión y los frenos del remolque se bloquean automáticamente. Esta es una característica de seguridad."
+            ],
+            keyPoints: [
+                "La línea de emergencia carga los tanques del remolque y controla los frenos de emergencia.",
+                "La línea de servicio controla qué tan fuerte se aplican los frenos del remolque.",
+                "La válvula manual del remolque es para pruebas, NO para estacionar.",
+                "Si el remolque se separa, los frenos de emergencia se activan automáticamente."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q9',
+                    text: "¿Qué sucede si la línea de aire de emergencia del remolque se rompe o desconecta?",
+                    options: [
+                        "El remolque acelerará",
+                        "No pasa nada",
+                        "Los frenos del remolque se bloquearán automáticamente",
+                        "Los frenos del tractor fallarán"
+                    ],
+                    correctIndex: 2,
+                    explanation: "La pérdida de presión de aire en la línea de emergencia hace que los frenos de resorte del remolque se activen automáticamente, deteniendo el remolque."
+                }
+            ]
+        },
+        {
+            id: 'comb-doubles',
+            title: 'Dobles y Triples',
+            cdlReference: 'Manual CDL §7',
+            content: [
+                "Los dobles y triples requieren precaución adicional. Tienen más puntos de articulación, lo que los hace más propensos a vuelcos e inestabilidad.",
+                "Efecto látigo (Crack-the-whip): El último remolque en un conjunto de dobles o triples es el más propenso a volcar. Los cambios rápidos de carril o movimientos repentinos en el frente se amplifican en la parte trasera.",
+                "Acoplamiento de dobles/triples: El remolque más pesado debe estar más cerca del tractor. El remolque más ligero debe estar en la parte trasera.",
+                "Inspección: Verifique todos los dispositivos de acoplamiento, incluidos los ganchos de clavija (pintle hooks), barras de tracción y cadenas de seguridad. Inspeccione todas las conexiones de aire y eléctricas entre unidades.",
+                "Distancia de seguimiento: Permita aún más distancia de seguimiento para dobles y triples. Tardan más en detenerse y son menos estables."
+            ],
+            keyPoints: [
+                "El último remolque es el más propenso a rodar ('efecto látigo').",
+                "El remolque más pesado va más cerca del tractor.",
+                "Inspeccione todos los puntos de acoplamiento y conexiones.",
+                "Permita distancia de seguimiento adicional."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'comb-q10',
+                    text: "Al acoplar dobles, ¿qué remolque debe estar más cerca del tractor?",
+                    options: [
+                        "El remolque más ligero",
+                        "El remolque más pesado",
+                        "El remolque más corto",
+                        "No importa"
+                    ],
+                    correctIndex: 1,
+                    explanation: "El remolque más pesado debe estar más cerca del tractor para una mejor estabilidad. El más ligero va atrás."
+                }
+            ]
+        }
+    ]
+};
+export const DoublesTriplesStudyGuide_ES: StudyGuide = {
+    topicId: 'doubles_triples',
+    sections: [
+        {
+            id: 'dt-pulling',
+            title: 'Tirar de Remolques Dobles/Triples',
+            cdlReference: 'Manual CDL §7.1',
+            content: [
+                "Tirar de dobles y triples requiere más habilidad que tirar de un solo remolque. Son menos estables y más propensos a volcar.",
+                "Prevenir vuelcos: Mantenga la carga lo más cerca posible del suelo. Conduzca suavemente en las curvas. Los dobles/triples vuelcan fácilmente.",
+                "Inspeccione completamente: Hay más partes críticas para verificar. La seguridad depende de que todas funcionen correctamente.",
+                "Mire lejos hacia adelante: Debe mirar más adelante que cuando conduce una combinación simple. Permita más distancia de seguimiento."
+            ],
+            keyPoints: [
+                "Menos estables que los simples: mayor riesgo de vuelco.",
+                "Mantenga la carga baja y conduzca suavemente.",
+                "Permita más distancia de seguimiento."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'dt-q1',
+                    text: "¿Por qué los dobles y triples son más peligrosos que los simples?",
+                    options: [
+                        "Son más lentos",
+                        "Son menos estables y más propensos a volcar",
+                        "Usan más combustible",
+                        "Son más difíciles de estacionar solamente"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Tienen más puntos de articulación y son menos estables, lo que los hace más propensos a vuelcos y efecto tijera."
+                }
+            ]
+        },
+        {
+            id: 'dt-coupling',
+            title: 'Acoplamiento y Desacoplamiento',
+            cdlReference: 'Manual CDL §7.2',
+            content: [
+                "Acoplamiento de remolques gemelos: Asegure el segundo remolque (trasero). Acople el dolly convertidor al remolque delantero. Luego acople el dolly convertidor al remolque trasero.",
+                "Dolly convertidor: Un dispositivo de acoplamiento de uno o dos ejes y una quinta rueda utilizado para acoplar un remolque trasero a un remolque delantero.",
+                "Desacoplamiento: Desacople primero el remolque trasero. Luego desacople el dolly convertidor del remolque delantero.",
+                "Cadenas de seguridad: SIEMPRE use cadenas de seguridad al acoplar un dolly convertidor. Evitan que el dolly se separe si falla el enganche."
+            ],
+            keyPoints: [
+                "Asegure el remolque trasero antes de acoplar.",
+                "Acople el dolly al remolque delantero, luego el remolque trasero al dolly.",
+                "SIEMPRE use cadenas de seguridad en los dollies convertidores."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'dt-q2',
+                    text: "¿Qué dispositivo se utiliza para acoplar un remolque trasero a un remolque delantero?",
+                    options: [
+                        "Enganche Pingel",
+                        "Dolly convertidor",
+                        "Gancho de seguridad",
+                        "Tren de aterrizaje"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Se utiliza un dolly convertidor (con una quinta rueda) para conectar el remolque trasero al delantero."
+                }
+            ]
+        },
+        {
+            id: 'dt-inspect',
+            title: 'Inspección de Dobles y Triples',
+            cdlReference: 'Manual CDL §7.3',
+            content: [
+                "Haga una inspección previa al viaje normal, más estas comprobaciones para dobles/triples.",
+                "Sistema de acoplamiento: Verifique la quinta rueda inferior y superior, los pasadores de bloqueo de la quinta rueda deslizante y asegúrese de que el brazo de liberación esté bloqueado. Verifique el gancho de clavija (pintle hook) y el ojo/barra de tracción en busca de grietas o desgaste.",
+                "Líneas de aire: Verifique que las mangueras de aire al remolque trasero estén conectadas y aseguradas. Escuche si hay fugas.",
+                "Cadenas de seguridad: Verifique que las cadenas estén bien sujetas y no tengan grietas/daños.",
+                "Tren de aterrizaje: Comience con el tren de aterrizaje bajo en el remolque trasero para evitar que se vuelque."
+            ],
+            keyPoints: [
+                "Verifique el gancho de clavija, la barra de tracción y las cadenas de seguridad.",
+                "Verifique que las líneas de aire al remolque trasero estén seguras.",
+                "Asegúrese de que el brazo de liberación esté en posición bloqueada."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'dt-q3',
+                    text: "¿Cuál de estos es un control crítico para dobles/triples?",
+                    options: [
+                        "Volumen de radio",
+                        "Gancho de clavija, barra de tracción y cadenas de seguridad",
+                        "Estabilidad del portavasos",
+                        "Tapicería del asiento"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Los puntos de conexión (gancho de clavija, barra de tracción, cadenas) son críticos para evitar la separación del remolque."
+                }
+            ]
+        },
+        {
+            id: 'dt-aircheck',
+            title: 'Verificación de Frenos de Aire de Dobles/Triples',
+            cdlReference: 'Manual CDL §7.4',
+            content: [
+                "Verifique que el aire fluya a todos los remolques. Abra la válvula de cierre de la línea de emergencia en la parte trasera del último remolque. Debería escuchar aire escapando.",
+                "Cierre la válvula de la línea de emergencia. Ahora abra la válvula de la línea de servicio para verificar la presión de aire de servicio (que alguien aplique los frenos).",
+                "Prueba de flujo de aire: Si el aire no fluye hacia el remolque trasero, los frenos no funcionarán. Esta es una verificación obligatoria."
+            ],
+            keyPoints: [
+                "Verifique que el aire fluya hacia la PARTE TRASERA del ÚLTIMO remolque.",
+                "Abra las válvulas para escuchar el escape de aire.",
+                "Si no hay flujo de aire, los frenos no funcionarán."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'dt-q4',
+                    text: "¿Cómo se verifica si el aire fluye hacia el remolque trasero?",
+                    options: [
+                        "Mire el medidor",
+                        "Abra la válvula de cierre de la línea de emergencia en la parte trasera del último remolque",
+                        "Escuche el motor",
+                        "Patee los neumáticos"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Abrir la válvula en la parte trasera asegura que el aire viaje a través de todo el sistema hasta el último remolque."
+                }
+            ]
+        }
+    ]
+};
+export const TankVehiclesStudyGuide_ES: StudyGuide = {
+    topicId: 'tank_vehicles',
+    sections: [
+        {
+            id: 'tank-inspect',
+            title: 'Inspección de Vehículos Tanque',
+            cdlReference: 'Manual CDL §8.1',
+            content: [
+                "Los vehículos tanque tienen elementos especiales para revisar. Las fugas son una gran preocupación.",
+                "Revise el tanque: Busque grietas, abolladuras y fugas. Revise tuberías, conexiones y mangueras en busca de fugas.",
+                "Tapas de alcantarilla (Manhole Covers): Deben estar cerradas y aseguradas antes de moverse. Las fugas alrededor de la cubierta del domo son peligrosas.",
+                "Rejillas de ventilación (Vents): Verifique que las válvulas de admisión y descarga estén en la posición correcta. Verifique las válvulas de alivio de presión."
+            ],
+            keyPoints: [
+                "Revise el cuerpo del tanque, las tuberías y las mangueras en busca de fugas.",
+                "Asegúrese de que las tapas de alcantarilla estén ASEGURADAS.",
+                "Verifique que las rejillas de ventilación y las válvulas funcionen."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'tank-q1',
+                    text: "¿Cuál es una comprobación crítica para las tapas de alcantarilla en los vehículos tanque?",
+                    options: [
+                        "Están pintadas de rojo",
+                        "Están cerradas y aseguradas",
+                        "Están abiertas para ventilación",
+                        "Tienen candado"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Las tapas de alcantarilla deben estar cerradas y aseguradas para evitar fugas y derrames, especialmente en un vuelco."
+                }
+            ]
+        },
+        {
+            id: 'tank-driving',
+            title: 'Conducción de Vehículos Tanque',
+            cdlReference: 'Manual CDL §8.2',
+            content: [
+                "Alto centro de gravedad: Los camiones cisterna son pesados en la parte superior. Vuelcan fácilmente. Conduzca despacio en las curvas.",
+                "Oleaje líquido (Liquid Surge): El movimiento del líquido dentro del tanque (oleaje) puede empujar el camión en la dirección de la ola. Puede empujar un camión detenido hacia una intersección.",
+                "Mamparos (Bulkheads): Algunos tanques tienen mamparos (divisores) con agujeros. Controlan el oleaje hacia adelante/atrás pero no el oleaje de lado a lado.",
+                "Deflectores (Baffles): Los tanques con deflectores tienen mamparos con agujeros. Los tanques sin deflectores (diámetro interior liso) no tienen nada para ralentizar el oleaje del líquido. Son más difíciles de conducir."
+            ],
+            keyPoints: [
+                "Los camiones cisterna tienen un centro de gravedad alto (riesgo de vuelco).",
+                "El oleaje líquido afecta el manejo y el frenado.",
+                "Los tanques de diámetro liso (sin deflectores) tienen un oleaje fuerte."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'tank-q2',
+                    text: "¿Qué tipo de vehículo tanque tiene el oleaje líquido más fuerte?",
+                    options: [
+                        "Tanques con deflectores",
+                        "Tanques con mamparos",
+                        "Tanques de diámetro liso (sin deflectores)",
+                        "Tanques pequeños"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Los tanques de diámetro liso no tienen estructura interna para ralentizar el líquido, lo que provoca un fuerte oleaje hacia adelante y hacia atrás."
+                }
+            ]
+        },
+        {
+            id: 'tank-safe',
+            title: 'Reglas de Conducción Segura',
+            cdlReference: 'Manual CDL §8.3',
+            content: [
+                "Exceso de velocidad: Si conduce demasiado rápido, el oleaje líquido combinado con un centro de gravedad alto puede provocar un vuelco. Reduzca la velocidad antes de las curvas.",
+                "Distancia de frenado: Las carreteras mojadas duplican su distancia de frenado. Los tanques vacíos pueden tardar más en detenerse que los cargados debido a una menor tracción (aunque los cargados tienen que lidiar con el oleaje).",
+                "Derrapes: No gire demasiado, no acelere demasiado ni frene demasiado. Si lo hace, el oleaje líquido puede empujar el tanque hacia los lados, provocando un efecto tijera."
+            ],
+            keyPoints: [
+                "Conduzca despacio (especialmente en curvas).",
+                "Las carreteras mojadas aumentan significativamente la distancia de frenado.",
+                "Evite girar demasiado para evitar el efecto tijera inducido por el oleaje."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'tank-q3',
+                    text: "¿Por qué debe reducir la velocidad antes de las curvas en un vehículo tanque?",
+                    options: [
+                        "Para ahorrar combustible",
+                        "Para admirar la vista",
+                        "Para evitar un vuelco debido al alto centro de gravedad y al oleaje",
+                        "Para cambiar de marcha"
+                    ],
+                    correctIndex: 2,
+                    explanation: "La combinación de un centro de gravedad alto y el oleaje líquido hace que los camiones cisterna sean muy propensos a vuelcos en las curvas."
+                }
+            ]
+        }
+    ]
+};
+export const SchoolBusStudyGuide_ES: StudyGuide = {
+    topicId: 'school_bus',
+    sections: [
+        {
+            id: 'sb-danger',
+            title: 'Zonas de Peligro y Uso de Espejos',
+            cdlReference: 'Manual CDL §10.1',
+            content: [
+                "Zonas de Peligro: El área en todos los lados del autobús donde los niños corren mayor peligro de ser golpeados. Se extiende hasta 30 pies desde el parachoques delantero y 10 pies desde los lados izquierdo y derecho.",
+                "Espejos: Use espejos convexos para ver las zonas de peligro. Los espejos planos detectan el tráfico. Los espejos de vista cruzada (cross-view) le permiten ver el área del parachoques delantero.",
+                "Puntos ciegos: El área directamente detrás del autobús es un punto ciego importante. No se puede ver con ningún espejo."
+            ],
+            keyPoints: [
+                "La zona de peligro se extiende 30 pies al frente, 10 pies a los lados.",
+                "Los espejos de vista cruzada muestran el área del parachoques delantero.",
+                "Directamente detrás del autobús es un punto ciego."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q1',
+                    text: "¿Hasta dónde se extiende la zona de peligro desde el parachoques delantero?",
+                    options: [
+                        "5 pies",
+                        "10 pies",
+                        "30 pies",
+                        "50 pies"
+                    ],
+                    correctIndex: 2,
+                    explanation: "La zona de peligro se extiende hasta 30 pies desde el parachoques delantero."
+                }
+            ]
+        },
+        {
+            id: 'sb-loading',
+            title: 'Carga y Descarga',
+            cdlReference: 'Manual CDL §10.2',
+            content: [
+                "Esta es la parte más peligrosa del trabajo. Encienda las luces ámbar intermitentes 200-300 pies (o según lo requiera la ley estatal) antes de la parada.",
+                "Parada: Deténgase al menos a 10 pies de distancia de los estudiantes. Ponga el freno de estacionamiento.",
+                "Señal: Señale a los estudiantes cuando sea seguro cruzar. Deben cruzar al menos 10 pies frente al autobús para que pueda verlos.",
+                "Descarga: Cuente a los estudiantes a medida que salen. Asegúrese de que nadie quede atrapado en el pasamanos o la puerta."
+            ],
+            keyPoints: [
+                "Active las luces ámbar 200-300 pies antes de la parada.",
+                "Deténgase al menos a 10 pies de los estudiantes.",
+                "Los estudiantes deben cruzar 10 pies DELANTE del autobús."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q2',
+                    text: "Al descargar, ¿por dónde deben cruzar la calle los estudiantes?",
+                    options: [
+                        "Detrás del autobús",
+                        "Al menos 10 pies frente al autobús",
+                        "Directamente al lado de la ventana del conductor",
+                        "En cualquier lugar seguro"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Deben cruzar al menos 10 pies por delante para que pueda verlos."
+                }
+            ]
+        },
+        {
+            id: 'sb-exit',
+            title: 'Salida de Emergencia y Evacuación',
+            cdlReference: 'Manual CDL §10.3',
+            content: [
+                "Evacúe si: El autobús está en llamas, atascado en las vías del tren o en peligro de hundirse/colisión.",
+                "Puerta delantera: La mejor para la mayoría de las evacuaciones.",
+                "Puerta trasera: Úsela si la delantera está bloqueada.",
+                "Salidas de techo/ventanas: Úselas si el autobús está de lado o en el agua.",
+                "Distancia: Mueva a los estudiantes al menos a 100 pies de distancia del autobús en la dirección del tráfico que se aproxima si está en una carretera (para evitar ser golpeado por escombros si el autobús es golpeado)."
+            ],
+            keyPoints: [
+                "Evacúe por incendio, vías de tren o peligro inminente.",
+                "Mueva a los estudiantes a 100 pies de distancia.",
+                "Asegure el autobús si es posible."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q3',
+                    text: "¿Qué tan lejos debe mover a los estudiantes durante una evacuación?",
+                    options: [
+                        "10 pies",
+                        "50 pies",
+                        "100 pies",
+                        "Media milla"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Muévalos al menos a 100 pies de distancia para garantizar la seguridad."
+                }
+            ]
+        },
+        {
+            id: 'sb-railroad',
+            title: 'Cruces de Ferrocarril-Carretera',
+            cdlReference: 'Manual CDL §10.4',
+            content: [
+                "Procedimientos: Active las luces de emergencia unos 200 pies antes. Deténgase entre 15 y 50 pies del riel más cercano.",
+                "Mire y escuche: Abra la puerta y la ventana del conductor para escuchar los trenes. Silencie a los pasajeros/radio.",
+                "Cruce: Cierre la puerta. Cruce solo cuando sea seguro. No cambie de marcha mientras cruza.",
+                "Contención: Si se activa una señal o baja una barrera mientras está en las vías, conduzca a través de la barrera. No se detenga."
+            ],
+            keyPoints: [
+                "Deténgase a 15-50 pies del riel.",
+                "Abra puerta/ventana para escuchar.",
+                "NUNCA cambie de marcha en las vías."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q4',
+                    text: "¿Qué debe hacer si la barrera baja mientras cruza las vías?",
+                    options: [
+                        "Deténgase inmediatamente",
+                        "Retroceda",
+                        "Conduzca a través de la barrera",
+                        "Toque la bocina"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Si queda atrapado, conduzca a través de la barrera. Salvar vidas es más importante que la barrera."
+                }
+            ]
+        },
+        {
+            id: 'sb-mgmt',
+            title: 'Gestión de Estudiantes',
+            cdlReference: 'Manual CDL §10.5',
+            content: [
+                "No se ocupe de la disciplina mientras conduce.",
+                "Si el comportamiento es incontrolable, deténgase de manera segura. Asegure el autobús. Levántese y hable con respeto pero con firmeza.",
+                "Bajada: Nunca baje a un estudiante del autobús en una parada personalizada por razones disciplinarias. Solo en su parada designada o escuela."
+            ],
+            keyPoints: [
+                "No discipline mientras conduce.",
+                "Deténgase de forma segura si pierde el control.",
+                "Solo deje a los estudiantes en las paradas designadas."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q5',
+                    text: "¿Cuándo debe lidiar con problemas graves de disciplina?",
+                    options: [
+                        "Mientras conduce, mirando por el espejo",
+                        "Deténgase de manera segura, asegure el autobús, luego manéjelo",
+                        "Grite mientras conduce",
+                        "Llame a los padres inmediatamente"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Detenga el autobús de forma segura primero. Conducir distraído es peligroso."
+                }
+            ]
+        },
+        {
+            id: 'sb-abs',
+            title: 'Sistemas de Frenos Antibloqueo (ABS)',
+            cdlReference: 'Manual CDL §10.6',
+            content: [
+                "El ABS le ayuda a mantener el control de la dirección durante un frenado brusco.",
+                "Frene normalmente. No bombee los frenos si tiene ABS.",
+                "La luz ABS se enciende al arrancar y debe apagarse. Si permanece encendida, el ABS no funciona (pero los frenos normales sí funcionan)."
+            ],
+            keyPoints: [
+                "El ABS evita el bloqueo de las ruedas.",
+                "No bombee los frenos.",
+                "Mantenga el control de la dirección."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q6',
+                    text: "¿Cómo debe frenar con ABS?",
+                    options: [
+                        "Bombee los frenos repetidamente",
+                        "Frene normalmente y mantenga la presión",
+                        "Pise los frenos de golpe",
+                        "Use el freno de estacionamiento"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Frene normalmente. El ABS pulsará automáticamente los frenos para evitar el bloqueo."
+                }
+            ]
+        },
+        {
+            id: 'sb-special',
+            title: 'Consideraciones Especiales de Seguridad',
+            cdlReference: 'Manual CDL §10.7',
+            content: [
+                "Luces estroboscópicas: Úselas cuando la visibilidad sea limitada (niebla, lluvia, nieve).",
+                "Vientos fuertes: Los autobuses escolares son altos y vulnerables a los vientos.",
+                "Retroceso: Se desaconseja totalmente. Solo retroceda si es absolutamente necesario. Use un vigía/ayudante."
+            ],
+            keyPoints: [
+                "Evite retroceder siempre que sea posible.",
+                "Use luces estroboscópicas con poca visibilidad.",
+                "Cuidado con los vientos fuertes."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'sb-q7',
+                    text: "¿Cuándo debe retroceder un autobús escolar?",
+                    options: [
+                        "Siempre que ahorre tiempo",
+                        "Solo cuando sea absolutamente necesario",
+                        "En cada parada",
+                        "Para dar la vuelta"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Retroceder es peligroso. Evítelo a menos que no haya otra forma segura."
+                }
+            ]
+        }
+    ]
+};
 export const AirBrakesStudyGuide_ES: StudyGuide = {
     "topicId": "air_brakes",
     "sections": [
@@ -1070,6 +2004,193 @@ export const AirBrakesStudyGuide_ES: StudyGuide = {
                     ],
                     "correctIndex": 1,
                     "explanation": "No use los frenos de estacionamiento si los frenos están muy calientes (pueden deformar los tambores) o mojados en temperaturas bajo cero (pueden congelarse)."
+                }
+            ]
+        }
+    ]
+};
+
+export const HazmatStudyGuide_ES: StudyGuide = {
+    topicId: 'hazmat',
+    sections: [
+        {
+            id: 'hazmat-intent',
+            title: 'La intención de las regulaciones',
+            cdlReference: 'Manual CDL §9.1',
+            content: [
+                "Los materiales peligrosos son productos que representan un riesgo para la salud, la seguridad y la propiedad durante el transporte.",
+                "Contención: Muchos materiales peligrosos pueden lesionar o matar al contacto. Las reglas indican a los remitentes cómo empaquetar de forma segura y a los conductores cómo cargar, transportar y descargar el producto.",
+                "Comunicación: Las reglas indican a los remitentes cómo marcar, etiquetar y documentar el envío. Indican a los conductores cómo colocar carteles en su vehículo.",
+                "Para garantizar conductores y equipos seguros, debe pasar una prueba de conocimientos y una verificación de antecedentes."
+            ],
+            keyPoints: [
+                "Intención: Contención y Comunicación.",
+                "Los remitentes empaquetan y etiquetan.",
+                "Los conductores colocan carteles y transportan de forma segura."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'haz-q1',
+                    text: "¿Cuáles son las dos razones principales de las regulaciones de materiales peligrosos?",
+                    options: [
+                        "Gravar a los remitentes y transportistas",
+                        "Contener el producto y comunicar el riesgo",
+                        "Ralentizar el tráfico de camiones",
+                        "Crear trabajos para inspectores"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Las regulaciones están destinadas a contener el producto (mantenerlo seguro) y comunicar el riesgo (hacer saber a los demás qué es)."
+                }
+            ]
+        },
+        {
+            id: 'hazmat-comms',
+            title: 'Reglas de Comunicación',
+            cdlReference: 'Manual CDL §9.2',
+            content: [
+                "Documentos de envío: Describen los materiales peligrosos. Deben guardarse en la bolsa de la puerta del conductor O a la vista y al alcance inmediato mientras el cinturón de seguridad está abrochado, usando el reposabrazos del conductor.",
+                "Carteles (Placards): Señales de advertencia en forma de diamante colocadas en el exterior del vehículo. Debe tener al menos 4 carteles (frente, atrás y ambos lados).",
+                "Etiquetas: Advertencias en forma de diamante en los paquetes mismos.",
+                "Números de identificación: Un código de 4 dígitos utilizado por los socorristas para identificar el material (por ejemplo, 1203 para gasolina)."
+            ],
+            keyPoints: [
+                "Documentos de envío: En la bolsa de la puerta o al alcance.",
+                "Carteles: 4 lados del vehículo.",
+                "Números de ID: Código de 4 dígitos para respuesta de emergencia."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'haz-q2',
+                    text: "¿Dónde debe guardar los documentos de envío mientras conduce?",
+                    options: [
+                        "En la guantera",
+                        "En su bolsillo",
+                        "En una bolsa en la puerta del conductor o a la vista y al alcance",
+                        "En la litera"
+                    ],
+                    correctIndex: 2,
+                    explanation: "Deben ser fácilmente accesibles para usted o para el personal de emergencia."
+                }
+            ]
+        },
+        {
+            id: 'hazmat-loading',
+            title: 'Carga y Descarga',
+            cdlReference: 'Manual CDL §9.3',
+            content: [
+                "Regla general: No fume a menos de 25 pies de cualquier vehículo de materiales peligrosos (Clase 1, 3, 4, 4.2).",
+                "Reglas del calentador de carga: Apague los calentadores de carga al cargar explosivos o líquidos inflamables.",
+                "Combinaciones de carga prohibidas: Algunos materiales no se pueden cargar juntos. Por ejemplo, no cargue la División 1.1 o 1.2 (Explosivos) con la Clase 3 (Líquidos Inflamables).",
+                "Tabla de segregación de carga: Use la tabla en el manual para verificar qué puede reemplazar a qué.",
+                "Frenos: Ponga el freno de estacionamiento. Use calzos en las ruedas."
+            ],
+            keyPoints: [
+                "No fumar a menos de 25 pies.",
+                "Verifique la tabla de segregación para combinaciones prohibidas.",
+                "Siempre calce las ruedas."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'haz-q3',
+                    text: "¿Qué tan cerca puede fumar de un vehículo cargado con líquidos inflamables?",
+                    options: [
+                        "10 pies",
+                        "25 pies",
+                        "50 pies",
+                        "100 pies"
+                    ],
+                    correctIndex: 1,
+                    explanation: "No fume a menos de 25 pies de un tanque de carga con carteles usado para Clase 3 (líquidos inflamables) o División 2.1 (gas inflamable)."
+                }
+            ]
+        },
+        {
+            id: 'hazmat-bulk',
+            title: 'Embalaje a Granel (Tanques)',
+            cdlReference: 'Manual CDL §9.4',
+            content: [
+                "Marcas: Los tanques portátiles deben mostrar el nombre del propietario o arrendatario en ambos lados.",
+                "Vehículos tanque: Tienen un centro de gravedad alto. Conduzca suavemente. Tenga cuidado en las curvas.",
+                "Espacio libre (Outage/Ullage): Nunca cargue un tanque al 100%. Los líquidos se expanden con el calor. Deje espacio (espacio libre) para la expansión.",
+                "Deflectores (Baffles): Mamparos con agujeros que ralentizan el oleaje del líquido (pero no detienen el oleaje de lado a lado)."
+            ],
+            keyPoints: [
+                "Deje espacio libre para la expansión.",
+                "Los tanques portátiles necesitan el nombre del propietario.",
+                "Cuidado con el centro de gravedad alto."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'haz-q4',
+                    text: "¿Por qué debe dejar espacio (espacio libre) en un tanque?",
+                    options: [
+                        "Para ahorrar peso",
+                        "Para permitir la expansión del líquido",
+                        "Para ahorrar dinero en producto",
+                        "Para reducir el chapoteo"
+                    ],
+                    correctIndex: 1,
+                    explanation: "Los líquidos se expanden cuando se calientan. Si el tanque está lleno, podría estallar o tener fugas."
+                }
+            ]
+        },
+        {
+            id: 'hazmat-driving',
+            title: 'Reglas de Conducción y Estacionamiento',
+            cdlReference: 'Manual CDL §9.5',
+            content: [
+                "Estacionamiento con Explosivos (1.1, 1.2, 1.3): Nunca se estacione a menos de 5 pies de la parte transitada de la carretera. Nunca se estacione a menos de 300 pies de un puente, túnel o edificio destinado a reuniones.",
+                "Cruces de ferrocarril: Debe detenerse de 15 a 50 pies antes del riel más cercano. Mire y escuche.",
+                "Restricciones de ruta: Algunas carreteras prohíben materiales peligrosos. Conozca su ruta.",
+                "Neumáticos: Revise los neumáticos cada 2 horas o 100 millas. Si un neumático está sobrecalentado, debe retirarlo a un lugar seguro para repararlo."
+            ],
+            keyPoints: [
+                "Estacionamiento de explosivos: 300 pies de edificios/puentes.",
+                "Deténgase en TODOS los cruces de ferrocarril (15-50 pies).",
+                "Revise los neumáticos cada 2 horas/100 millas."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'haz-q5',
+                    text: "¿Qué tan lejos debe permanecer de un puente o túnel si se estaciona con explosivos de la División 1.1?",
+                    options: [
+                        "100 pies",
+                        "200 pies",
+                        "300 pies",
+                        "500 pies"
+                    ],
+                    correctIndex: 2,
+                    explanation: "No se estacione a menos de 300 pies de puentes, túneles o edificios."
+                }
+            ]
+        },
+        {
+            id: 'hazmat-emergencies',
+            title: 'Emergencies',
+            cdlReference: 'Manual CDL §9.6',
+            content: [
+                "Guía de Respuesta a Emergencias (ERG): Utilizada por bomberos y policías. Les dice qué hacer. Guárdela en su camión.",
+                "Accidentes: Mantenga a las personas alejadas de la escena. Limite la propagación del material si es seguro.",
+                "Incendios: No entre en una estación de servicio. Use su extintor (B:C para materiales peligrosos). NO use agua en incendios químicos a menos que sepa que es seguro.",
+                "Informes: Llame a las autoridades o a CHEMTREC."
+            ],
+            keyPoints: [
+                "Lleve la ERG.",
+                "Mantenga a las personas alejadas (viento arriba).",
+                "Use extintor B:C."
+            ],
+            reviewQuestions: [
+                {
+                    id: 'haz-q6',
+                    text: "¿Para quién está diseñada principalmente la Guía de Respuesta a Emergencias (ERG)?",
+                    options: [
+                        "Conductores de camiones",
+                        "Remitentes",
+                        "Socorristas de emergencia",
+                        "Inspectores del DOT"
+                    ],
+                    correctIndex: 2,
+                    explanation: "La ERG es una guía para los socorristas durante la fase inicial de un incidente de transporte de mercancías peligrosas/materiales peligrosos."
                 }
             ]
         }
