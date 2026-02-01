@@ -91,6 +91,13 @@ export default function TabLayout() {
                 }}
             />
             <Tabs.Screen
+                name="news"
+                options={{
+                    title: t('news'),
+                    tabBarIcon: ({ focused }) => <TabBarIcon name="newspaper-o" focused={focused} label={t('news')} />,
+                }}
+            />
+            <Tabs.Screen
                 name="profile"
                 options={{
                     title: t('profile'),

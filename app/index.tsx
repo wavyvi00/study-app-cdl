@@ -5,6 +5,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import SEO from '../components/seo/Head';
 import { useLocalization } from '../context/LocalizationContext';
+import NewsFeed from '../components/NewsFeed';
 
 const ONBOARDING_KEY = 'onboarding_completed';
 
@@ -87,9 +88,14 @@ function WebLandingPage() {
                         </View>
 
                         {!isMobile && (
-                            <TouchableOpacity onPress={navigateToApp} style={styles.navLink}>
-                                <Text style={styles.navLinkText}>{t('navPracticeNow')}</Text>
-                            </TouchableOpacity>
+                            <>
+                                <TouchableOpacity onPress={() => router.push('/updates')} style={styles.navLink}>
+                                    <Text style={styles.navLinkText}>{t('news')}</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity onPress={navigateToApp} style={styles.navLink}>
+                                    <Text style={styles.navLinkText}>{t('navPracticeNow')}</Text>
+                                </TouchableOpacity>
+                            </>
                         )}
 
                         <TouchableOpacity onPress={() => router.push('/auth/login')} style={styles.loginButton}>
@@ -199,6 +205,21 @@ function WebLandingPage() {
                             </Text>
                         </View>
                     </View>
+                </View>
+
+                {/* News Updates Section */}
+                <View style={styles.newsSection}>
+                    <View style={styles.sectionHeader}>
+                        <Text accessibilityRole="header" aria-level="2" style={styles.sectionTitle}>
+                            {t('latestUpdates')}
+                        </Text>
+                        <Text style={styles.sectionSubtitle}>{t('updatedByInstructors')}</Text>
+                    </View>
+                    <NewsFeed limit={3} />
+                    <TouchableOpacity onPress={() => router.push('/updates')} style={styles.viewAllButton}>
+                        <Text style={styles.viewAllText}>{t('viewAllUpdates')}</Text>
+                        <FontAwesome name="arrow-right" size={14} color="#0284C7" />
+                    </TouchableOpacity>
                 </View>
 
                 {/* Call to Action Strip */}
@@ -560,6 +581,29 @@ const styles = StyleSheet.create({
         color: '#64748B', // Slate-500
         fontSize: 16,
         lineHeight: 26,
+    },
+
+    // News Section
+    newsSection: {
+        paddingVertical: 80,
+        paddingHorizontal: 24,
+        backgroundColor: '#F8FAFC', // Slate-50 - matches hero
+        alignItems: 'center',
+    },
+    viewAllButton: {
+        marginTop: 32,
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 8,
+        paddingVertical: 12,
+        paddingHorizontal: 24,
+        backgroundColor: '#E0F2FE', // Sky-100
+        borderRadius: 10,
+    },
+    viewAllText: {
+        color: '#0284C7', // Sky-600
+        fontWeight: '700',
+        fontSize: 15,
     },
 
     // CTA Strip

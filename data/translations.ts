@@ -226,7 +226,18 @@ export type TranslationKey =
     | 'footerConnect'
     | 'footerAboutUs'
     | 'footerHelpCenter'
-    | 'footerContactSupport';
+    | 'footerContactSupport'
+    // News Feature
+    | 'news'
+    | 'cdlUpdates'
+    | 'latestUpdates'
+    | 'updatedByInstructors'
+    | 'viewAllUpdates'
+    | 'tagImportant'
+    | 'tagUpcoming'
+    | 'tagGeneral'
+    | 'source'
+    | 'readMore';
 
 export const translations: Record<Locale, Record<TranslationKey, string>> = {
     en: {
@@ -467,6 +478,17 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         footerAboutUs: 'About Us',
         footerHelpCenter: 'Help Center',
         footerContactSupport: 'Contact Support',
+        // News Feature
+        news: 'News',
+        cdlUpdates: 'CDL Updates',
+        latestUpdates: 'Latest Updates',
+        updatedByInstructors: 'Updated by CDL instructors',
+        viewAllUpdates: 'View All Updates',
+        tagImportant: 'Important',
+        tagUpcoming: 'Upcoming',
+        tagGeneral: 'General',
+        source: 'Source',
+        readMore: 'Read More',
     },
     es: {
         appTitle: 'CENTRO DE ESTUDIO',
@@ -706,6 +728,17 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         footerAboutUs: 'Sobre Nosotros',
         footerHelpCenter: 'Centro de Ayuda',
         footerContactSupport: 'Contactar Soporte',
+        // News Feature
+        news: 'Noticias',
+        cdlUpdates: 'Actualizaciones CDL',
+        latestUpdates: 'Últimas Actualizaciones',
+        updatedByInstructors: 'Actualizado por instructores CDL',
+        viewAllUpdates: 'Ver Todas las Actualizaciones',
+        tagImportant: 'Importante',
+        tagUpcoming: 'Próximo',
+        tagGeneral: 'General',
+        source: 'Fuente',
+        readMore: 'Leer más',
     },
     ru: {
         appTitle: 'УЧЕБНЫЙ ЦЕНТР',
@@ -945,5 +978,16 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         footerAboutUs: 'О нас',
         footerHelpCenter: 'Помощь',
         footerContactSupport: 'Служба поддержки',
+        // News Feature
+        news: 'Новости',
+        cdlUpdates: 'Обновления CDL',
+        latestUpdates: 'Последние обновления',
+        updatedByInstructors: 'Обновлено инструкторами CDL',
+        viewAllUpdates: 'Смотреть все обновления',
+        tagImportant: 'Важно',
+        tagUpcoming: 'Предстоящее',
+        tagGeneral: 'Общее',
+        source: 'Источник',
+        readMore: 'Читать далее',
     },
 };
