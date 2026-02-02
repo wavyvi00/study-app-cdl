@@ -1,5 +1,5 @@
 
-import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platform, UIManager, LayoutAnimation, Image, Alert } from 'react-native';
+import { View, Text, StyleSheet, TextInput, TouchableOpacity, ScrollView, Platform, UIManager, LayoutAnimation, Image, Alert, Switch, KeyboardAvoidingView } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useState, useCallback, useEffect } from 'react';
 import { useFocusEffect, useRouter } from 'expo-router';
@@ -25,7 +25,7 @@ const AVATARS = [
 export default function ProfileScreen() {
     const router = useRouter();
     const insets = useSafeAreaInsets();
-    const { t } = useLocalization();
+    const { t, dualLanguageMode, setDualLanguageMode, secondaryLanguage, setSecondaryLanguage } = useLocalization();
     const { restore, isPro } = useSubscription();
     const auth = useAuth(); // Cross-platform auth
 
@@ -183,7 +183,10 @@ export default function ProfileScreen() {
     // Render Edit/Create Form
     if (!stats.username || isEditing) {
         return (
-            <View style={[styles.container, { paddingTop: insets.top + 20 }]}>
+            <KeyboardAvoidingView
+                behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                style={[styles.container, { paddingTop: insets.top + 20 }]}
+            >
                 <View style={styles.header}>
                     <Text style={styles.headerTitle}>{isEditing ? t('editProfile') : t('createProfile')}</Text>
                     {isEditing && (
@@ -222,13 +225,11 @@ export default function ProfileScreen() {
 
                     {renderClassPicker()}
 
-
-
                     <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
                         <Text style={styles.saveButtonText}>{isEditing ? t('saveChanges') : t('createProfile')}</Text>
                     </TouchableOpacity>
                 </ScrollView>
-            </View>
+            </KeyboardAvoidingView>
         );
     }
 
@@ -304,6 +305,50 @@ export default function ProfileScreen() {
                                 <Text style={styles.signInButtonText}>Sign In</Text>
                             </TouchableOpacity>
                         </>
+                    )}
+                </View>
+            </View>
+
+
+            {/* Settings Section */}
+            <View style={styles.sectionContainer}>
+                <Text style={styles.sectionTitle}>{t('settings')}</Text>
+                <View style={styles.settingsCard}>
+                    {/* Dual Language Toggle */}
+                    <View style={styles.settingRow}>
+                        <View style={{ flex: 1, paddingRight: 16 }}>
+                            <Text style={styles.settingLabel}>{t('dualLanguageMode')}</Text>
+                            <Text style={styles.settingDescription}>
+                                {t('englishOnlyExamWarningText')}
+                            </Text>
+                        </View>
+                        <Switch
+                            value={dualLanguageMode}
+                            onValueChange={setDualLanguageMode}
+                            trackColor={{ false: '#e0e0e0', true: '#BFDBFE' }}
+                            thumbColor={dualLanguageMode ? '#1565C0' : '#f4f3f4'}
+                        />
+                    </View>
+
+                    {/* Secondary Language Selector */}
+                    {dualLanguageMode && (
+                        <View style={styles.languageSelector}>
+                            <Text style={styles.languageSelectorLabel}>{t('secondaryLanguage')}</Text>
+                            <View style={styles.languageButtons}>
+                                <TouchableOpacity
+                                    style={[styles.langButton, secondaryLanguage === 'es' && styles.langButtonSelected]}
+                                    onPress={() => setSecondaryLanguage('es')}
+                                >
+                                    <Text style={[styles.langButtonText, secondaryLanguage === 'es' && styles.langButtonTextSelected]}>Español</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    style={[styles.langButton, secondaryLanguage === 'ru' && styles.langButtonSelected]}
+                                    onPress={() => setSecondaryLanguage('ru')}
+                                >
+                                    <Text style={[styles.langButtonText, secondaryLanguage === 'ru' && styles.langButtonTextSelected]}>Русский</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
                     )}
                 </View>
             </View>
@@ -400,7 +445,7 @@ export default function ProfileScreen() {
                     <Text style={styles.restoreTextFooter}>{t('restorePurchases')}</Text>
                 </TouchableOpacity>
             </View>
-        </ScrollView>
+        </ScrollView >
     );
 }
 
@@ -796,6 +841,70 @@ const styles = StyleSheet.create({
     restoreButtonFooter: {
         marginBottom: 16,
         padding: 8,
+    },
+    // Settings Styles
+    settingsCard: {
+        backgroundColor: 'white',
+        borderRadius: 16,
+        padding: 16,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 1 },
+        shadowOpacity: 0.05,
+        shadowRadius: 2,
+        elevation: 1,
+    },
+    settingRow: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    settingLabel: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#333',
+        marginBottom: 4,
+    },
+    settingDescription: {
+        fontSize: 12,
+        color: '#666',
+        lineHeight: 16,
+    },
+    languageSelector: {
+        marginTop: 16,
+        paddingTop: 16,
+        borderTopWidth: 1,
+        borderTopColor: '#f0f0f0',
+    },
+    languageSelectorLabel: {
+        fontSize: 14,
+        fontWeight: '600',
+        color: '#666',
+        marginBottom: 12,
+    },
+    languageButtons: {
+        flexDirection: 'row',
+        gap: 12,
+    },
+    langButton: {
+        flex: 1,
+        paddingVertical: 10,
+        borderRadius: 8,
+        borderWidth: 1,
+        borderColor: '#e0e0e0',
+        alignItems: 'center',
+    },
+    langButtonSelected: {
+        backgroundColor: '#E3F2FD',
+        borderColor: '#1565C0',
+    },
+    langButtonText: {
+        fontSize: 14,
+        color: '#666',
+        fontWeight: '500',
+    },
+    langButtonTextSelected: {
+        color: '#1565C0',
+        fontWeight: '700',
     },
     restoreTextFooter: {
         color: '#1565C0',

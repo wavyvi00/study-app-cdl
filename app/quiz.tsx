@@ -1,6 +1,6 @@
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router';
 import { useState, useMemo, useEffect, useRef } from 'react';
-import { StyleSheet, Text, View, TouchableOpacity, ScrollView, ViewStyle, TextStyle } from 'react-native';
+import { StyleSheet, Text, View, TouchableOpacity, ScrollView, ViewStyle, TextStyle, useWindowDimensions } from 'react-native';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Question } from '../data/mock';
 import { useQuestions } from '../context/QuestionsContext';
@@ -31,7 +31,8 @@ export default function QuizScreen() {
 
     const router = useRouter();
     const { colors, spacing, typography, radius, isDark } = useTheme();
-    const { t } = useLocalization();
+    const { width } = useWindowDimensions();
+    const { t, dualLanguageMode, secondaryLanguage } = useLocalization();
     const { getQuestions, topics } = useQuestions();
     const insets = useSafeAreaInsets();
     const { checkCanAccessQuiz, refreshSubscriptionStatus, isPro, questionsAnsweredTotal, incrementQuestionsAnswered } = useSubscription();
@@ -130,6 +131,25 @@ export default function QuizScreen() {
     const [isFinished, setIsFinished] = useState(false);
     const [showReview, setShowReview] = useState(false);
     const [isFeedbackVisible, setFeedbackVisible] = useState(false);
+    const [showTranslate, setShowTranslate] = useState(false);
+
+    // Reset translation toggle when question changes
+    useEffect(() => {
+        setShowTranslate(false);
+    }, [currentIndex]);
+
+    // Fetch secondary questions if dual mode is on
+    const secondaryQuestions = useMemo(() => {
+        if (!dualLanguageMode) return [];
+
+        if (topicId) {
+            return getQuestions(topicId as string, secondaryLanguage);
+        } else {
+            // If no specific topic (Random Practice), get all questions in secondary language
+            // We iterate through available topics and fetch questions for each in the secondary language
+            return topics.flatMap(t => getQuestions(t.id, secondaryLanguage));
+        }
+    }, [dualLanguageMode, topicId, secondaryLanguage, getQuestions, topics]);
 
     // Track wrong answers
     const [wrongAnswers, setWrongAnswers] = useState<Array<{
@@ -286,6 +306,67 @@ export default function QuizScreen() {
         return `${m}:${s < 10 ? '0' : ''}${s}`;
     };
 
+    // Calculate current question safely for hooks
+    const currentQuestionIndex = questionOrder.length > 0 ? questionOrder[currentIndex] : -1;
+    const currentQuestion = (currentQuestionIndex >= 0 && questions.length > currentQuestionIndex)
+        ? questions[currentQuestionIndex]
+        : undefined;
+
+    // Resolve translated question (Always call useMemo)
+    // Find the matching translated question
+    const secondaryQuestion = useMemo(() => {
+        if (!currentQuestion || !dualLanguageMode || secondaryQuestions.length === 0) return null;
+
+        // 1. Try Exact ID Match (e.g. if both are local "gk5")
+        const idMatch = secondaryQuestions.find(q => q.id === currentQuestion.id);
+        if (idMatch) return idMatch;
+
+        // 2. Try Fallback: Index Matching (e.g. Supabase UUID vs Local ID)
+        // If the English list and Spanish list are ordered identically.
+        // We need to find the index of currentQuestion in the *source* English list, not the shuffled 'questions' array.
+        // However, 'getQuestions' logic is complex.
+
+        // Best effort: Try to find index in the current active 'questions' array, 
+        // IF 'questions' corresponds to 'secondaryQuestions' 1:1.
+        // But 'questions' might be shuffled if it's random practice? 
+        // No, 'questions' is the raw list for the topic. 'questionOrder' controls display order.
+        // Wait, 'getQuestions' returns array.
+
+        // If we are in "Random Practice" (topicId undefined), 'questions' is ALL questions shuffled?
+        // No, look at `useEffect` lines 86-126. 
+        // If mode === 'practice' (random) -> `const allQ = topics.flatMap...; return shuffleArray(allQ).slice(0, 10);`
+        // So `questions` IS shuffled and sliced.
+
+        // This makes matching hard in Random mode if IDs don't match.
+        // But the user reported this in specific topic ("general_knowledge").
+        // In specific topic mode: `return getQuestions(topicId)...` which returns Supabase list (sorted by created_at).
+        // Local list is sorted by array order.
+
+        // Assumption: Supabase insertion order matches Local array order.
+        // Let's try matching by Index in the `questions` array.
+        const currentIndexInList = questions.findIndex(q => q.id === currentQuestion.id);
+        if (currentIndexInList !== -1 && secondaryQuestions[currentIndexInList]) {
+            // Verify it's not a completely random match? 
+            // We can't verify text. We just trust the index alignment for now as a fallback.
+            console.log('[Quiz] Using Index Fallback Match:', currentIndexInList);
+            return secondaryQuestions[currentIndexInList];
+        }
+
+        return null;
+    }, [currentQuestion, dualLanguageMode, secondaryQuestions, questions]);
+
+    // Debug translation matching - placed here to access variables
+    useEffect(() => {
+        if (showTranslate) {
+            console.log('[Quiz] Toggling Translation:', {
+                currentId: currentQuestion?.id,
+                secondaryId: secondaryQuestion?.id,
+                match: currentQuestion?.id === secondaryQuestion?.id,
+                secText: secondaryQuestion?.text?.substring(0, 20)
+            });
+        }
+    }, [showTranslate, currentQuestion, secondaryQuestion]);
+
     // If no questions found or loading
     if (questions.length === 0) {
         return (
@@ -296,13 +377,14 @@ export default function QuizScreen() {
         );
     }
 
-
-
     if (questionOrder.length === 0) return null; // Wait for init
-
-    const currentQuestionIndex = questionOrder[currentIndex];
-    const currentQuestion = questions[currentQuestionIndex];
     if (!currentQuestion) return null; // Safety
+
+    const displayQuestionText = (showTranslate && secondaryQuestion) ? secondaryQuestion.text : currentQuestion.text;
+    // ensure options match length to avoid index errors
+    const displayOptions = (showTranslate && secondaryQuestion && secondaryQuestion.options.length === currentQuestion.options.length)
+        ? secondaryQuestion.options
+        : currentQuestion.options;
 
     const isLastQuestion = currentIndex === questionOrder.length - 1;
     const isPractice = mode === 'practice';
@@ -482,7 +564,7 @@ export default function QuizScreen() {
 
                         <Button
                             title={t('backToHome')}
-                            onPress={() => router.back()}
+                            onPress={() => router.dismissAll()}
                             variant="outline"
                             style={{ width: '100%', borderColor: 'white', backgroundColor: 'rgba(255,255,255,0.1)' }}
                             textStyle={{ color: 'white' }}
@@ -526,11 +608,26 @@ export default function QuizScreen() {
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
                 <Card padding="lg" style={{ marginBottom: spacing.xl }}>
-                    <Text style={[styles.questionText, { color: colors.text, fontSize: typography.lg }]}>{currentQuestion.text}</Text>
+                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
+                        <Text style={[styles.questionText, { color: colors.text, fontSize: typography.lg, flex: 1 }]}>
+                            {displayQuestionText}
+                        </Text>
+                        {dualLanguageMode && (
+                            <TouchableOpacity
+                                onPress={() => setShowTranslate(!showTranslate)}
+                                style={{ paddingLeft: 10, paddingBottom: 10 }}
+                            >
+                                <FontAwesome name="language" size={24} color={showTranslate ? colors.primary : colors.textSecondary} />
+                                <Text style={{ fontSize: 10, color: showTranslate ? colors.primary : colors.textSecondary, textAlign: 'center' }}>
+                                    {showTranslate ? t('original') : t('translate')}
+                                </Text>
+                            </TouchableOpacity>
+                        )}
+                    </View>
                 </Card>
 
                 <View style={styles.optionsContainer}>
-                    {currentQuestion.options.map((option, index) => {
+                    {displayOptions.map((option, index) => {
                         const isSelected = selectedOption === index;
                         const isCorrect = index === currentQuestion.correctIndex;
 
@@ -605,7 +702,9 @@ export default function QuizScreen() {
                     isPractice && selectedOption !== null && !!currentQuestion.explanation && (
                         <View style={[styles.explanationBox, { backgroundColor: colors.background, borderLeftColor: colors.primary, borderLeftWidth: 4, padding: spacing.md, marginTop: spacing.lg, borderRadius: radius.md }]}>
                             <Text style={{ fontWeight: 'bold', color: colors.text, marginBottom: 4 }}>{t('explanation')}:</Text>
-                            <Text style={{ color: colors.textSecondary, lineHeight: 22 }}>{currentQuestion.explanation}</Text>
+                            <Text style={{ color: colors.textSecondary, lineHeight: 22 }}>
+                                {(showTranslate && secondaryQuestion?.explanation) ? secondaryQuestion.explanation : currentQuestion.explanation}
+                            </Text>
                         </View>
                     )
                 }

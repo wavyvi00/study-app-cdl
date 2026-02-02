@@ -4,8 +4,10 @@ import { Question, Topic, getTopics, getQuestionsByLocale } from '../data/mock';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { useLocalization } from './LocalizationContext';
 
+import { Locale } from '../data/translations';
+
 interface QuestionsContextType {
-    getQuestions: (topicId: string) => Question[];
+    getQuestions: (topicId: string, overrideLocale?: Locale) => Question[];
     topics: Topic[];
     isLoading: boolean;
     refreshQuestions: () => Promise<void>;
@@ -22,14 +24,14 @@ export const useQuestions = () => useContext(QuestionsContext);
 
 // Map topic IDs to question keys
 const TOPIC_TO_QUESTION_KEY: Record<string, string> = {
-    'general-knowledge': 'ALL_GK',
-    'combination-vehicles': 'COMBINATION',
-    'air-brakes': 'AIR_BRAKES',
+    'general_knowledge': 'ALL_GK',
+    'combinations': 'COMBINATION',
+    'air_brakes': 'AIR_BRAKES',
     'hazmat': 'HAZMAT',
     'passenger': 'PASSENGER',
-    'doubles-triples': 'DOUBLES_TRIPLES',
+    'doubles_triples': 'DOUBLES_TRIPLES',
     'tanks': 'TANKS',
-    'school-bus': 'SCHOOL_BUS',
+    'school_bus': 'SCHOOL_BUS',
 };
 
 // Convert database question to app question format
@@ -131,28 +133,52 @@ export function QuestionsProvider({ children }: { children: ReactNode }) {
 
     // Get questions for a topic
     // IMPORTANT: For non-English locales, ALWAYS use pre-translated local files
-    const getQuestions = useCallback((topicId: string): Question[] => {
+    const getQuestions = useCallback((topicId: string, overrideLocale?: Locale): Question[] => {
+        const targetLocale = overrideLocale || locale;
+
         // For non-English locales, use pre-translated local files
-        if (locale !== 'en') {
-            const questionKey = TOPIC_TO_QUESTION_KEY[topicId];
-            if (questionKey && localTranslatedQuestions[questionKey]) {
-                return localTranslatedQuestions[questionKey] as Question[];
+        if (targetLocale !== 'en') {
+            let translatedMap: any = localTranslatedQuestions;
+            if (overrideLocale && overrideLocale !== locale) {
+                // If checking a different locale, fetch it directly
+                try {
+                    translatedMap = getQuestionsByLocale(targetLocale);
+                } catch (e) {
+                    console.warn('Failed to load override questions', e);
+                    translatedMap = {}; // Fallback
+                }
             }
+
+            const questionKey = TOPIC_TO_QUESTION_KEY[topicId];
+            if (questionKey && translatedMap[questionKey]) {
+                return translatedMap[questionKey] as Question[];
+            }
+
             // Fallback to topic questions from getTopics
-            const topic = currentTopics.find(t => t.id === topicId);
+            const topicsForLocale = (overrideLocale && overrideLocale !== locale)
+                ? getTopics(targetLocale)
+                : currentTopics;
+            const topic = topicsForLocale.find(t => t.id === topicId);
             return topic?.questions || [];
         }
 
-        // For English, try Supabase first, then fallback to local
+        // For English (targetLocale === 'en'), try Supabase first, then fallback to local
         const supabaseQ = supabaseQuestions.get(topicId);
         if (supabaseQ && supabaseQ.length > 0) {
             return supabaseQ;
         }
 
-        // Fallback to local data
-        const topic = currentTopics.find(t => t.id === topicId);
+        // Fallback to local data (English)
+        // If we are overriding to 'en' from something else, currentTopics might be non-English
+        const topicsForLocale = (overrideLocale && overrideLocale !== locale)
+            ? getTopics('en')
+            : currentTopics;
+
+        const topic = topicsForLocale.find(t => t.id === topicId);
         return topic?.questions || [];
     }, [locale, supabaseQuestions, localTranslatedQuestions, currentTopics]);
+
+    // ...
 
     // Get topics with updated question counts
     const topics: Topic[] = useMemo(() => {

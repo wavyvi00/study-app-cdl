@@ -74,7 +74,15 @@ export default function TopicsScreen() {
     // Load stats and check subscription status whenever the screen comes into focus
     useFocusEffect(
         useCallback(() => {
-            loadStats(auth?.userId).then(setStats);
+            loadStats(auth?.userId).then(s => {
+                console.log('[TopicsScreen] Loaded stats:', {
+                    userId: auth?.userId,
+                    hasUsername: !!s.username,
+                    username: s.username,
+                    class: s.cdlClass
+                });
+                setStats(s);
+            });
 
             // Check if we should show email opt-in popup (with 5 second delay)
             let timeoutId: NodeJS.Timeout | null = null;
@@ -100,7 +108,7 @@ export default function TopicsScreen() {
             return () => {
                 if (timeoutId) clearTimeout(timeoutId);
             };
-        }, [])
+        }, [auth?.userId])
     );
 
     // ESC key handler for info card overlay

@@ -20,7 +20,7 @@ export default function StudyScreen() {
     const router = useRouter();
     const { colors, spacing, typography, radius, isDark } = useTheme();
     const { topics } = useQuestions();
-    const { locale, t } = useLocalization(); // Added
+    const { locale, t, dualLanguageMode, secondaryLanguage } = useLocalization(); // Updated
     const auth = useAuth();
     const insets = useSafeAreaInsets();
     const scrollViewRef = useRef<ScrollView>(null);
@@ -30,6 +30,7 @@ export default function StudyScreen() {
 
     // Get localized study guide
     const studyGuide = getStudyGuide(topicId, locale);
+    const secondaryStudyGuide = dualLanguageMode ? getStudyGuide(topicId, secondaryLanguage) : null;
 
     const [sectionIndex, setSectionIndex] = useState(0);
     // Track selected answers: { questionId: selectedIndex }
@@ -37,6 +38,7 @@ export default function StudyScreen() {
 
     const [isCompleted, setIsCompleted] = useState(false);
     const [isFeedbackVisible, setFeedbackVisible] = useState(false);
+    const [showTranslation, setShowTranslation] = useState(false); // Dual Language State
 
     // Reset scroll and answers when section changes
     useEffect(() => {
@@ -103,6 +105,8 @@ export default function StudyScreen() {
     }
 
     const currentSection = studyGuide.sections[sectionIndex];
+    const secondarySection = secondaryStudyGuide?.sections[sectionIndex]; // Get corresponding secondary section
+
     const isFirstSection = sectionIndex === 0;
     const isLastSection = sectionIndex === studyGuide.sections.length - 1;
 
@@ -203,6 +207,30 @@ export default function StudyScreen() {
 
             <ScrollView ref={scrollViewRef} contentContainerStyle={[styles.scrollViewContent, { padding: spacing.lg }]}>
 
+                {/* Florida Warning Banner */}
+                {dualLanguageMode && (
+                    <View style={[styles.warningBanner, { backgroundColor: '#FFF3E0', borderColor: '#FFB74D' }]}>
+                        <FontAwesome name="exclamation-triangle" size={16} color="#F57C00" style={{ marginRight: 8 }} />
+                        <View style={{ flex: 1 }}>
+                            <Text style={[styles.warningTitle, { color: '#E65100' }]}>{t('englishOnlyExamWarningTitle')}</Text>
+                            <Text style={[styles.warningText, { color: '#E65100' }]}>{t('englishOnlyExamWarningText')}</Text>
+                        </View>
+                    </View>
+                )}
+
+                {/* Translation Toggle */}
+                {dualLanguageMode && (
+                    <TouchableOpacity
+                        style={[styles.translationToggle, { backgroundColor: showTranslation ? colors.primary : colors.surface, borderColor: colors.primary }]}
+                        onPress={() => setShowTranslation(!showTranslation)}
+                    >
+                        <FontAwesome name="language" size={16} color={showTranslation ? "#fff" : colors.primary} style={{ marginRight: 8 }} />
+                        <Text style={[styles.translationToggleText, { color: showTranslation ? "#fff" : colors.primary }]}>
+                            {showTranslation ? t('hideTranslation') : t('showTranslation')}
+                        </Text>
+                    </TouchableOpacity>
+                )}
+
                 {/* Content Card */}
                 <Card padding="lg" style={{ marginBottom: spacing.xl }}>
                     {currentSection.cdlReference && (
@@ -216,9 +244,19 @@ export default function StudyScreen() {
 
                     {/* Main Text Content */}
                     {currentSection.content.map((paragraph, idx) => (
-                        <Text key={idx} style={[styles.text, { color: colors.text, fontSize: typography.md, marginBottom: spacing.md, lineHeight: 26 }]}>
-                            {paragraph}
-                        </Text>
+                        <View key={idx} style={{ marginBottom: spacing.md }}>
+                            <Text style={[styles.text, { color: colors.text, fontSize: typography.md, lineHeight: 26 }]}>
+                                {paragraph}
+                            </Text>
+                            {/* Secondary Language Text using secondarySection */}
+                            {showTranslation && secondarySection && secondarySection.content[idx] && (
+                                <View style={[styles.translatedTextBox, { backgroundColor: isDark ? 'rgba(255,255,255,0.05)' : '#F5F5F5', borderLeftColor: colors.secondary }]}>
+                                    <Text style={[styles.translatedText, { color: colors.textSecondary }]}>
+                                        {secondarySection.content[idx]}
+                                    </Text>
+                                </View>
+                            )}
+                        </View>
                     ))}
                 </Card>
 
@@ -232,7 +270,14 @@ export default function StudyScreen() {
                         {currentSection.keyPoints.map((point, idx) => (
                             <View key={idx} style={styles.bulletRow}>
                                 <View style={[styles.bullet, { backgroundColor: isDark ? colors.highlight : '#F57F17' }]} />
-                                <Text style={[styles.bulletText, { color: colors.text, fontSize: typography.md }]}>{point}</Text>
+                                <View style={{ flex: 1 }}>
+                                    <Text style={[styles.bulletText, { color: colors.text, fontSize: typography.md }]}>{point}</Text>
+                                    {showTranslation && secondarySection?.keyPoints?.[idx] && (
+                                        <Text style={[styles.translatedText, { color: colors.textSecondary, marginTop: 4, fontStyle: 'italic', fontSize: 14 }]}>
+                                            {secondarySection.keyPoints[idx]}
+                                        </Text>
+                                    )}
+                                </View>
                             </View>
                         ))}
                     </Card>
@@ -260,7 +305,14 @@ export default function StudyScreen() {
                                             />
                                         )}
                                     </View>
-                                    <Text style={[styles.questionText, { color: colors.text, fontSize: typography.md, marginBottom: spacing.md }]}>{q.text}</Text>
+                                    <Text style={[styles.questionText, { color: colors.text, fontSize: typography.md, marginBottom: spacing.md }]}>
+                                        {q.text}
+                                        {showTranslation && secondarySection?.reviewQuestions?.[idx] && (
+                                            <Text style={{ color: colors.textSecondary, fontStyle: 'italic', fontWeight: 'normal' }}>
+                                                {'\n'}{secondarySection.reviewQuestions[idx].text}
+                                            </Text>
+                                        )}
+                                    </Text>
 
                                     <View style={styles.optionsContainer}>
                                         {q.options.map((opt, optIdx) => {
@@ -293,7 +345,14 @@ export default function StudyScreen() {
                                                     activeOpacity={0.8}
                                                 >
                                                     <Card style={[styles.optionCard, cardStyle]} padding="sm">
-                                                        <Text style={[styles.optionText, textStyle, { fontSize: typography.md }]}>{opt}</Text>
+                                                        <Text style={[styles.optionText, textStyle, { fontSize: typography.md }]}>
+                                                            {opt}
+                                                            {showTranslation && secondarySection?.reviewQuestions?.[idx]?.options?.[optIdx] && (
+                                                                <Text style={{ fontSize: 14, fontStyle: 'italic', color: isAnswered ? textStyle.color : colors.textSecondary }}>
+                                                                    {'\n'}{secondarySection.reviewQuestions[idx].options[optIdx]}
+                                                                </Text>
+                                                            )}
+                                                        </Text>
                                                     </Card>
                                                 </TouchableOpacity>
                                             );
@@ -544,5 +603,48 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: '600',
         color: '#fff',
+    },
+    warningBanner: {
+        flexDirection: 'row',
+        padding: 12,
+        borderRadius: 8,
+        borderWidth: 1,
+        marginBottom: 16,
+        alignItems: 'flex-start',
+    },
+    warningTitle: {
+        fontSize: 14,
+        fontWeight: 'bold',
+        marginBottom: 2,
+    },
+    warningText: {
+        fontSize: 12,
+        lineHeight: 16,
+    },
+    translationToggle: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        paddingVertical: 8,
+        paddingHorizontal: 16,
+        borderRadius: 20,
+        borderWidth: 1,
+        alignSelf: 'flex-start',
+        marginBottom: 16,
+    },
+    translationToggleText: {
+        fontSize: 14,
+        fontWeight: '600',
+    },
+    translatedTextBox: {
+        marginTop: 8,
+        padding: 12,
+        borderRadius: 8,
+        borderLeftWidth: 3,
+    },
+    translatedText: {
+        fontSize: 15,
+        fontStyle: 'italic',
+        lineHeight: 24,
     },
 });

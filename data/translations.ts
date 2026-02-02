@@ -237,7 +237,16 @@ export type TranslationKey =
     | 'tagUpcoming'
     | 'tagGeneral'
     | 'source'
-    | 'readMore';
+    | 'readMore'
+    // Dual Language Mode
+    | 'dualLanguageMode'
+    | 'secondaryLanguage'
+    | 'showTranslation'
+    | 'hideTranslation'
+    | 'translate'
+    | 'original'
+    | 'englishOnlyExamWarningTitle'
+    | 'englishOnlyExamWarningText';
 
 export const translations: Record<Locale, Record<TranslationKey, string>> = {
     en: {
@@ -489,6 +498,15 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         tagGeneral: 'General',
         source: 'Source',
         readMore: 'Read More',
+        // Dual Language Mode
+        dualLanguageMode: 'Dual-Language Learning Mode',
+        secondaryLanguage: 'Secondary Language',
+        showTranslation: 'Show Translation',
+        hideTranslation: 'Hide Translation',
+        translate: 'Translate',
+        original: 'Original',
+        englishOnlyExamWarningTitle: 'Important for Florida Drivers',
+        englishOnlyExamWarningText: 'CDL Exams in Florida will be English-only starting Feb 6, 2026. This dual-language mode is for study assistance only.',
     },
     es: {
         appTitle: 'CENTRO DE ESTUDIO',
@@ -739,6 +757,15 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         tagGeneral: 'General',
         source: 'Fuente',
         readMore: 'Leer más',
+        // Dual Language Mode
+        dualLanguageMode: 'Modo de Aprendizaje Bilingüe',
+        secondaryLanguage: 'Idioma Secundario',
+        showTranslation: 'Mostrar Traducción',
+        hideTranslation: 'Ocultar Traducción',
+        translate: 'Traducir',
+        original: 'Original',
+        englishOnlyExamWarningTitle: 'Importante para Conductores de Florida',
+        englishOnlyExamWarningText: 'Los exámenes CDL en Florida serán solo en inglés a partir del 6 de febrero de 2026. Este modo bilingüe es solo para ayuda en el estudio.',
     },
     ru: {
         appTitle: 'УЧЕБНЫЙ ЦЕНТР',
@@ -989,5 +1016,14 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         tagGeneral: 'Общее',
         source: 'Источник',
         readMore: 'Читать далее',
+        // Dual Language Mode
+        dualLanguageMode: 'Двуязычный режим обучения',
+        secondaryLanguage: 'Второй язык',
+        showTranslation: 'Показать перевод',
+        hideTranslation: 'Скрыть перевод',
+        translate: 'Перевести',
+        original: 'Оригинал',
+        englishOnlyExamWarningTitle: 'Важно для водителей Флориды',
+        englishOnlyExamWarningText: 'Экзамены CDL во Флориде будут проводиться только на английском языке с 6 февраля 2026 года. Этот режим предназначен только для помощи в обучении.',
     },
 };
