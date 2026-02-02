@@ -1,3 +1,6 @@
+import { AppState } from 'react-native';
+
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { createClient, SupabaseClient } from '@supabase/supabase-js';
 
 import { SUPABASE_URL, SUPABASE_ANON_KEY } from '../constants/SupabaseCredentials';
@@ -13,10 +16,28 @@ if (!isValidConfig) {
     console.warn('[Supabase] Credentials missing - check constants/SupabaseCredentials.ts');
 }
 
-// Create client only if valid config, otherwise null
+// Create client with AsyncStorage for persistence
 export const supabase: SupabaseClient | null = isValidConfig
-    ? createClient(supabaseUrl, supabaseAnonKey)
+    ? createClient(supabaseUrl, supabaseAnonKey, {
+        auth: {
+            storage: AsyncStorage,
+            autoRefreshToken: true,
+            persistSession: true,
+            detectSessionInUrl: false,
+        },
+    })
     : null;
+
+// Listen to AppState for auto-refresh handling on mobile
+if (supabase) {
+    AppState.addEventListener('change', (state) => {
+        if (state === 'active') {
+            supabase.auth.startAutoRefresh();
+        } else {
+            supabase.auth.stopAutoRefresh();
+        }
+    });
+}
 
 // Database types for questions
 export interface DbQuestion {

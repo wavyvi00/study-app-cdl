@@ -7,6 +7,7 @@ import { loadStats, updateStats, UserStats, INITIAL_STATS } from '../../data/sta
 import { ACHIEVEMENTS } from '../../data/achievements';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { useLocalization } from '../../context/LocalizationContext';
+import { useTheme } from '../../context/ThemeContext';
 import { useSubscription } from '../../context/SubscriptionContext';
 import { useAuth } from '../../context/AuthContext';
 
@@ -28,6 +29,7 @@ export default function ProfileScreen() {
     const { t, dualLanguageMode, setDualLanguageMode, secondaryLanguage, setSecondaryLanguage } = useLocalization();
     const { restore, isPro } = useSubscription();
     const auth = useAuth(); // Cross-platform auth
+    const { colors, isDark } = useTheme();
 
     const [stats, setStats] = useState<UserStats>(INITIAL_STATS);
     const [isLoading, setIsLoading] = useState(true);
@@ -185,10 +187,10 @@ export default function ProfileScreen() {
         return (
             <KeyboardAvoidingView
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-                style={[styles.container, { paddingTop: insets.top + 20 }]}
+                style={[styles.container, { paddingTop: insets.top + 20, backgroundColor: colors.background }]}
             >
                 <View style={styles.header}>
-                    <Text style={styles.headerTitle}>{isEditing ? t('editProfile') : t('createProfile')}</Text>
+                    <Text style={[styles.headerTitle, { color: colors.text }]}>{isEditing ? t('editProfile') : t('createProfile')}</Text>
                     {isEditing && (
                         <TouchableOpacity
                             onPress={() => setIsEditing(false)}
@@ -207,8 +209,9 @@ export default function ProfileScreen() {
                     <View style={styles.inputGroup}>
                         <Text style={styles.label}>{t('username')} <Text style={{ color: 'red' }}>*</Text></Text>
                         <TextInput
-                            style={[styles.input, usernameError && styles.inputError]}
+                            style={[styles.input, usernameError && styles.inputError, { backgroundColor: colors.surface, color: colors.text }]}
                             placeholder={t('displayName')}
+                            placeholderTextColor={colors.textSecondary}
                             value={username}
                             onChangeText={(value) => {
                                 setUsername(value);
@@ -225,7 +228,7 @@ export default function ProfileScreen() {
 
                     {renderClassPicker()}
 
-                    <TouchableOpacity style={styles.saveButton} onPress={handleSaveProfile}>
+                    <TouchableOpacity style={[styles.saveButton, { backgroundColor: colors.primary }]} onPress={handleSaveProfile}>
                         <Text style={styles.saveButtonText}>{isEditing ? t('saveChanges') : t('createProfile')}</Text>
                     </TouchableOpacity>
                 </ScrollView>
@@ -238,24 +241,24 @@ export default function ProfileScreen() {
 
     return (
         <ScrollView
-            style={[styles.container, { paddingTop: insets.top + 20 }]}
+            style={[styles.container, { paddingTop: insets.top + 20, backgroundColor: colors.background }]}
             contentContainerStyle={{ paddingBottom: 130 }}
             keyboardShouldPersistTaps="handled"
         >
             <View style={[styles.header, { justifyContent: 'space-between', flexDirection: 'row', alignItems: 'center' }]}>
-                <Text style={styles.headerTitle}>{t('myProfile')}</Text>
+                <Text style={[styles.headerTitle, { color: colors.text }]}>{t('myProfile')}</Text>
                 <TouchableOpacity onPress={() => setIsEditing(true)} style={styles.editButtonHeader}>
                     <Text style={styles.editText}>{t('editProfile')}</Text>
                 </TouchableOpacity>
             </View>
 
             {/* Profile Header */}
-            <View style={styles.profileHeaderCard}>
+            <View style={[styles.profileHeaderCard, { backgroundColor: colors.surface }]}>
                 <View style={styles.avatarCircle}>
                     <Image source={currentAvatar.source} style={styles.avatarImageLarge} />
                 </View>
                 <View style={styles.profileInfo}>
-                    <Text style={styles.profileName}>{stats.username}</Text>
+                    <Text style={[styles.profileName, { color: colors.text }]}>{stats.username}</Text>
                     <View style={styles.classBadge}>
                         <Text style={styles.classBadgeText}>{stats.cdlClass || 'Class A'}</Text>
                     </View>
@@ -264,13 +267,13 @@ export default function ProfileScreen() {
 
             {/* Account Section - Available on All Platforms */}
             <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>{t('profile')}</Text>
-                <View style={styles.accountCard}>
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('profile')}</Text>
+                <View style={[styles.accountCard, { backgroundColor: colors.surface }]}>
                     {auth?.isAuthenticated ? (
                         <>
                             <View style={styles.accountRow}>
-                                <FontAwesome name="envelope" size={18} color="#666" />
-                                <Text style={styles.accountEmail}>{auth.user?.email}</Text>
+                                <FontAwesome name="envelope" size={18} color={colors.textSecondary} />
+                                <Text style={[styles.accountEmail, { color: colors.textSecondary }]}>{auth.user?.email}</Text>
                             </View>
                             <View style={styles.accountRow}>
                                 <FontAwesome name="star" size={18} color={isPro ? '#FFC107' : '#ccc'} />
@@ -312,13 +315,13 @@ export default function ProfileScreen() {
 
             {/* Settings Section */}
             <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>{t('settings')}</Text>
-                <View style={styles.settingsCard}>
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('settings')}</Text>
+                <View style={[styles.settingsCard, { backgroundColor: colors.surface }]}>
                     {/* Dual Language Toggle */}
                     <View style={styles.settingRow}>
                         <View style={{ flex: 1, paddingRight: 16 }}>
-                            <Text style={styles.settingLabel}>{t('dualLanguageMode')}</Text>
-                            <Text style={styles.settingDescription}>
+                            <Text style={[styles.settingLabel, { color: colors.text }]}>{t('dualLanguageMode')}</Text>
+                            <Text style={[styles.settingDescription, { color: colors.textSecondary }]}>
                                 {t('englishOnlyExamWarningText')}
                             </Text>
                         </View>
@@ -355,23 +358,23 @@ export default function ProfileScreen() {
 
             {/* Global Progress */}
             <View style={styles.sectionContainer}>
-                <Text style={styles.sectionTitle}>{t('globalProgress')}</Text>
+                <Text style={[styles.sectionTitle, { color: colors.text }]}>{t('globalProgress')}</Text>
                 <View style={styles.statsGrid}>
-                    <View style={styles.statBox}>
+                    <View style={[styles.statBox, { backgroundColor: colors.surface }]}>
                         <Text style={styles.statValue}>{stats.averageScore}%</Text>
-                        <Text style={styles.statLabel}>{t('accuracy')}</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('accuracy')}</Text>
                     </View>
-                    <View style={styles.statBox}>
+                    <View style={[styles.statBox, { backgroundColor: colors.surface }]}>
                         <Text style={styles.statValue}>{stats.questionsAnswered}</Text>
-                        <Text style={styles.statLabel}>{t('completed')}</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('completed')}</Text>
                     </View>
-                    <View style={styles.statBox}>
+                    <View style={[styles.statBox, { backgroundColor: colors.surface }]}>
                         <Text style={styles.statValue}>{Math.floor(stats.studyTimeMinutes / 60)}h {stats.studyTimeMinutes % 60}m</Text>
-                        <Text style={styles.statLabel}>{t('timeSpent')}</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('timeSpent')}</Text>
                     </View>
-                    <View style={styles.statBox}>
+                    <View style={[styles.statBox, { backgroundColor: colors.surface }]}>
                         <Text style={styles.statValue}>{stats.examAttempts}</Text>
-                        <Text style={styles.statLabel}>{t('exams')}</Text>
+                        <Text style={[styles.statLabel, { color: colors.textSecondary }]}>{t('exams')}</Text>
                     </View>
                 </View>
             </View>
@@ -379,9 +382,9 @@ export default function ProfileScreen() {
             {/* Achievements Summary */}
             <View style={styles.sectionContainer}>
                 <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', marginBottom: 12 }}>
-                    <Text style={[styles.sectionTitle, { marginBottom: 0 }]}>{t('achievements')}</Text>
+                    <Text style={[styles.sectionTitle, { marginBottom: 0, color: colors.text }]}>{t('achievements')}</Text>
                     <TouchableOpacity onPress={() => router.push('/achievements')}>
-                        <Text style={{ color: '#1565C0', fontWeight: '600' }}>{t('viewAllAwards')}</Text>
+                        <Text style={{ color: colors.primary, fontWeight: '600' }}>{t('viewAllAwards')}</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -400,31 +403,42 @@ export default function ProfileScreen() {
                         const desc = t(`achievement_${ach.id}_desc` as any);
 
                         return (
-                            <View key={ach.id} style={[styles.achievementCard, !isUnlocked && styles.achievementCardLocked]}>
-                                <View style={[styles.achievementIcon, isUnlocked ? styles.iconUnlocked : styles.iconLocked]}>
+                            <View key={ach.id} style={[
+                                styles.achievementCard,
+                                { backgroundColor: colors.surface },
+                                !isUnlocked && { opacity: 0.8, backgroundColor: isDark ? colors.surface : '#f9f9f9' }
+                            ]}>
+                                <View style={[
+                                    styles.achievementIcon,
+                                    isUnlocked ? styles.iconUnlocked : { backgroundColor: isDark ? '#333' : '#e0e0e0' }
+                                ]}>
                                     <FontAwesome
                                         name={ach.icon as any}
                                         size={24}
-                                        color={isUnlocked ? '#fff' : '#999'}
+                                        color={isUnlocked ? '#fff' : (isDark ? '#666' : '#999')}
                                     />
                                 </View>
                                 <View style={styles.achievementContent}>
                                     <View style={styles.achievementHeader}>
-                                        <Text style={[styles.achievementTitle, !isUnlocked && styles.textLocked]}>
+                                        <Text style={[
+                                            styles.achievementTitle,
+                                            { color: colors.text },
+                                            !isUnlocked && { color: colors.textSecondary }
+                                        ]}>
                                             {title}
                                         </Text>
                                         {isUnlocked && (
                                             <FontAwesome name="check-circle" size={16} color="#4CAF50" />
                                         )}
                                     </View>
-                                    <Text style={styles.achievementDesc}>{desc}</Text>
+                                    <Text style={[styles.achievementDesc, { color: colors.textSecondary }]}>{desc}</Text>
 
                                     {!isUnlocked && (
                                         <View style={styles.progressContainer}>
-                                            <View style={styles.progressBarBg}>
+                                            <View style={[styles.progressBarBg, { backgroundColor: isDark ? '#333' : '#eee' }]}>
                                                 <View style={[styles.progressBarFill, { width: `${percentage}%` }]} />
                                             </View>
-                                            <Text style={styles.progressText}>
+                                            <Text style={[styles.progressText, { color: colors.textSecondary }]}>
                                                 {progress.current} / {progress.target}
                                             </Text>
                                         </View>
