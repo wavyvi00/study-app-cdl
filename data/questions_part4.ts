@@ -36,7 +36,7 @@ export const GK_QUESTIONS_PART4: Question[] = [
     { id: 'gk182', text: 'Maximum allowed weight for most interstate roads?', options: ['60,000 lbs', '80,000 lbs', '100,000 lbs', 'Unlimited'], correctIndex: 1, explanation: '80,000 lbs maximum for most interstate highways.' },
     { id: 'gk183', text: 'Axle weight limits typically are?', options: ['10,000 lbs', '20,000 lbs steering, 34,000 lbs tandem', '50,000 lbs', 'Unlimited'], correctIndex: 1, explanation: '20,000 lbs steering axle, 34,000 lbs tandem axles typically.' },
     { id: 'gk184', text: 'Overweight permits allow you to exceed limits if?', options: ['Anyone can get them', 'Special circumstances and approved', 'With CDL automatically', 'Never'], correctIndex: 1, explanation: 'Overweight permits granted for special circumstances only.' },
-    { id: 'gk185', text: 'What endorsement is needed for tank vehicles?', options: ['H', 'N', 'P', 'T'], correctIndex: 3, explanation: 'T endorsement for tank vehicles.' },
+    { id: 'gk185', text: 'What endorsement is needed for tank vehicles?', options: ['H', 'N', 'P', 'T'], correctIndex: 1, explanation: 'N endorsement for tank vehicles.' },
     { id: 'gk186', text: 'What endorsement is needed for hazardous materials?', options: ['H', 'N', 'P', 'T'], correctIndex: 0, explanation: 'H endorsement for hazardous materials.' },
     { id: 'gk187', text: 'P endorsement is for?', options: ['Placards', 'Passengers', 'Petroleum', 'Permits'], correctIndex: 1, explanation: 'P endorsement for passenger vehicles.' },
     { id: 'gk188', text: 'S endorsement is for?', options: ['Speed', 'School bus', 'Straight truck', 'Special cargo'], correctIndex: 1, explanation: 'S endorsement for school buses.' },
