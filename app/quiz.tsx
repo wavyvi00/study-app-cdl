@@ -321,39 +321,25 @@ export default function QuizScreen() {
         const idMatch = secondaryQuestions.find(q => q.id === currentQuestion.id);
         if (idMatch) return idMatch;
 
-        // 2. Try Fallback: Index Matching (e.g. Supabase UUID vs Local ID)
-        // If the English list and Spanish list are ordered identically.
-        // We need to find the index of currentQuestion in the *source* English list, not the shuffled 'questions' array.
-        // However, 'getQuestions' logic is complex.
+        // 2. Try Fallback: Index Matching (Valid only if lists are aligned)
+        // We must find the index in the RAW (unshuffled) primary list.
+        // We can't rely on 'questions' index because it is shuffled.
 
-        // Best effort: Try to find index in the current active 'questions' array, 
-        // IF 'questions' corresponds to 'secondaryQuestions' 1:1.
-        // But 'questions' might be shuffled if it's random practice? 
-        // No, 'questions' is the raw list for the topic. 'questionOrder' controls display order.
-        // Wait, 'getQuestions' returns array.
+        // Retrieve raw primary questions to find the true index
+        const rawPrimaryQuestions = topicId
+            ? getQuestions(topicId as string, 'en') // Assuming primary is 'en' or current locale
+            : topics.flatMap(t => getQuestions(t.id, 'en')); // Fallback for random practice assuming 'en'
 
-        // If we are in "Random Practice" (topicId undefined), 'questions' is ALL questions shuffled?
-        // No, look at `useEffect` lines 86-126. 
-        // If mode === 'practice' (random) -> `const allQ = topics.flatMap...; return shuffleArray(allQ).slice(0, 10);`
-        // So `questions` IS shuffled and sliced.
+        const trueIndex = rawPrimaryQuestions.findIndex(q => q.id === currentQuestion.id);
 
-        // This makes matching hard in Random mode if IDs don't match.
-        // But the user reported this in specific topic ("general_knowledge").
-        // In specific topic mode: `return getQuestions(topicId)...` which returns Supabase list (sorted by created_at).
-        // Local list is sorted by array order.
-
-        // Assumption: Supabase insertion order matches Local array order.
-        // Let's try matching by Index in the `questions` array.
-        const currentIndexInList = questions.findIndex(q => q.id === currentQuestion.id);
-        if (currentIndexInList !== -1 && secondaryQuestions[currentIndexInList]) {
-            // Verify it's not a completely random match? 
-            // We can't verify text. We just trust the index alignment for now as a fallback.
-            console.log('[Quiz] Using Index Fallback Match:', currentIndexInList);
-            return secondaryQuestions[currentIndexInList];
+        if (trueIndex !== -1 && secondaryQuestions[trueIndex]) {
+            console.log('[Quiz] Using True Index Match:', trueIndex, 'for ID:', currentQuestion.id);
+            return secondaryQuestions[trueIndex];
         }
 
+        console.warn('[Quiz] Translation failed for ID:', currentQuestion.id);
         return null;
-    }, [currentQuestion, dualLanguageMode, secondaryQuestions, questions]);
+    }, [currentQuestion, dualLanguageMode, secondaryQuestions, questions, topicId, getQuestions, topics]);
 
     // Debug translation matching - placed here to access variables
     useEffect(() => {
