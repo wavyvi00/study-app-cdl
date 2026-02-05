@@ -147,12 +147,12 @@ function WebLandingPage() {
                 {/* Social Proof / Stats Strip */}
                 <View style={styles.statsStrip}>
                     <View style={styles.statItem}>
-                        <Text style={styles.statNumber}>10k+</Text>
+                        <Text style={styles.statNumber}>250+</Text>
                         <Text style={styles.statLabel}>{t('statActiveUsers')}</Text>
                     </View>
                     <View style={styles.statDivider} />
                     <View style={styles.statItem}>
-                        <Text style={styles.statNumber}>50+</Text>
+                        <Text style={styles.statNumber}>FL</Text>
                         <Text style={styles.statLabel}>{t('statStatesCovered')}</Text>
                     </View>
                     <View style={styles.statDivider} />
