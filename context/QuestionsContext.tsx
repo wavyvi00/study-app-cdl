@@ -35,9 +35,10 @@ const TOPIC_TO_QUESTION_KEY: Record<string, string> = {
 };
 
 // Convert database question to app question format
+// Uses local_id (e.g., 'gk72') for translation matching with local files
 function dbToAppQuestion(dbQ: DbQuestion): Question {
     return {
-        id: dbQ.id,
+        id: dbQ.local_id || dbQ.id, // Use local_id for translation matching, fallback to UUID
         text: dbQ.text,
         options: dbQ.options,
         correctIndex: dbQ.correct_index,

@@ -42,6 +42,7 @@ if (supabase) {
 // Database types for questions
 export interface DbQuestion {
     id: string;
+    local_id: string | null; // Maps to local file IDs (gk1, comb_1, etc.) for translation matching
     topic_id: string;
     text: string;
     options: string[];
