@@ -22,6 +22,11 @@ import { useSubscription } from '../context/SubscriptionContext';
 import { useAuth } from '../context/AuthContext';
 
 // ... imports
+import { useAudioHighlight } from '../hooks/useAudioHighlight';
+import { SmartText } from '../components/SmartText';
+import GlossaryModal from '../components/GlossaryModal';
+import { GlossaryTerm, findTerm } from '../data/glossary';
+
 
 export default function QuizScreen() {
     const params = useLocalSearchParams();
@@ -132,11 +137,32 @@ export default function QuizScreen() {
     const [showReview, setShowReview] = useState(false);
     const [isFeedbackVisible, setFeedbackVisible] = useState(false);
     const [showTranslate, setShowTranslate] = useState(false);
+    const [selectedTerm, setSelectedTerm] = useState<GlossaryTerm | null>(null);
+    const [isGlossaryVisible, setGlossaryVisible] = useState(false);
+
+    const { speak, speakSequence, stop, isPlaying, currentCharIndex, activeId } = useAudioHighlight({
+        onFinish: () => {
+            // Optional: Auto-advance
+        }
+    });
+
+    // Handle Keyword Press
+
+    const handleKeywordPress = (term: string) => {
+        const definition = findTerm(term);
+        if (definition) {
+            setSelectedTerm(definition);
+            setGlossaryVisible(true);
+        }
+    };
+
 
     // Reset translation toggle when question changes
     useEffect(() => {
+        stop(); // Stop audio when question changes
         setShowTranslate(false);
     }, [currentIndex]);
+
 
     // Fetch secondary questions if dual mode is on
     const secondaryQuestions = useMemo(() => {
@@ -593,24 +619,68 @@ export default function QuizScreen() {
             </View>
 
             <ScrollView contentContainerStyle={styles.scrollContent}>
+
                 <Card padding="lg" style={{ marginBottom: spacing.xl }}>
                     <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                        <Text style={[styles.questionText, { color: colors.text, fontSize: typography.lg, flex: 1 }]}>
-                            {displayQuestionText}
-                        </Text>
-                        {dualLanguageMode && (
-                            <TouchableOpacity
-                                onPress={() => setShowTranslate(!showTranslate)}
-                                style={{ paddingLeft: 10, paddingBottom: 10 }}
-                            >
-                                <FontAwesome name="language" size={24} color={showTranslate ? colors.primary : colors.textSecondary} />
-                                <Text style={{ fontSize: 10, color: showTranslate ? colors.primary : colors.textSecondary, textAlign: 'center' }}>
-                                    {showTranslate ? t('original') : t('translate')}
-                                </Text>
-                            </TouchableOpacity>
-                        )}
+
+                        {/* Smart Text with Audio + Keywords */}
+                        <View style={{ flex: 1, marginRight: 8 }}>
+                            <SmartText
+                                text={displayQuestionText}
+                                isPlaying={isPlaying && activeId === 'question'}
+                                currentCharIndex={isPlaying && activeId === 'question' ? currentCharIndex : -1}
+                                onKeywordPress={handleKeywordPress}
+                                style={{ color: colors.text, fontSize: typography.lg }}
+                            />
+                        </View>
+
+                        {/* Controls Container */}
+                        <View style={{ gap: 12 }}>
+                            {/* Audio Button - Only for English (unless we add multiple TTS langs) */}
+                            {(!showTranslate) && (
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        if (isPlaying) {
+                                            stop();
+                                        } else {
+                                            const sequence = [
+                                                { id: 'question', text: displayQuestionText },
+                                                ...displayOptions.map((opt, i) => ({ id: `option-${i}`, text: opt }))
+                                            ];
+                                            speakSequence(sequence);
+                                        }
+                                    }}
+                                    style={{ alignItems: 'center', justifyContent: 'center', width: 44, height: 44, borderRadius: 22, backgroundColor: isPlaying ? colors.primary + '20' : 'transparent', borderWidth: 1, borderColor: colors.border }}
+                                >
+                                    <FontAwesome name={isPlaying ? "stop" : "volume-up"} size={20} color={isPlaying ? colors.primary : colors.textSecondary} />
+                                </TouchableOpacity>
+                            )}
+
+                            {/* Translate Button */}
+                            {dualLanguageMode && (
+                                <TouchableOpacity
+                                    onPress={() => {
+                                        stop(); // Stop audio if translating
+                                        setShowTranslate(!showTranslate);
+                                    }}
+                                    style={{ alignItems: 'center' }}
+                                >
+                                    <FontAwesome name="language" size={24} color={showTranslate ? colors.primary : colors.textSecondary} />
+                                    <Text style={{ fontSize: 10, color: showTranslate ? colors.primary : colors.textSecondary, textAlign: 'center' }}>
+                                        {showTranslate ? t('original') : t('translate')}
+                                    </Text>
+                                </TouchableOpacity>
+                            )}
+                        </View>
                     </View>
                 </Card>
+
+                {/* Glossary Modal */}
+                <GlossaryModal
+                    visible={isGlossaryVisible}
+                    onClose={() => setGlossaryVisible(false)}
+                    term={selectedTerm}
+                />
 
                 <View style={styles.optionsContainer}>
                     {displayOptions.map((option, index) => {
@@ -669,7 +739,13 @@ export default function QuizScreen() {
                                                 <Text style={{ fontSize: 10, color: isSelected ? '#fff' : colors.textSecondary }}>{String.fromCharCode(65 + index)}</Text>
                                             )}
                                         </View>
-                                        <Text style={[{ fontSize: 16, flex: 1 }, textStyle]}>{option}</Text>
+                                        <SmartText
+                                            text={option}
+                                            isPlaying={isPlaying && activeId === `option-${index}`}
+                                            currentCharIndex={isPlaying && activeId === `option-${index}` ? currentCharIndex : -1}
+                                            onKeywordPress={handleKeywordPress}
+                                            style={[{ fontSize: 16, flex: 1 }, textStyle]}
+                                        />
                                         {/* Additional visual indicator for correct/incorrect */}
                                         {isSelected && isPractice && isCorrect && (
                                             <FontAwesome name="check-circle" size={20} color={colors.success} style={{ marginLeft: 8 }} />
