@@ -621,10 +621,16 @@ export default function QuizScreen() {
             <ScrollView contentContainerStyle={styles.scrollContent}>
 
                 <Card padding="lg" style={{ marginBottom: spacing.xl }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-
-                        {/* Smart Text with Audio + Keywords */}
-                        <View style={{ flex: 1, marginRight: 8 }}>
+                    <View style={{
+                        flexDirection: width > 600 ? 'row' : 'column',
+                        justifyContent: 'space-between',
+                        alignItems: width > 600 ? 'flex-start' : 'stretch',
+                        gap: 16
+                    }}>
+                        <View style={{
+                            flex: width > 600 ? 1 : 0,
+                            marginRight: width > 600 ? 16 : 0
+                        }}>
                             <SmartText
                                 text={displayQuestionText}
                                 isPlaying={isPlaying && activeId === 'question'}
@@ -634,9 +640,14 @@ export default function QuizScreen() {
                             />
                         </View>
 
-                        {/* Controls Container */}
-                        <View style={{ gap: 12 }}>
-                            {/* Audio Button - Only for English (unless we add multiple TTS langs) */}
+                        {/* Controls Toolbar */}
+                        <View style={{
+                            flexDirection: 'row',
+                            justifyContent: width > 600 ? 'flex-start' : 'flex-end',
+                            alignItems: 'center',
+                            gap: 12
+                        }}>
+                            {/* Audio Button */}
                             {(!showTranslate) && (
                                 <TouchableOpacity
                                     onPress={() => {
@@ -650,7 +661,12 @@ export default function QuizScreen() {
                                             speakSequence(sequence);
                                         }
                                     }}
-                                    style={{ alignItems: 'center', justifyContent: 'center', width: 44, height: 44, borderRadius: 22, backgroundColor: isPlaying ? colors.primary + '20' : 'transparent', borderWidth: 1, borderColor: colors.border }}
+                                    style={{
+                                        alignItems: 'center', justifyContent: 'center',
+                                        width: 44, height: 44, borderRadius: 22,
+                                        backgroundColor: isPlaying ? colors.primary + '20' : colors.surface,
+                                        borderWidth: 1, borderColor: colors.border
+                                    }}
                                 >
                                     <FontAwesome name={isPlaying ? "stop" : "volume-up"} size={20} color={isPlaying ? colors.primary : colors.textSecondary} />
                                 </TouchableOpacity>
@@ -663,10 +679,16 @@ export default function QuizScreen() {
                                         stop(); // Stop audio if translating
                                         setShowTranslate(!showTranslate);
                                     }}
-                                    style={{ alignItems: 'center' }}
+                                    style={{
+                                        alignItems: 'center', justifyContent: 'center',
+                                        height: 44, paddingHorizontal: 12, borderRadius: 22,
+                                        borderWidth: 1, borderColor: showTranslate ? colors.primary : colors.border,
+                                        backgroundColor: showTranslate ? colors.primary + '10' : colors.surface,
+                                        flexDirection: 'row', gap: 6
+                                    }}
                                 >
-                                    <FontAwesome name="language" size={24} color={showTranslate ? colors.primary : colors.textSecondary} />
-                                    <Text style={{ fontSize: 10, color: showTranslate ? colors.primary : colors.textSecondary, textAlign: 'center' }}>
+                                    <FontAwesome name="language" size={20} color={showTranslate ? colors.primary : colors.textSecondary} />
+                                    <Text style={{ fontSize: 13, fontWeight: '500', color: showTranslate ? colors.primary : colors.textSecondary }}>
                                         {showTranslate ? t('original') : t('translate')}
                                     </Text>
                                 </TouchableOpacity>

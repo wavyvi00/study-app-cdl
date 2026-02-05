@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import * as Speech from 'expo-speech';
+import { Audio } from 'expo-av';
 import { Platform } from 'react-native';
 
 interface UseAudioHighlightProps {
@@ -20,6 +21,21 @@ export function useAudioHighlight({ onFinish }: UseAudioHighlightProps = {}) {
     const queueIndexRef = useRef(0);
 
     useEffect(() => {
+        // Configure Audio to play in silent mode (iOS)
+        const setupAudio = async () => {
+            try {
+                await Audio.setAudioModeAsync({
+                    playsInSilentModeIOS: true,
+                    staysActiveInBackground: false,
+                    shouldDuckAndroid: true,
+                    playThroughEarpieceAndroid: false
+                });
+            } catch (e) {
+                console.warn("Failed to set audio mode", e);
+            }
+        };
+        setupAudio();
+
         const loadVoice = async () => {
             try {
                 const voices = await Speech.getAvailableVoicesAsync();
@@ -72,7 +88,13 @@ export function useAudioHighlight({ onFinish }: UseAudioHighlightProps = {}) {
         const item = queueRef.current[index];
         setActiveId(item.id);
         setCurrentText(item.text);
-        setCurrentCharIndex(0);
+
+        // On Android, we don't support word highlighting, so we use -1 to trigger block highlighting
+        if (Platform.OS === 'android') {
+            setCurrentCharIndex(-1);
+        } else {
+            setCurrentCharIndex(0);
+        }
 
         const options: Speech.SpeechOptions = {
             language: 'en-US',

@@ -136,8 +136,19 @@ export const SmartText: React.FC<SmartTextProps> = ({
         return result;
     }, [text]);
 
+    const isBlockHighlight = isPlaying && currentCharIndex === -1;
+
     return (
-        <Text style={[style, { lineHeight: (flattenedStyle?.fontSize || 16) * 1.5 }]}>
+        <Text style={[
+            style,
+            { lineHeight: (flattenedStyle?.fontSize || 16) * 1.5 },
+            isBlockHighlight && {
+                backgroundColor: colors.primary + '15',
+                borderRadius: 6,
+                paddingHorizontal: 4,
+                overflow: 'hidden' // Ensure border radius clips background
+            }
+        ]}>
             {tokens.map((token, i) => {
                 const isHighlighted = isPlaying &&
                     currentCharIndex >= token.start &&
