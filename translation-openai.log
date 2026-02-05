@@ -1,16 +1,15 @@
-[00:15:16] ╔════════════════════════════════════════════════════════════╗
-[00:15:16] ║  OpenAI Translation Tool (gpt-4o-mini)                     ║
-[00:15:16] ║  Fast • Reliable • Cost-Efficient                         ║
-[00:15:16] ╚════════════════════════════════════════════════════════════╝
-[00:15:16] 
-[00:15:16] ✅ OpenAI client initialized
-[00:15:16] 📦 Loaded cache with 3188 translations
-[00:15:16] 📚 Loading questions from questions_combination.ts...
-[00:15:16]    Found 65 questions (Variable: COMBINATION_QUESTIONS)
-[00:15:16] 📂 Resuming from question 4
-[00:15:16] 🌐 Target: Russian (ru)
-[00:15:16] 
-[00:19:16] 
-[00:19:16] ═══════════════════════════════════════════════════════════════
-[00:19:16] ✨ Done! 65 questions in 240.3s
-[00:19:16] 📄 Output: /Users/victorrodriguez/REPO/study-app-cdl/data/questions/ru/questions_combination.ts
+[00:42:13] ╔════════════════════════════════════════════════════════════╗
+[00:42:13] ║  OpenAI Translation Tool (gpt-4o-mini)                     ║
+[00:42:13] ║  Fast • Reliable • Cost-Efficient                         ║
+[00:42:13] ╚════════════════════════════════════════════════════════════╝
+[00:42:13] 
+[00:42:13] ✅ OpenAI client initialized
+[00:42:13] 📦 Loaded cache with 3881 translations
+[00:42:13] 📚 Loading questions from questions_combination.ts...
+[00:42:13]    Found 65 questions (Variable: COMBINATION_QUESTIONS)
+[00:42:13] 🌐 Target: Russian (ru)
+[00:42:13] 
+[00:42:27] 
+[00:42:27] ═══════════════════════════════════════════════════════════════
+[00:42:27] ✨ Done! 65 questions in 13.8s
+[00:42:27] 📄 Output: /Users/victorrodriguez/REPO/study-app-cdl/data/questions/ru/questions_combination.ts

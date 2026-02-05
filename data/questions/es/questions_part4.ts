@@ -1,7 +1,7 @@
 import { Question } from '../../mock';
 
 export const GK_QUESTIONS_PART4: Question[] = [
-    { id: 'gk151', text: `Maximum driving time before required break (property-carrying)?`, options: [`8 horas`, `11 horas`, `14 horas`, `10 horas`], correctIndex: 1, explanation: `11 hours maximum after 10 consecutive hours off duty.` },
+    { id: 'gk151', text: `¿Tiempo máximo de conducción antes del descanso obligatorio (transporte de carga)?`, options: [`8 horas`, `11 horas`, `14 horas`, `10 horas`], correctIndex: 1, explanation: `Máximo 11 horas después de 10 horas consecutivas fuera de servicio.` },
     { id: 'gk152', text: `Después de 8 horas de conducción, ¿necesita un descanso de al menos?`, options: [`15 minutos`, `30 minutos`, `45 minutos`, `1 hora`], correctIndex: 1, explanation: `Se requiere un descanso de 30 minutos después de 8 horas de conducción.` },
     { id: 'gk153', text: `¿Máximo de horas de servicio en 7 días (propiedad)?`, options: [`50 horas`, `60 horas`, `70 horas`, `80 horas`], correctIndex: 1, explanation: `60 horas en 7 días consecutivos para transportistas de propiedad.` },
     { id: 'gk154', text: `El reinicio de 34 horas restaura tus horas a?`, options: [`Límite semanal completo`, `Límite medio semanal`, `Nivel anterior`, `Nada`], correctIndex: 0, explanation: `El reinicio de 34 horas restaura tu límite completo de 60/70 horas.` },
