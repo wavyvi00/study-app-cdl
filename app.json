@@ -3,7 +3,7 @@
     "name": "CDL Zero: Permit Practice",
     "slug": "cdl-prep-mastery",
     "scheme": "cdlzero",
-    "version": "2.0.7",
+    "version": "2.0.11",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "automatic",
@@ -17,7 +17,7 @@
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.victorrodriguez.cdlzero",
-      "buildNumber": "35",
+      "buildNumber": "39",
       "config": {
         "usesNonExemptEncryption": false
       },
@@ -30,7 +30,7 @@
         "NSPhotoLibraryUsageDescription": "Used to select images for your profile or study notes.",
         "NSMicrophoneUsageDescription": "Used for voice commands and study features.",
         "CFBundleDisplayName": "CDL Zero",
-        "CFBundleShortVersionString": "2.0.7",
+        "CFBundleShortVersionString": "2.0.11",
         "ITSAppUsesNonExemptEncryption": false,
         "LSApplicationQueriesSchemes": [],
         "UIRequiresFullScreen": false,
@@ -44,6 +44,9 @@
           "UIInterfaceOrientationPortraitUpsideDown",
           "UIInterfaceOrientationLandscapeLeft",
           "UIInterfaceOrientationLandscapeRight"
+        ],
+        "UIBackgroundModes": [
+          "audio"
         ]
       },
       "privacyManifests": {

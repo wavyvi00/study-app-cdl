@@ -6,6 +6,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useEffect, useState } from 'react';
 import { View, Platform } from 'react-native';
 import { Analytics } from '@vercel/analytics/react';
+import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 
 import { ThemeProvider, useTheme } from '../context/ThemeContext';
 import { LocalizationProvider } from '../context/LocalizationContext';
@@ -86,6 +87,24 @@ export default function RootLayout() {
         // SpaceMono: require('../assets/fonts/SpaceMono-Regular.ttf'),
     });
     useEffect(() => {
+        // Configure global audio settings for robust playback
+        const configureAudio = async () => {
+            try {
+                await Audio.setAudioModeAsync({
+                    allowsRecordingIOS: false,
+                    staysActiveInBackground: true,
+                    playsInSilentModeIOS: true,
+                    interruptionModeIOS: InterruptionModeIOS.DoNotMix,
+                    interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+                    shouldDuckAndroid: true,
+                    playThroughEarpieceAndroid: false,
+                });
+            } catch (e) {
+                console.warn('Error configuring global audio:', e);
+            }
+        };
+        configureAudio();
+
         // Delay background sync to not interfere with startup
         const timer = setTimeout(() => {
             try {

@@ -1,7 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import * as Speech from 'expo-speech';
-import { Audio } from 'expo-av';
 import { Platform } from 'react-native';
+import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 
 interface UseAudioHighlightProps {
     onFinish?: () => void;
@@ -21,17 +21,20 @@ export function useAudioHighlight({ onFinish }: UseAudioHighlightProps = {}) {
     const queueIndexRef = useRef(0);
 
     useEffect(() => {
-        // Configure Audio to play in silent mode (iOS)
+        // Enforce Playback mode locally to ensure expo-speech doesn't revert to Ambient
         const setupAudio = async () => {
             try {
                 await Audio.setAudioModeAsync({
+                    allowsRecordingIOS: false,
+                    staysActiveInBackground: true,
                     playsInSilentModeIOS: true,
-                    staysActiveInBackground: false,
+                    interruptionModeIOS: InterruptionModeIOS.DoNotMix,
+                    interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
                     shouldDuckAndroid: true,
-                    playThroughEarpieceAndroid: false
+                    playThroughEarpieceAndroid: false,
                 });
             } catch (e) {
-                console.warn("Failed to set audio mode", e);
+                console.warn("Failed to set local audio mode", e);
             }
         };
         setupAudio();
@@ -138,6 +141,14 @@ export function useAudioHighlight({ onFinish }: UseAudioHighlightProps = {}) {
             // For V1 Android: Just play audio, no word karaoke.
             // Or we could estimate based on time? No, unreliable.
         }
+
+        // Re-force audio mode just in case speech engine reset it
+        Audio.setAudioModeAsync({
+            playsInSilentModeIOS: true,
+            staysActiveInBackground: true,
+            interruptionModeIOS: InterruptionModeIOS.DoNotMix,
+            interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+        }).catch(e => console.warn("Audio mode refresh failed", e));
 
         Speech.speak(item.text, options);
     };
