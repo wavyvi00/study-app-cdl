@@ -246,7 +246,16 @@ export type TranslationKey =
     | 'translate'
     | 'original'
     | 'englishOnlyExamWarningTitle'
-    | 'englishOnlyExamWarningText';
+    | 'englishOnlyExamWarningText'
+    // Exam & Practice Mode
+    | 'examModeTitle'
+    | 'examModeSubtitle'
+    | 'examModeInfo'
+    | 'startExam'
+    | 'practiceModeTitle'
+    | 'practiceModeSubtitle'
+    | 'practiceModeInfo'
+    | 'startPractice';
 
 export const translations: Record<Locale, Record<TranslationKey, string>> = {
     en: {
@@ -507,6 +516,15 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         original: 'Original',
         englishOnlyExamWarningTitle: 'Important for Florida Drivers',
         englishOnlyExamWarningText: 'CDL Exams in Florida will be English-only starting Feb 6, 2026. This dual-language mode is for study assistance only.',
+        // Exam & Practice Mode
+        examModeTitle: 'Exam Mode',
+        examModeSubtitle: 'Simulate the real test environment',
+        examModeInfo: 'Test your knowledge with a timed exam structure similar to the real CDL test. No immediate feedback - just like the real thing.',
+        startExam: 'Start Exam',
+        practiceModeTitle: 'Practice Mode',
+        practiceModeSubtitle: 'Learn at your own pace',
+        practiceModeInfo: 'Answer questions with immediate feedback and explanations. Perfect for learning new material.',
+        startPractice: 'Start Practice',
     },
     es: {
         appTitle: 'CENTRO DE ESTUDIO',
@@ -766,6 +784,15 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         original: 'Original',
         englishOnlyExamWarningTitle: 'Importante para Conductores de Florida',
         englishOnlyExamWarningText: 'Los exámenes CDL en Florida serán solo en inglés a partir del 6 de febrero de 2026. Este modo bilingüe es solo para ayuda en el estudio.',
+        // Exam & Practice Mode
+        examModeTitle: 'Modo Examen',
+        examModeSubtitle: 'Simula el ambiente real de la prueba',
+        examModeInfo: 'Pon a prueba tus conocimientos con una estructura de examen cronometrada similar a la prueba real de CDL. Sin comentarios inmediatos, igual que en la realidad.',
+        startExam: 'Comenzar Examen',
+        practiceModeTitle: 'Modo Práctica',
+        practiceModeSubtitle: 'Aprende a tu propio ritmo',
+        practiceModeInfo: 'Responde preguntas con retroalimentación inmediata y explicaciones. Perfecto para aprender material nuevo.',
+        startPractice: 'Comenzar Práctica',
     },
     ru: {
         appTitle: 'УЧЕБНЫЙ ЦЕНТР',
@@ -798,6 +825,15 @@ export const translations: Record<Locale, Record<TranslationKey, string>> = {
         quizComplete: 'Тест завершен!',
         score: 'Ваш результат',
         home: 'Главная',
+        // Exam & Practice Mode
+        examModeTitle: 'Режим Экзамена',
+        examModeSubtitle: 'Симуляция реального теста',
+        examModeInfo: 'Проверьте свои знания с помощью экзамена на время, похожего на настоящий тест CDL. Без мгновенных подсказок.',
+        startExam: 'Начать Экзамен',
+        practiceModeTitle: 'Режим Практики',
+        practiceModeSubtitle: 'Учитесь в своем темпе',
+        practiceModeInfo: 'Отвечайте на вопросы с мгновенной обратной связью и пояснениями. Идеально для изучения нового материала.',
+        startPractice: 'Начать Практику',
         tryAgain: 'Повторить',
         review: 'Обзор',
         loading: 'Загрузка...',

@@ -1,4 +1,4 @@
-import { Question } from '../mock';
+import { Question } from '../../mock';
 
 export const COMBINATION_QUESTIONS: Question[] = [
     { id: 'comb_1', text: `¿Qué dos cosas son importantes para prevenir el vuelco?`, options: [`Mantén la carga lo más cerca posible del suelo y conduce despacio en las curvas.`, `Mantén la carga alta y conduce rápido.`, `Mantén la carga fuertemente distribuida hacia la parte trasera.`, `Utiliza el freno de mano del remolque en las curvas.`], correctIndex: 0, explanation: `Para prevenir vuelcos, mantén el centro de gravedad bajo y conduce despacio en las curvas.` },

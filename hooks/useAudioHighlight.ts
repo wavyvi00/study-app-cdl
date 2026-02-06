@@ -78,7 +78,7 @@ export function useAudioHighlight({ onFinish }: UseAudioHighlightProps = {}) {
         };
     }, []);
 
-    const speakNext = () => {
+    const speakNext = async () => {
         if (!isPlayingRef.current) return;
 
         const index = queueIndexRef.current;
@@ -143,12 +143,17 @@ export function useAudioHighlight({ onFinish }: UseAudioHighlightProps = {}) {
         }
 
         // Re-force audio mode just in case speech engine reset it
-        Audio.setAudioModeAsync({
-            playsInSilentModeIOS: true,
-            staysActiveInBackground: true,
-            interruptionModeIOS: InterruptionModeIOS.DoNotMix,
-            interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
-        }).catch(e => console.warn("Audio mode refresh failed", e));
+        // AWAITing this is critical to ensure the session is active before speech starts
+        try {
+            await Audio.setAudioModeAsync({
+                playsInSilentModeIOS: true,
+                staysActiveInBackground: true,
+                interruptionModeIOS: InterruptionModeIOS.DoNotMix,
+                interruptionModeAndroid: InterruptionModeAndroid.DoNotMix,
+            });
+        } catch (e) {
+            console.warn("Audio mode refresh failed", e);
+        }
 
         Speech.speak(item.text, options);
     };

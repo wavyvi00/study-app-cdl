@@ -39,7 +39,14 @@ export default function ResetPasswordScreen() {
 
     // Check for valid recovery session on mount
     useEffect(() => {
+        if (!supabase) {
+            setError('System error: Database client missing');
+            setIsLoading(false);
+            return;
+        }
+
         const checkSession = async () => {
+            if (!supabase) return;
             try {
                 // Get current session - Supabase automatically handles the recovery token
                 const { data: { session } } = await supabase.auth.getSession();
@@ -70,6 +77,11 @@ export default function ResetPasswordScreen() {
     }, []);
 
     const handleUpdate = async () => {
+        if (!supabase) {
+            setError('System error: Database client missing');
+            return;
+        }
+
         if (!password.trim()) {
             setError('Please enter a new password');
             return;
