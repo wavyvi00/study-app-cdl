@@ -4,7 +4,8 @@ import { Platform } from 'react-native';
 import { Audio, InterruptionModeIOS, InterruptionModeAndroid } from 'expo-av';
 
 // Import silent audio file for iOS silent mode fix
-const SILENCE_AUDIO = require('../assets/audio/silence.mp3');
+// Base64 silent mp3 to avoid file corruption issues
+const SILENCE_AUDIO_URI = 'data:audio/mp3;base64,//uQZAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAWgAAAA0AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAABMmBMPAAACAAABFWAAAAd///+/+//uQZAAAAAAN4AAAAAAAABAAAAAAAAAAAA//uQZAAAAAAN4AAAAAAAABAAAAAAAAAAAA';
 
 interface UseAudioHighlightProps {
     onFinish?: () => void;
@@ -42,7 +43,7 @@ export function useAudioHighlight({ onFinish }: UseAudioHighlightProps = {}) {
 
                 // Pre-load the silent sound on iOS to have it ready
                 if (Platform.OS === 'ios') {
-                    const { sound } = await Audio.Sound.createAsync(SILENCE_AUDIO, { shouldPlay: false });
+                    const { sound } = await Audio.Sound.createAsync({ uri: SILENCE_AUDIO_URI }, { shouldPlay: false });
                     silentSoundRef.current = sound;
                     console.log('[Audio] Silent sound pre-loaded for iOS silent mode fix');
                 }
@@ -123,7 +124,7 @@ export function useAudioHighlight({ onFinish }: UseAudioHighlightProps = {}) {
                 console.log('[Audio] Silent sound played - Playback session should now be active');
             } else {
                 // Fallback: create and play on the fly
-                const { sound } = await Audio.Sound.createAsync(SILENCE_AUDIO, { shouldPlay: true });
+                const { sound } = await Audio.Sound.createAsync({ uri: SILENCE_AUDIO_URI }, { shouldPlay: true });
                 silentSoundRef.current = sound;
                 console.log('[Audio] Silent sound created and played on demand');
             }
